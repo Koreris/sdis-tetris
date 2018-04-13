@@ -1,0 +1,69 @@
+
+menu.png
+size: 1024,64
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+button_hover
+  rotate: false
+  xy: 2, 2
+  size: 216, 49
+  orig: 216, 49
+  offset: 0, 0
+  index: -1
+button_normal
+  rotate: false
+  xy: 220, 2
+  size: 216, 49
+  orig: 216, 49
+  offset: 0, 0
+  index: -1
+checkbox_checked
+  rotate: false
+  xy: 724, 27
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+checkbox_hover
+  rotate: false
+  xy: 750, 27
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+checkbox_normal
+  rotate: false
+  xy: 776, 27
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+slider
+  rotate: false
+  xy: 438, 19
+  size: 148, 32
+  orig: 148, 32
+  offset: 0, 0
+  index: -1
+slider_knob
+  rotate: false
+  xy: 690, 19
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+volume_hover
+  rotate: false
+  xy: 588, 2
+  size: 49, 49
+  orig: 49, 49
+  offset: 0, 0
+  index: -1
+volume_normal
+  rotate: false
+  xy: 639, 2
+  size: 49, 49
+  orig: 49, 49
+  offset: 0, 0
+  index: -1

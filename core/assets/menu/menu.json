@@ -1,0 +1,72 @@
+{
+"com.badlogic.gdx.graphics.Color": 
+	{
+		"blue": { hex: "0096a0ff" }, 
+		"white": { hex: "ffffffff" }, 
+	},
+
+    "com.badlogic.gdx.graphics.g2d.BitmapFont": 
+    {
+        "mainFont": { "file": "font/gradient1.fnt" },
+        "detailFont": { "file" : "font/gradient2.fnt" },
+        "titleFont": {"file": "font/gradient1.fnt"},
+    },
+    
+    "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": 
+    { 
+        "default": 
+        { 
+			"up": "button_normal", 
+			"down": "button_hover", 
+			"over": "button_hover", 
+			"font": mainFont,
+			"pressedOffsetY": -2,
+			"fontColor": blue,
+		},
+		
+		"menuLabel": 
+		{ 
+			"up": "button_normal", 
+			"down": "button_hover", 
+			"over": "button_hover", 
+			"pressedOffsetY": -2,
+			"font": mainFont,
+		 },
+		 
+		"toggle": 
+		{ 
+			"up": "button_normal", 
+			"down": "button_hover", 
+			"checked": "button_hover", 
+			"over": "button_hover", 
+			"font": mainFont,
+			"fontColor": blue,
+		 },
+    },
+    
+   	"com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle":
+    {
+		"default":
+		{
+			"up": "volume_normal", 
+			"down": "volume_hover", 
+			"over": "volume_hover", 
+		},
+    },
+    
+    "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": 
+    {
+        "default": { "font": titleFont },
+        "gradientLabel": { "font" : detailFont },
+        "smallLabel": { "font": detailFont, "fontColor": white },
+    },
+    
+    "com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle":
+    {
+		"default-horizontal":
+		{
+			"background": "slider",
+			"knob": "slider_knob",
+		},
+    },
+}
