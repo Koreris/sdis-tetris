@@ -1,0 +1,24 @@
+{
+  "com.badlogic.gdx.graphics.Color":
+  {
+    "blue": { hex: "0096a0ff" },
+    "white": { hex: "ffffffff" },
+  },
+  "com.badlogic.gdx.graphics.g2d.BitmapFont":
+  {
+    "mainFont": { "file": "font/gradient1.fnt" },
+    "detailFont": { "file" : "font/gradient2.fnt" },
+    "titleFont": {"file": "font/gradient1.fnt"},
+  },
+
+  "com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle":
+  {
+    "default":
+    {
+      "font": mainFont,
+      "fontColorUnselected": blue,
+      "fontColorSelected": white,
+      "selection": "altas",
+    },
+  },
+}

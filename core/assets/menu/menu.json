@@ -69,4 +69,16 @@
 			"knob": "slider_knob",
 		},
     },
+
+	"com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle":
+	{
+		"default":
+		{
+			"background": "button_normal",
+			"cursor": "slider_knob",
+			"font": detailFont,
+			"fontColor": blue,
+			"selection": "slider",
+		},
+	},
 }
