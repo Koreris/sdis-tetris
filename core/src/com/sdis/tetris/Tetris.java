@@ -7,6 +7,7 @@ import com.sdis.tetris.audio.AudioHandler;
 import com.sdis.tetris.audio.LRUCache;
 import com.sdis.tetris.gui.GUIGame;
 import com.sdis.tetris.gui.GUIMainMenu;
+import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.gui.GUIScreen;
 import com.sdis.tetris.logic.HighScores;
 import com.sdis.tetris.logic.HighScores.Score;
@@ -58,7 +59,7 @@ public class Tetris extends Game
 	
 	public void startGame()
 	{
-		switchTo(new GUIGame(this));
+		switchTo(new GUIMultiGame(this));
 	}
 
 	@Override

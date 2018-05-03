@@ -30,7 +30,7 @@ public class GUIMultiPlayer extends GUIScreen{
     private float gameWidth = Gdx.graphics.getWidth();
     private float gameHeight = Gdx.graphics.getHeight();
 
-    private class JoinLoby implements Runnable
+    private class JoinLobby implements Runnable
     {
         @Override
         public void run()
@@ -39,7 +39,7 @@ public class GUIMultiPlayer extends GUIScreen{
         }
     };
 
-    private class CreateLoby implements Runnable
+    private class CreateLobby implements Runnable
     {
         @Override
         public void run()
@@ -102,7 +102,7 @@ public class GUIMultiPlayer extends GUIScreen{
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
-                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinLoby())));
+                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinLobby())));
             }
 
             @Override
@@ -121,7 +121,7 @@ public class GUIMultiPlayer extends GUIScreen{
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
-                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLoby())));
+                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLobby())));
             }
 
             @Override

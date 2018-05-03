@@ -115,7 +115,18 @@ public class TetrisServer implements Runnable{
 		
 		public void deleteLobby(String lobby_name) {
 			running_lobbies.remove(lobby_name);
-			//send delete message to other servers
+			String header = "DELETE" +  " " + server_name + " " + lobby_name + CRLF + CRLF;
+			for (String key : other_servers.keySet()) 
+			{
+				try {
+					DatagramPacket packet = new DatagramPacket(header.getBytes(), 0, header.getBytes().length,InetAddress.getByName(key),other_servers.get(key));
+					System.out.println("Sending delete to "+key+":"+other_servers.get(key));
+					server_socket.send(packet);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		public void handleReplicationPacket(DatagramPacket data) {
@@ -130,7 +141,6 @@ public class TetrisServer implements Runnable{
 			switch(headerComponents[0]) {
 				case "REPLICATE":
 					try {
-					
 						TetrisLobbySerializable lobby = (TetrisLobbySerializable) Utils.convertFromBytes(lines[2].trim().getBytes());
 						//Key = original server name + lobby name
 						replicated_lobbies.put(headerComponents[1]+headerComponents[2], lobby);
@@ -139,6 +149,7 @@ public class TetrisServer implements Runnable{
 					} 
 					break;
 				case "DELETE":
+					replicated_lobbies.remove((headerComponents[1]+headerComponents[2]));
 					break;
 				default:
 					break;
