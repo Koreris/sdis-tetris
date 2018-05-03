@@ -16,12 +16,12 @@ import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
 
-public class GUIWaitLoby  extends GUIScreen{
+public class GUIWaitLobby  extends GUIScreen{
     private final Stage stage = new Stage();
     private final Table table = new Table();
     Sprite background = new Sprite(new Texture(Gdx.files.internal("img/main_menu.png"), false));
     Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
-    private final TextButton backButton = new TextButton("MultiPlayer_Menu", Buttons.MenuButton);
+    private final TextButton backButton = new TextButton("< BACK", Buttons.MenuButton);
     private final List<String> list;
     private Skin skin;
     ScrollPane scrollPane;
@@ -37,7 +37,7 @@ public class GUIWaitLoby  extends GUIScreen{
         }
     }
 
-    public GUIWaitLoby(Tetris paramParent) {
+    public GUIWaitLobby(Tetris paramParent) {
         super(paramParent, Song.THEME_A);
         background.setPosition(0,0);
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
@@ -63,6 +63,7 @@ public class GUIWaitLoby  extends GUIScreen{
         table.setFillParent(true);
         table.setVisible(true);
         stage.addActor(table);
+        backButton.setPosition(48, 30);
         backButton.addListener(new ClickListener()
         {
             @Override

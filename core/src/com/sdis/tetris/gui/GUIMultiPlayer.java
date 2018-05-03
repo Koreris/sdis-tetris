@@ -21,9 +21,9 @@ public class GUIMultiPlayer extends GUIScreen{
     private final Table table = new Table();
     Sprite background = new Sprite(new Texture(Gdx.files.internal("img/main_menu.png"), false));
     Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
-    private final TextButton joinButton = new TextButton("Join_Loby", Buttons.MenuButton);
-    private final TextButton createButton = new TextButton("Create_Loby", Buttons.MenuButton);
-    private final TextButton backButton = new TextButton("Main_Menu", Buttons.MenuButton);
+    private final TextButton joinButton = new TextButton("JOIN LOBBY", Buttons.MenuButton);
+    private final TextButton createButton = new TextButton("CREATE LOBBY", Buttons.MenuButton);
+    private final TextButton backButton = new TextButton("< BACK", Buttons.MenuButton);
     private final List<String> list;
     private Skin skin;
     ScrollPane scrollPane;
@@ -35,7 +35,7 @@ public class GUIMultiPlayer extends GUIScreen{
         @Override
         public void run()
         {
-            parent.switchTo(new GUIWaitLoby(parent));
+            parent.switchTo(new GUIWaitLobby(parent));
         }
     };
 
@@ -44,7 +44,7 @@ public class GUIMultiPlayer extends GUIScreen{
         @Override
         public void run()
         {
-            parent.switchTo(new GUICreateLoby(parent));
+            parent.switchTo(new GUICreateLobby(parent));
         }
     }
 
@@ -95,6 +95,7 @@ public class GUIMultiPlayer extends GUIScreen{
         table.setFillParent(true);
         table.setVisible(true);
         stage.addActor(table);
+        backButton.setPosition(48, 30);
         joinButton.addListener(new ClickListener()
         {
             @Override

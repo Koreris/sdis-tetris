@@ -31,7 +31,7 @@ public class GUIMainMenu extends GUIScreen
 	Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
 	private final TextButton onePButton = new TextButton("1 PLAYER", Buttons.MenuButton);
 	private final TextButton prefButton = new TextButton("PREFERENCES", Buttons.MenuButton);
-	private final TextButton multiButton = new TextButton("MultiPlayer", Buttons.MenuButton);
+	private final TextButton multiButton = new TextButton("MULTIPLAYER", Buttons.MenuButton);
 	private final TextButton credButton = new TextButton("CREDITS", Buttons.MenuButton);
 	private final TextButton exitButton = new TextButton("EXIT", Buttons.MenuButton);
 	private final float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();

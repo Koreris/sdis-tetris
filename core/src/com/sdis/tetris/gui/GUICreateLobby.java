@@ -18,14 +18,14 @@ import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
 
-public class GUICreateLoby extends GUIScreen{
+public class GUICreateLobby extends GUIScreen{
 
     private final Stage stage = new Stage();
     private final Table table = new Table();
     Sprite background = new Sprite(new Texture(Gdx.files.internal("img/main_menu.png"), false));
     Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
-    private final TextButton createButton = new TextButton("Create_Loby", Buttons.MenuButton);
-    private final TextButton backButton = new TextButton("MultiPlayer_Menu", Buttons.MenuButton);
+    private final TextButton createButton = new TextButton("CREATE LOBBY", Buttons.MenuButton);
+    private final TextButton backButton = new TextButton("< BACK", Buttons.MenuButton);
     private Label label;
     private Skin skin;
     private TextField usernameTextField;
@@ -39,21 +39,21 @@ public class GUICreateLoby extends GUIScreen{
         }
     }
 
-    private class CreateLoby implements Runnable
+    private class CreateLobby implements Runnable
     {
         @Override
         public void run()
         {
-            parent.switchTo(new GUIWaitLoby(parent));
+            parent.switchTo(new GUIWaitLobby(parent));
         }
     }
 
-    public GUICreateLoby(Tetris paramParent) {
+    public GUICreateLobby(Tetris paramParent) {
         super(paramParent, Song.THEME_A);
         background.setPosition(0,0);
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
         skin  = new Skin(Gdx.files.internal("menu/menu.json"), new TextureAtlas(Gdx.files.internal("menu/menu.atlas")));
-        label = new Label("Loby name:", skin);
+        label = new Label("Lobby name:", skin);
         usernameTextField = new TextField("", skin);
         usernameTextField.setAlignment(Align.center);
         table.add(label);
@@ -65,6 +65,7 @@ public class GUICreateLoby extends GUIScreen{
         table.setFillParent(true);
         table.setVisible(true);
         stage.addActor(table);
+        backButton.setPosition(48, 30);
         backButton.addListener(new ClickListener()
         {
             @Override
@@ -89,7 +90,7 @@ public class GUICreateLoby extends GUIScreen{
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
-                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLoby())));
+                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLobby())));
             }
 
             @Override
