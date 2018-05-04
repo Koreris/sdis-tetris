@@ -105,6 +105,20 @@ public class Board {
 		gameOver=false;
 	}
 	
+	/**
+	 * Board constructor
+	 * @return
+	 */
+	public Board(int width, int height) 
+	{
+		boardWidth = width;
+		boardHeight = height;
+		fallingPiece = TetrominoProto.generateRandom();
+		fallingPiece.setPosition(boardWidth/2, boardHeight-3);
+		gameBounds = new Bounds(0, 0, boardWidth, boardHeight);
+		gameOver=false;
+	}
+	
 	
 	/**
 	 * This function will check if the current falling Piece has collided or reached the bottom 

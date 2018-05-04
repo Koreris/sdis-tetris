@@ -31,6 +31,7 @@ public class GUIMainMenu extends GUIScreen
 	Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
 	private final TextButton onePButton = new TextButton("1 PLAYER", Buttons.MenuButton);
 	private final TextButton prefButton = new TextButton("PREFERENCES", Buttons.MenuButton);
+	private final TextButton multiButton = new TextButton("MULTIPLAYER", Buttons.MenuButton);
 	private final TextButton credButton = new TextButton("CREDITS", Buttons.MenuButton);
 	private final TextButton exitButton = new TextButton("EXIT", Buttons.MenuButton);
 	private final float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
@@ -65,7 +66,15 @@ public class GUIMainMenu extends GUIScreen
 		}
 	}
 
-	
+	private class Multiplayer implements Runnable
+	{
+		@Override
+		public void run()
+		{
+			parent.switchTo(new GUIMultiPlayer(parent));
+		}
+	}
+
 	public GUIMainMenu(final Tetris parent)
 	{
 		super(parent, Song.THEME_A);
@@ -75,6 +84,7 @@ public class GUIMainMenu extends GUIScreen
 		
 		table.setPosition(0,75);
 		table.add(onePButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
+		table.add(multiButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
 		table.add(prefButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
 		table.add(credButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
 		table.add(exitButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
@@ -91,6 +101,25 @@ public class GUIMainMenu extends GUIScreen
 			{
 				audio.playSFX(SFX.HOVER);
 				stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new RunGame())));
+			}
+
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor)
+			{
+				if (!onePButton.isPressed())
+				{
+					audio.playSFX(SFX.HOVER);
+				}
+			}
+		});
+
+		multiButton.addListener(new ClickListener()
+		{
+			@Override
+			public void clicked(InputEvent event, float x, float y)
+			{
+				audio.playSFX(SFX.HOVER);
+				stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new Multiplayer())));
 			}
 
 			@Override

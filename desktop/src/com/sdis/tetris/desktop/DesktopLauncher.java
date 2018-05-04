@@ -1,5 +1,8 @@
 package com.sdis.tetris.desktop;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -13,9 +16,12 @@ public class DesktopLauncher {
         config.addIcon("com/sdis/tetris/res/icon-128x128.png", FileType.Internal);
         config.addIcon("com/sdis/tetris/res/icon-32x32.png", FileType.Internal);
         config.addIcon("com/sdis/tetris/res/icon-16x16.png", FileType.Internal);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        double height = screenSize.getHeight();
         config.title = "Tetris";
-		config.width = 500;
-		config.height = 710;
+		config.width = (int) width;
+		config.height = (int) height;
         config.fullscreen = false;
         config.resizable = false;
         config.vSyncEnabled = true;
