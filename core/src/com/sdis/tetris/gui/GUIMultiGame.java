@@ -40,9 +40,9 @@ public class GUIMultiGame extends GUIScreen
 	private final Stage stage = new Stage();
 
 	private Board myBoard = new Board();
-	public Board smallBoard1 = new Board(7,14);
-	public Board smallBoard2 = new Board(7,14);
-	public Board smallBoard3 = new Board(7,14);
+	public Board smallBoard1 = new Board(15,15);
+	public Board smallBoard2 = new Board(15,15);
+	public Board smallBoard3 = new Board(15,15);
 	Sprite lvl1 = new Sprite(new Texture(Gdx.files.internal("img/level1.png"), false));
 	Sprite lvl2 = new Sprite(new Texture(Gdx.files.internal("img/level2.png"), false));
 	Sprite lvl3 = new Sprite(new Texture(Gdx.files.internal("img/level3.png"), false));
@@ -65,7 +65,7 @@ public class GUIMultiGame extends GUIScreen
 	float minBoardHeight=0;
 	float maxBoardHeight=(myBoard.boardHeight*myBoard.scaleY);
 	int count=0;
-	
+
 
 	public void changeState(GameState newState)
 	{
@@ -86,6 +86,9 @@ public class GUIMultiGame extends GUIScreen
 		myBoard.setGameOver(false);
 		myBoard.setCurrentLevel(0);
 		myBoard.setPlayerScore(0);
+		/*smallBoard1.setPlayerScore(0);
+		smallBoard2.setPlayerScore(0);
+		smallBoard3.setPlayerScore(0);*/
 		t1=new Timer().scheduleTask(new AnimatePiece(), 1, 1);
 	}
 
@@ -307,7 +310,10 @@ public class GUIMultiGame extends GUIScreen
 			background.draw(batch);
 
 			drawBoard(9.1f);
-			
+			drawSmallBoard(smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+			drawSmallBoard(smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+			drawSmallBoard(smallBoard3, smallFrame3, 850f, 250f, 1.26f);
+
 			if(myBoard.isGameOver())
 			{
 				parent.addToHighScores(myBoard.getPlayerScore(),"Player1");
@@ -531,13 +537,14 @@ public class GUIMultiGame extends GUIScreen
 			}
 		}
 	}
-	
+
 	public void drawSmallBoard(Board smallBoard,Sprite smallFrame, float framePosX, float framePosY, float delta)
 	{
-		
+
 		//Draw Board
-		smallFrame.setPosition(minBoardWidth-135f,minBoardHeight+47f);
-		smallFrame.setSize(maxBoardWidth+50f, maxBoardHeight+50f);
+		smallFrame.setPosition(minBoardWidth+framePosX,minBoardHeight+framePosY);
+		smallFrame.setScale(1.85f, 1.75f);
+		//smallFrame.setSize(maxBoardWidth+50f, maxBoardHeight+50f);
 		smallFrame.draw(batch);
 
 		for (int y = 0; y < smallBoard.boardHeight; y++) 
@@ -547,37 +554,37 @@ public class GUIMultiGame extends GUIScreen
 				if (smallBoard.gameBoard[y][x] != null) 
 				{
 					if(smallBoard.gameBoard[y][x]==Color.GREEN){
-						greenBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+100f);
+						greenBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						greenBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						greenBlock.draw(batch);
 					}
 					if(smallBoard.gameBoard[y][x]==Color.RED){
-						redBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+100f);
+						redBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						redBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						redBlock.draw(batch);
 					}
 					if(smallBoard.gameBoard[y][x]==Color.BLUE){
-						blueBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+100f);
+						blueBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						blueBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						blueBlock.draw(batch);
 					}
 					if(smallBoard.gameBoard[y][x]==Color.MAGENTA){
-						purpleBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+100f);
+						purpleBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						purpleBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						purpleBlock.draw(batch);
 					}
 					if(smallBoard.gameBoard[y][x]==Color.ORANGE){
-						orangeBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+100f);
+						orangeBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						orangeBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						orangeBlock.draw(batch);
 					}
 					if(smallBoard.gameBoard[y][x]==Color.YELLOW){
-						yellowBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+100f);
+						yellowBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						yellowBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						yellowBlock.draw(batch);
 					}
 					if(smallBoard.gameBoard[y][x]==Color.CYAN){
-						cyanBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+100f);
+						cyanBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						cyanBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						cyanBlock.draw(batch);
 					}
@@ -588,7 +595,7 @@ public class GUIMultiGame extends GUIScreen
 
 		//Draw falling piece
 
-
+		/*
 		for (int y = 0; y < smallBoard.fallingPiece.getHeight(); y++) 
 		{
 			for (int x = 0; x < smallBoard.fallingPiece.getWidth(); x++) 
@@ -598,37 +605,37 @@ public class GUIMultiGame extends GUIScreen
 					switch(smallBoard.fallingPiece.getColorName())
 					{
 					case "red":
-						redBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+100f);
+						redBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+208f);
 						redBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						redBlock.draw(batch);
 						break;
 					case "blue":
-						blueBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+100f);
+						blueBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+208f);
 						blueBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						blueBlock.draw(batch);
 						break;
 					case "magenta":
-						purpleBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+100f);
+						purpleBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+208f);
 						purpleBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						purpleBlock.draw(batch);
 						break;
 					case "orange":
-						orangeBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+100f);
+						orangeBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+208f);
 						orangeBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						orangeBlock.draw(batch);
 						break;
 					case "yellow":
-						yellowBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+100f);
+						yellowBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+208f);
 						yellowBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						yellowBlock.draw(batch);
 						break;
 					case "cyan":
-						cyanBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+100f);
+						cyanBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+208f);
 						cyanBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						cyanBlock.draw(batch);
 						break;
 					case "green":
-						greenBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+100);
+						greenBlock.setPosition(smallBoard.scaleX*(smallBoard.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (smallBoard.fallingPiece.getY() + y)+208f);
 						greenBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						greenBlock.draw(batch);
 						break;
@@ -636,6 +643,6 @@ public class GUIMultiGame extends GUIScreen
 
 				}
 			}
-		}
+		}*/
 	}
 }

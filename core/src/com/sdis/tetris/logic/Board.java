@@ -109,10 +109,10 @@ public class Board {
 	 * Board constructor
 	 * @return
 	 */
-	public Board(int width, int height) 
+	public Board(int scX, int scY) 
 	{
-		boardWidth = width;
-		boardHeight = height;
+		scaleX = scX;
+		scaleY = scY;
 		fallingPiece = TetrominoProto.generateRandom();
 		fallingPiece.setPosition(boardWidth/2, boardHeight-3);
 		gameBounds = new Bounds(0, 0, boardWidth, boardHeight);
