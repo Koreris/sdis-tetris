@@ -53,19 +53,20 @@ public class GUICreateLobby extends GUIScreen{
         background.setPosition(0,0);
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
         skin  = new Skin(Gdx.files.internal("menu/menu.json"), new TextureAtlas(Gdx.files.internal("menu/menu.atlas")));
-        label = new Label("Lobby name:", skin);
+        label = new Label("Loby name:", skin);
         usernameTextField = new TextField("", skin);
         usernameTextField.setAlignment(Align.center);
-        table.add(label);
-        table.add(usernameTextField).width(200);
+        table.add(label).expandX().center().row();
+        table.add(usernameTextField).size((float)Gdx.graphics.getWidth()/4, (float)Gdx.graphics.getHeight()/10).padBottom(10).row();;
         table.row();
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
         table.add(createButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
         table.add(backButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
+        title.scale(0.7f);
+        table.bottom();
         table.setFillParent(true);
         table.setVisible(true);
         stage.addActor(table);
-        backButton.setPosition(48, 30);
         backButton.addListener(new ClickListener()
         {
             @Override

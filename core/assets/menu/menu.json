@@ -81,4 +81,12 @@
 			"selection": "slider",
 		},
 	},
+
+	"com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle":
+	{
+		"default" :
+		{
+			"hScrollKnob": "slider",
+		}
+	}
 }
