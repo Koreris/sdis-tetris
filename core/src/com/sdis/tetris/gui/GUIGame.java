@@ -32,13 +32,13 @@ import com.sdis.tetris.logic.Board;
 
 public class GUIGame extends GUIScreen
 {
-
+	
 
 	private GameState state;
 	private final float screenWidth = Gdx.graphics.getWidth();
 	private final float screenHeight = Gdx.graphics.getHeight();
 	private final Stage stage = new Stage();
-
+	
 	private Board myBoard = new Board();
 	Sprite lvl1 = new Sprite(new Texture(Gdx.files.internal("img/level1.png"), false));
 	Sprite lvl2 = new Sprite(new Texture(Gdx.files.internal("img/level2.png"), false));
@@ -59,14 +59,13 @@ public class GUIGame extends GUIScreen
 	float minBoardHeight=0;
 	float maxBoardHeight=(myBoard.boardHeight*myBoard.scaleY);
 	int count=0;
-	
 
 	public void changeState(GameState newState)
 	{
 		state = newState;
 	}
-
-
+	
+	
 	public GUIGame(Tetris paramParent) 
 	{
 		super(paramParent, TetrisPreferences.getTheme());
@@ -74,7 +73,7 @@ public class GUIGame extends GUIScreen
 		t1.cancel();
 		changeState(new GameRunningState());
 	}	
-
+	
 	private void reStartGame(){
 		myBoard=new Board();
 		myBoard.setGameOver(false);
@@ -82,7 +81,7 @@ public class GUIGame extends GUIScreen
 		myBoard.setPlayerScore(0);
 		t1=new Timer().scheduleTask(new AnimatePiece(), 1, 1);
 	}
-
+	
 	private class AnimatePiece extends Task
 	{
 		@Override
@@ -91,13 +90,13 @@ public class GUIGame extends GUIScreen
 			myBoard.moveDown();
 		}
 	}
-
+	
 	@Override
 	public void render(float delta)
 	{
 		state.draw();
 	}
-
+	
 	@Override
 	public boolean keyDown(final int keycode)
 	{
@@ -118,10 +117,10 @@ public class GUIGame extends GUIScreen
 			t1.cancel();
 			changeState(new GamePausedState());
 		}
-
+		
 		return true;
 	} 
-
+	
 	public boolean keyPressed()
 	{
 		if (Gdx.input.isKeyPressed(Keys.DOWN))
@@ -136,12 +135,12 @@ public class GUIGame extends GUIScreen
 	{
 		return !(state instanceof GameRunningState);
 	}
-
+	
 	public boolean isGameRunning()
 	{
 		return !(state instanceof GameRunningState);
 	}
-
+	
 
 	@Override
 	public void pause()
@@ -151,16 +150,16 @@ public class GUIGame extends GUIScreen
 			changeState(new GamePausedState());
 		}
 	}
+	
 
-
-
+	
 	private abstract class GameState
 	{
 		public abstract void update(float delta);
-
+		
 		public abstract void draw();
 	}
-
+	
 	private class GameRunningState extends GameState
 	{
 		private final Stage stageGame = new Stage();
@@ -171,19 +170,19 @@ public class GUIGame extends GUIScreen
 		Label score= new Label(scores, Buttons.SmallLabel);
 		int prevLevel=0;
 		Sprite background = lvl1;
-
-
-
+	
+		
+	
 		public GameRunningState()
 		{
-
+			
 			Gdx.input.setInputProcessor(GUIGame.this);
-
+			
 			if(isGameRunning())
 			{
 				t1.run();
 			}
-
+			
 			table.setFillParent(true);
 			level.setFontScale(0.8f,0.8f);
 			score.setFontScale(0.8f,0.8f);
@@ -191,10 +190,10 @@ public class GUIGame extends GUIScreen
 			table.row();
 			table.add(score);
 			table.setPosition(minBoardWidth+115f,minBoardHeight+280f);
-
+			
 			stageGame.addActor(table);
 			updateTimer();
-
+			
 		}
 		void setBackground(){
 			background.setPosition(0,0);
@@ -270,7 +269,7 @@ public class GUIGame extends GUIScreen
 				break;
 			}
 		}
-
+		
 		public void update()
 		{
 			count++;
@@ -280,7 +279,7 @@ public class GUIGame extends GUIScreen
 			}
 			levels="Level\n"+myBoard.getCurrentLevel();
 			scores="Score\n"+myBoard.getPlayerScore();
-
+			
 			level.setText(levels);
 			score.setText(scores);
 			if(prevLevel!=myBoard.getCurrentLevel()){
@@ -288,32 +287,32 @@ public class GUIGame extends GUIScreen
 				updateTimer();	
 			}
 		}
-
+		
 		@Override
 		public void draw()
 		{
-
+			
 			update();
 			Gdx.gl.glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 			Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-
+			
 			batch.begin();
 			background.draw(batch);
-
-			drawBoard(3.1f);
-
+			
+			drawBoard();
+			
 			if(myBoard.isGameOver())
 			{
 				parent.addToHighScores(myBoard.getPlayerScore(),"Player1");
 				t1.cancel();
-
+				
 				changeState(new GameOverState());
 			}
-
-
+			
+		
 			batch.end();
 			stageGame.draw();
-
+		
 		}
 
 		@Override
@@ -321,16 +320,16 @@ public class GUIGame extends GUIScreen
 		{	
 			stageGame.act(delta);
 		}
-
+		
 	}
-
+	
 	private class GamePausedState extends GameState
 	{
 		private final Stage stagePause = new Stage();
 		private final Table tablePaused = new Table();
 		private final Label labelRes = new Label("PAUSE", Buttons.SmallLabel);
 		private final TextButton resumeButton = new TextButton("RESUME", Buttons.MenuButton);
-
+		
 		public GamePausedState()
 		{
 			tablePaused.setFillParent(true);
@@ -370,14 +369,14 @@ public class GUIGame extends GUIScreen
 			stagePause.act(delta);
 		}
 	}
-
+	
 	private class GameOverState extends GameState
 	{
 		private final Stage stageOver = new Stage();
 		private final Table tableOver = new Table();
 		private final Label labelOver = new Label("GAME OVER", Buttons.SmallLabel);
 		private final TextButton hsButton = new TextButton("Highscores", Buttons.MenuButton);
-
+		
 		public GameOverState()
 		{
 			tableOver.setFillParent(true);
@@ -419,112 +418,113 @@ public class GUIGame extends GUIScreen
 		}
 	}
 
-	public void drawBoard(float delta)
-	{
-		//Draw Board
-		boardFrame.setPosition(minBoardWidth+156f,minBoardHeight+47f);
-		boardFrame.setSize(maxBoardWidth+50f, maxBoardHeight+50f);
-		boardFrame.draw(batch);
-
-		for (int y = 0; y < myBoard.boardHeight; y++) 
+		public void drawBoard()
 		{
-			for (int x = 0; x <myBoard.boardWidth; x++) 
+			//Draw Board
+			
+			boardFrame.setPosition(minBoardWidth-25f,minBoardHeight+45f);
+			boardFrame.setSize(maxBoardWidth+50f, maxBoardHeight+50f);
+			boardFrame.draw(batch);
+			
+			for (int y = 0; y < myBoard.boardHeight; y++) 
 			{
-				if (myBoard.gameBoard[y][x] != null) 
+				for (int x = 0; x <myBoard.boardWidth; x++) 
 				{
-					if(myBoard.gameBoard[y][x]==Color.GREEN){
-						greenBlock.setPosition(myBoard.scaleX*x+screenWidth/delta, myBoard.scaleY *y+100f);
-						greenBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						greenBlock.draw(batch);
-					}
-					if(myBoard.gameBoard[y][x]==Color.RED){
-						redBlock.setPosition(myBoard.scaleX*x+screenWidth/delta, myBoard.scaleY *y+100f);
-						redBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						redBlock.draw(batch);
-					}
-					if(myBoard.gameBoard[y][x]==Color.BLUE){
-						blueBlock.setPosition(myBoard.scaleX*x+screenWidth/delta, myBoard.scaleY *y+100f);
-						blueBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						blueBlock.draw(batch);
-					}
-					if(myBoard.gameBoard[y][x]==Color.MAGENTA){
-						purpleBlock.setPosition(myBoard.scaleX*x+screenWidth/delta, myBoard.scaleY *y+100f);
-						purpleBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						purpleBlock.draw(batch);
-					}
-					if(myBoard.gameBoard[y][x]==Color.ORANGE){
-						orangeBlock.setPosition(myBoard.scaleX*x+screenWidth/delta, myBoard.scaleY *y+100f);
-						orangeBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						orangeBlock.draw(batch);
-					}
-					if(myBoard.gameBoard[y][x]==Color.YELLOW){
-						yellowBlock.setPosition(myBoard.scaleX*x+screenWidth/delta, myBoard.scaleY *y+100f);
-						yellowBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						yellowBlock.draw(batch);
-					}
-					if(myBoard.gameBoard[y][x]==Color.CYAN){
-						cyanBlock.setPosition(myBoard.scaleX*x+screenWidth/delta, myBoard.scaleY *y+100f);
-						cyanBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						cyanBlock.draw(batch);
-					}
-
-				}
-			}
-		}
-
-		//Draw falling piece
-
-
-		for (int y = 0; y < myBoard.fallingPiece.getHeight(); y++) 
-		{
-			for (int x = 0; x < myBoard.fallingPiece.getWidth(); x++) 
-			{
-				if (myBoard.fallingPiece.mMatrix[y][x] == true) 
-				{
-
-					switch(myBoard.fallingPiece.getColorName())
+					if (myBoard.gameBoard[y][x] != null) 
 					{
-					case "red":
-						redBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/delta, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
-						redBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						redBlock.draw(batch);
-						break;
-					case "blue":
-						blueBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/delta, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
-						blueBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						blueBlock.draw(batch);
-						break;
-					case "magenta":
-						purpleBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/delta, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
-						purpleBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						purpleBlock.draw(batch);
-						break;
-					case "orange":
-						orangeBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/delta, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
-						orangeBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						orangeBlock.draw(batch);
-						break;
-					case "yellow":
-						yellowBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/delta, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
-						yellowBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						yellowBlock.draw(batch);
-						break;
-					case "cyan":
-						cyanBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/delta, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
-						cyanBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						cyanBlock.draw(batch);
-						break;
-					case "green":
-						greenBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/delta, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100);
-						greenBlock.setSize(myBoard.scaleX, myBoard.scaleY);
-						greenBlock.draw(batch);
-						break;
+						if(myBoard.gameBoard[y][x]==Color.GREEN){
+							greenBlock.setPosition(myBoard.scaleX*x+screenWidth/5.3f, myBoard.scaleY *y+100f);
+							greenBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							greenBlock.draw(batch);
+						}
+						if(myBoard.gameBoard[y][x]==Color.RED){
+							redBlock.setPosition(myBoard.scaleX*x+screenWidth/5.3f, myBoard.scaleY *y+100f);
+							redBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							redBlock.draw(batch);
+						}
+						if(myBoard.gameBoard[y][x]==Color.BLUE){
+							blueBlock.setPosition(myBoard.scaleX*x+screenWidth/5.3f, myBoard.scaleY *y+100f);
+							blueBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							blueBlock.draw(batch);
+						}
+						if(myBoard.gameBoard[y][x]==Color.MAGENTA){
+							purpleBlock.setPosition(myBoard.scaleX*x+screenWidth/5.3f, myBoard.scaleY *y+100f);
+							purpleBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							purpleBlock.draw(batch);
+						}
+						if(myBoard.gameBoard[y][x]==Color.ORANGE){
+							orangeBlock.setPosition(myBoard.scaleX*x+screenWidth/5.3f, myBoard.scaleY *y+100f);
+							orangeBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							orangeBlock.draw(batch);
+						}
+						if(myBoard.gameBoard[y][x]==Color.YELLOW){
+							yellowBlock.setPosition(myBoard.scaleX*x+screenWidth/5.3f, myBoard.scaleY *y+100f);
+							yellowBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							yellowBlock.draw(batch);
+						}
+						if(myBoard.gameBoard[y][x]==Color.CYAN){
+							cyanBlock.setPosition(myBoard.scaleX*x+screenWidth/5.3f, myBoard.scaleY *y+100f);
+							cyanBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							cyanBlock.draw(batch);
+						}
+						
 					}
-
 				}
 			}
+			
+			//Draw falling piece
+			
+
+			for (int y = 0; y < myBoard.fallingPiece.getHeight(); y++) 
+			{
+				for (int x = 0; x < myBoard.fallingPiece.getWidth(); x++) 
+				{
+					if (myBoard.fallingPiece.mMatrix[y][x] == true) 
+					{
+						
+						switch(myBoard.fallingPiece.getColorName())
+						{
+						case "red":
+							redBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/5.3f, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
+							redBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							redBlock.draw(batch);
+							break;
+						case "blue":
+							blueBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/5.3f, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
+							blueBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							blueBlock.draw(batch);
+							break;
+						case "magenta":
+							purpleBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/5.3f, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
+							purpleBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							purpleBlock.draw(batch);
+							break;
+						case "orange":
+							orangeBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/5.3f, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
+							orangeBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							orangeBlock.draw(batch);
+							break;
+						case "yellow":
+							yellowBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/5.3f, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
+							yellowBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							yellowBlock.draw(batch);
+							break;
+						case "cyan":
+							cyanBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/5.3f, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100f);
+							cyanBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							cyanBlock.draw(batch);
+							break;
+						case "green":
+							greenBlock.setPosition(myBoard.scaleX*(myBoard.fallingPiece.getX() + x)+screenWidth/5.3f, myBoard.scaleY * (myBoard.fallingPiece.getY() + y)+100);
+							greenBlock.setSize(myBoard.scaleX, myBoard.scaleY);
+							greenBlock.draw(batch);
+							break;
+						}
+						
+					}
+				}
+			}
+			
+			
 		}
-
-
-	}
 }

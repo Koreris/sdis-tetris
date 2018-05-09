@@ -3,6 +3,7 @@
   {
     "blue": { hex: "0096a0ff" },
     "white": { hex: "ffffffff" },
+    "yellow": {hex: "FFFF00"},
   },
   "com.badlogic.gdx.graphics.g2d.BitmapFont":
   {
@@ -16,9 +17,17 @@
     "default":
     {
       "font": mainFont,
-      "fontColorUnselected": blue,
+      "fontColorUnselected": yellow,
       "fontColorSelected": white,
       "selection": "altas",
     },
   },
+
+  "com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle":
+  {
+    "default" :
+    {
+      "hScrollKnob": "altas",
+    }
+  }
 }

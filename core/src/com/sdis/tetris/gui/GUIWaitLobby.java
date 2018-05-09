@@ -49,6 +49,7 @@ public class GUIWaitLobby  extends GUIScreen{
             strings[k++] = "String: " + i;
         }
         list.setItems(strings);
+        list.setAlignment(1);
         scrollPane = new ScrollPane(list);
         scrollPane.setBounds(0, 0, 5, 20);
         scrollPane.setSmoothScrolling(false);
@@ -56,7 +57,7 @@ public class GUIWaitLobby  extends GUIScreen{
                 gameHeight / 2 - scrollPane.getHeight() / 4);
         scrollPane.setTransform(true);
         scrollPane.setScale(0.5f);
-        table.add(list);
+        table.add(list).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
         table.add(scrollPane);
         table.row();
         table.add(backButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();

@@ -10,27 +10,31 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
 
+import java.awt.*;
+
 public class GUIMultiPlayer extends GUIScreen{
     private final Stage stage = new Stage();
     private final Table table = new Table();
     Sprite background = new Sprite(new Texture(Gdx.files.internal("img/main_menu.png"), false));
     Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
-    private final TextButton joinButton = new TextButton("JOIN LOBBY", Buttons.MenuButton);
-    private final TextButton createButton = new TextButton("CREATE LOBBY", Buttons.MenuButton);
-    private final TextButton backButton = new TextButton("< BACK", Buttons.MenuButton);
+    private final TextButton joinButton = new TextButton("Join_Loby", Buttons.MenuButton);
+    private final TextButton createButton = new TextButton("Create_Loby", Buttons.MenuButton);
+    private final TextButton backButton = new TextButton("Main_Menu", Buttons.MenuButton);
     private final List<String> list;
     private Skin skin;
-    ScrollPane scrollPane;
-    private float gameWidth = Gdx.graphics.getWidth();
-    private float gameHeight = Gdx.graphics.getHeight();
+    private Skin skinv2;
+    final ScrollPane scroll;
 
-    private class JoinLobby implements Runnable
+    private class JoinLoby implements Runnable
     {
         @Override
         public void run()
@@ -39,7 +43,7 @@ public class GUIMultiPlayer extends GUIScreen{
         }
     };
 
-    private class CreateLobby implements Runnable
+    private class CreateLoby implements Runnable
     {
         @Override
         public void run()
@@ -72,22 +76,19 @@ public class GUIMultiPlayer extends GUIScreen{
         background.setPosition(0,0);
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
+        title.setColor(175f,130f,80f,255f);
         skin  = new Skin(Gdx.files.internal("menu/myskin.json"), new TextureAtlas(Gdx.files.internal("menu/atlas.atlas")));
-        list=new List<String>(skin);
-        String[] strings = new String[4];
-        for (int i = 0, k = 0; i < 4; i++) {
-            strings[k++] = "String: " + i;
+        skinv2  = new Skin(Gdx.files.internal("menu/menu.json"), new TextureAtlas(Gdx.files.internal("menu/menu.atlas")));
+        list=new List<>(skin);
+        list.setAlignment(1);
+        String[] strings = new String[5];
+        for (int i = 0, k = 0; i < 5; i++) {
+            strings[k++] = "String: " + (i+1);
         }
         list.setItems(strings);
-        scrollPane = new ScrollPane(list);
-        scrollPane.setBounds(0, 0, 5, 20);
-        scrollPane.setSmoothScrolling(false);
-        scrollPane.setPosition(gameWidth / 2 - scrollPane.getWidth() / 4,
-                gameHeight / 2 - scrollPane.getHeight() / 4);
-        scrollPane.setTransform(true);
-        scrollPane.setScale(0.5f);
-        table.add(list);
-        table.add(scrollPane);
+        scroll = new ScrollPane(list, skinv2);
+        table.add(list).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
+        table.add(scroll);
         table.row();
         table.add(joinButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
         table.add(createButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
@@ -95,14 +96,13 @@ public class GUIMultiPlayer extends GUIScreen{
         table.setFillParent(true);
         table.setVisible(true);
         stage.addActor(table);
-        backButton.setPosition(48, 30);
         joinButton.addListener(new ClickListener()
         {
             @Override
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
-                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinLobby())));
+                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinLoby())));
             }
 
             @Override
@@ -121,7 +121,7 @@ public class GUIMultiPlayer extends GUIScreen{
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
-                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLobby())));
+                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLoby())));
             }
 
             @Override
