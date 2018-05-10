@@ -65,54 +65,15 @@ public class TetrisServer implements Runnable{
             simulateLobbyCreation();
 
         Socket socket = null;
-        InputStream in = null;
-        OutputStream out = null;
-
+     
         try {
             socket = client_socket.accept();
-
-            in = socket.getInputStream();
-            out = socket.getOutputStream();
+            thread_pool.execute(new ClientConnectionHandler(socket));
         }catch(IOException e){
             e.printStackTrace();
             return;
         }
-
-        while(true){
-            try {
-                byte []buffer = new byte[256];
-
-                in.read(buffer);
-
-                String str = new String(buffer);
-                String msg_tokens[] = str.split(" ");
-
-                if(msg_tokens[0].compareTo("CREATE") == 0){
-                    String lobby_name = msg_tokens[1];
-                    TetrisLobby new_lob = new TetrisLobby(this,lobby_name);
-
-                    if(running_lobbies.get(lobby_name) != null){
-                        //TODO - Error, room already exists
-                        continue;
-                    }
-
-                    running_lobbies.put(lobby_name,new_lob);
-
-                    String answer = "CREATED " + new_lob.getCurrentPort();
-
-                    out.write(answer.getBytes());
-                }else if(msg_tokens[0].compareTo("ASKLIST") == 0){
-
-                }else if(msg_tokens[0].compareTo("CONNECT") == 0){
-
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ArrayIndexOutOfBoundsException e){
-                e.printStackTrace();
-            }
-        }
+   
     }
 
     /* function just to test replication */
@@ -138,6 +99,71 @@ public class TetrisServer implements Runnable{
         {
             System.out.println(replicated_lobbies.get(key).toString());
         }
+    }	
+    
+    class ClientConnectionHandler implements Runnable{
+	    Socket socket;
+	    InputStream in = null;
+        OutputStream out = null;
+         
+    	public ClientConnectionHandler(Socket connection) {
+    		socket=connection;
+			try {
+				 socket.setSoTimeout(2000);
+				 in = socket.getInputStream();
+				 out = socket.getOutputStream();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
+    	}
+    	
+    	public void terminateConnection() {
+    		try {
+				out.close();
+				in.close();
+	    		socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
+    	}
+    	
+		@Override
+		public void run() {
+            try {
+                byte []buffer = new byte[512];
+                in.read(buffer);
+               
+                String str = new String(buffer);
+                String msg_tokens[] = str.split(" ");
+
+                if(msg_tokens[0].compareTo("CREATE") == 0){
+                    String lobby_name = msg_tokens[1];
+                    TetrisLobby new_lob = new TetrisLobby(TetrisServer.this,lobby_name);
+
+                    if(running_lobbies.get(lobby_name) != null){
+                        //TODO - Error, room already exists
+                    	return;
+                    }
+
+                    running_lobbies.put(lobby_name,new_lob);
+                    String answer = "CREATED " + new_lob.getCurrentPort();
+                    out.write(answer.getBytes());
+                }
+                else if(msg_tokens[0].compareTo("ASKLIST") == 0){
+
+                }
+                else if(msg_tokens[0].compareTo("CONNECT") == 0){
+
+                }
+                terminateConnection();	
+            } 
+            catch(SocketTimeoutException e) {
+            	 terminateConnection();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            } 
+		}
     }
 
     class ServerReplicationService implements Runnable{
