@@ -5,15 +5,16 @@ import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TetrisLobby implements Runnable{
 	String lobby_name;
 	ConcurrentHashMap<InetAddress,Integer> player_addresses; /* Save ip/port combos of players here */
 	ConcurrentHashMap<String,Integer> scores; /* Save player username and score here */
+	Queue<String> incomingPackets;
 	transient SSLServerSocket[] sockets; /* A transient field will not be serialized */
 	transient TetrisServer master;
 	int current_socket;
@@ -79,8 +80,24 @@ public class TetrisLobby implements Runnable{
 	public void run() {
 	    int i = 0;
         for (SSLServerSocket socket: sockets) {
-            master.thread_pool.execute(new ClientListener(socket,connected_clients[i]));
+            master.thread_pool.execute(new ClientListener(socket,connected_clients[i],incomingPackets));
             i++;
+        }
+
+        while(true){
+            synchronized (incomingPackets){
+                try {
+                    incomingPackets.wait(); //TODO - Maybe add a timeout to this wait?
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                while(!incomingPackets.isEmpty()){
+                    String incMessage = incomingPackets.remove();
+
+                    //TODO - Parse incoming message here
+                }
+            }
         }
 	}
 
@@ -92,9 +109,11 @@ public class TetrisLobby implements Runnable{
 
 	    SSLServerSocket sslsocket;
 	    Boolean connected;
+	    Queue<String> incomingPackets;
 
-	    public ClientListener(SSLServerSocket s, Boolean connected){
+	    public ClientListener(SSLServerSocket s, Boolean connected, Queue<String> incomingPackets){
 	        sslsocket = s;
+	        this.incomingPackets = incomingPackets;
 	        this.connected = connected;
 	        this.connected = false;
         }
@@ -123,6 +142,10 @@ public class TetrisLobby implements Runnable{
                     in.read(buffer);
 
                     String str = new String(buffer);
+                    synchronized (incomingPackets){
+                        incomingPackets.add(str);
+                        incomingPackets.notify();
+                    }
                 }catch(IOException e){
                     e.printStackTrace();
                 }
