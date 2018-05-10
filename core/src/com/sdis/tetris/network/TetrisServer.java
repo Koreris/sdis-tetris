@@ -103,6 +103,7 @@ public class TetrisServer implements Runnable{
                     out.write(answer.getBytes());
                 }else if(msg_tokens[0].compareTo("ASKLIST") == 0){
 
+
                 }else if(msg_tokens[0].compareTo("CONNECT") == 0){
 
                 }
