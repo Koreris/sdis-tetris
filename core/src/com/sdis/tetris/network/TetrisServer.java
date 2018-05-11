@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -150,7 +152,11 @@ public class TetrisServer implements Runnable{
                     out.write(answer.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("ASKLIST") == 0){
-
+                    for(Map.Entry me: running_lobbies.entrySet()){
+                        out.write((byte) me.getKey());
+                    }
+                    byte[] end = "end".getBytes();
+                    out.write(end);
                 }
                 else if(msg_tokens[0].compareTo("CONNECT") == 0){
 
