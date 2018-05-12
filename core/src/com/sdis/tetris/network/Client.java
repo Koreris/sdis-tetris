@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class Client {
-    public static final byte[] CRLF              = {0xD, 0xA};
+    protected static String CRLF = "\r\n";
     public static String Client_name= "jogador 1";
     static SSLSocket socket;
     static ArrayList<String> running_lobbies;
@@ -43,19 +43,26 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        boolean loop = false;
+
         byte[] read = null;
         String srt;
+        running_lobbies = new ArrayList<>();
+        in.read(read);
+        srt = String.valueOf(read);
+        String[] temp = srt.split(" ");
+        String  dd= null;
 
-        while(loop!=true){
-            in.read(read);
-            srt = String.valueOf(read);
-            if(srt== "end"){
-                loop = true;
+        for(int i = 0;i<temp.length;i++){
+            dd = temp[i];
+            if(dd  == String.valueOf(CRLF)){
+                System.out.println("msg recived");
             }
             else{
                 running_lobbies.add(srt);
             }
         }
+        out.close();
+        in.close();
+        socket.close();
     }    
 }

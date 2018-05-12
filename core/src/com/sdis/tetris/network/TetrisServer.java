@@ -155,10 +155,14 @@ public class TetrisServer implements Runnable{
                     out.write(answer.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("ASKLIST") == 0){
+                    String msg = null;
+
                     for(Map.Entry me: running_lobbies.entrySet()){
-                        out.write((byte) me.getKey());
+                        msg =  msg + me.getKey() + " ";
                     }
-                    byte[] end = "end".getBytes();
+
+                    byte[] end = msg.getBytes();
+                    msg = msg + CRLF;
                     out.write(end);
                 }
                 else if(msg_tokens[0].compareTo("CONNECT") == 0){
