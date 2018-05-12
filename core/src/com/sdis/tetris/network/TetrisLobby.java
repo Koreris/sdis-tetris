@@ -5,41 +5,25 @@ import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TetrisLobby implements Runnable{
 	String lobby_name;
-	ConcurrentHashMap<InetAddress,Integer> player_addresses; /* Save ip/port combos of players here */
 	ConcurrentHashMap<String,Integer> scores; /* Save player username and score here */
-	Queue<String> incomingPackets;
-	transient SSLServerSocket[] sockets; /* A transient field will not be serialized */
+    ConcurrentHashMap<String,SSLServerSocket> playerSockets;
+    SSLServerSocketFactory ssl_socket_factory;
 	transient TetrisServer master;
-	int current_socket;
-	Boolean connected_clients[];
-	
+
 	public TetrisLobby(TetrisServer server,String name) {
 		master = server;
-		lobby_name=name;
-		player_addresses= new ConcurrentHashMap<InetAddress,Integer>();
-		scores = new ConcurrentHashMap<String,Integer>();
-		current_socket = 0;
+		lobby_name = name;
+		scores = new ConcurrentHashMap<>();
+		playerSockets = new ConcurrentHashMap<>();
 
-        SSLServerSocketFactory ssl_socket_factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-
-        sockets = new SSLServerSocket[4];
-        connected_clients = new Boolean[4];
-        for(int i = 0; i < sockets.length; i++){
-            try {
-                sockets[i] = (SSLServerSocket) ssl_socket_factory.createServerSocket(master.current_port++);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            sockets[i].setNeedClientAuth(true);
-        }
+        ssl_socket_factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
 		//establish socket1 connection with lobby creator
 	}
 	
@@ -48,17 +32,25 @@ public class TetrisLobby implements Runnable{
 		return this;
 	}
 	
-	public void join_lobby(String player_name, InetAddress player_address, int player_port) {
-		player_addresses.put(player_address,player_port);
+	public int join_lobby(String player_name) {
 		scores.put(player_name, 0);
+        SSLServerSocket socket;
+        try {
+            socket = (SSLServerSocket) ssl_socket_factory.createServerSocket(0);
+            playerSockets.put(player_name,socket);
+            master.thread_pool.execute(new ClientListener(player_name));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
+        }
+        return socket.getLocalPort();
 	}
-	
+
 	public void start_game() {
 		//prevent other joins from this point on?
 		TetrisLobbySerializable static_representation = 
 				new TetrisLobbySerializable()
 				.setLobbyName(lobby_name)
-				.setPlayerAdresses(player_addresses)
 				.setScores(scores);
 		this.master.replication_service.triggerReplication(static_representation);
 	}
@@ -71,51 +63,24 @@ public class TetrisLobby implements Runnable{
 		String players="";
 		for (String key : scores.keySet()) 
 		{
-			players+= key + "\n";
+			players += key + "\n";
 		}
 		return "Lobby Name: "+lobby_name+ "\nPlayers:\n"+players;
 	}
 	
 	@Override
 	public void run() {
-	    int i = 0;
-        for (SSLServerSocket socket: sockets) {
-            master.thread_pool.execute(new ClientListener(socket,connected_clients[i],incomingPackets));
-            i++;
-        }
-
-        while(true){
-            synchronized (incomingPackets){
-                try {
-                    incomingPackets.wait(); //TODO - Maybe add a timeout to this wait?
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                while(!incomingPackets.isEmpty()){
-                    String incMessage = incomingPackets.remove();
-
-                    //TODO - Parse incoming message here
-                }
-            }
-        }
-	}
-
-	public int getCurrentPort() {
-        return sockets[current_socket].getLocalPort();
+        //TODO - Might not be needed, implement this method or remove Runnable implementation
 	}
 
 	class ClientListener implements Runnable {
 
+	    String username;
 	    SSLServerSocket sslsocket;
-	    Boolean connected;
-	    Queue<String> incomingPackets;
 
-	    public ClientListener(SSLServerSocket s, Boolean connected, Queue<String> incomingPackets){
-	        sslsocket = s;
-	        this.incomingPackets = incomingPackets;
-	        this.connected = connected;
-	        this.connected = false;
+	    public ClientListener(String username){
+	        this.username = username;
+	        this.sslsocket = playerSockets.get(username);
         }
 
         @Override
@@ -127,8 +92,8 @@ public class TetrisLobby implements Runnable{
 
 	        try{
                 socket = sslsocket.accept();
-                connected = true;
-                out = socket.getOutputStream();
+				System.out.println("Starting socket in port " + socket.getLocalPort());
+				out = socket.getOutputStream();
                 in = socket.getInputStream();
             }catch (IOException e){
 	            e.printStackTrace();
@@ -137,15 +102,20 @@ public class TetrisLobby implements Runnable{
 
 	        while(true) {
                 try {
-                    byte[] buffer = new byte[256];
+                    byte[] buf = new byte[256];
 
-                    in.read(buffer);
+                    int read = in.read(buf);
+
+                    if(read < 0){
+                    	break; //Means error or end of connection
+					}
+
+					byte[] buffer = Arrays.copyOfRange(buf,0,read);
 
                     String str = new String(buffer);
-                    synchronized (incomingPackets){
-                        incomingPackets.add(str);
-                        incomingPackets.notify();
-                    }
+
+                    System.out.println("Received packet in lobby " + lobby_name + ": " + str);
+                    //TODO - send packet to other clients
                 }catch(IOException e){
                     e.printStackTrace();
                 }

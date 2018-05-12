@@ -27,7 +27,13 @@ public class TetrisServer implements Runnable{
     final static int MAX_PACKET_SIZE=64096;
 
     public TetrisServer(String name,int server_port, int client_port) {
-        current_port = client_port++;
+        System.setProperty("javax.net.ssl.keyStore", "server.keys");
+        System.setProperty("javax.net.ssl.keyStorePassword", "123456");
+        System.setProperty("javax.net.ssl.trustStore", "truststore");
+        System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+
+        current_port = client_port;
+
         server_name=name;
         running_lobbies = new ConcurrentHashMap<String,TetrisLobby>();
         replicated_lobbies = new ConcurrentHashMap<String,TetrisLobbySerializable>();
@@ -82,13 +88,18 @@ public class TetrisServer implements Runnable{
             try {
                 byte []buffer = new byte[256];
 
-                in.read(buffer);
+                int read = in.read(buffer);
+
+                if(read < 0){
+                    break; //Means error or end of connection
+                }
 
                 String str = new String(buffer);
                 String msg_tokens[] = str.split(" ");
 
                 if(msg_tokens[0].compareTo("CREATE") == 0){
                     String lobby_name = msg_tokens[1];
+                    String username = msg_tokens[2];
                     TetrisLobby new_lob = new TetrisLobby(this,lobby_name);
 
                     if(running_lobbies.get(lobby_name) != null){
@@ -98,7 +109,9 @@ public class TetrisServer implements Runnable{
 
                     running_lobbies.put(lobby_name,new_lob);
 
-                    String answer = "CREATED " + new_lob.getCurrentPort();
+                    int port = new_lob.join_lobby(username);
+
+                    String answer = "CREATED " + port;
 
                     out.write(answer.getBytes());
                 }else if(msg_tokens[0].compareTo("ASKLIST") == 0){
@@ -118,16 +131,12 @@ public class TetrisServer implements Runnable{
 
     /* function just to test replication */
     public void simulateLobbyCreation() {
-        try {
             //when actual thing is implemented, cannot allow creation of lobbies with already existing names
             TetrisLobby newlob = new TetrisLobby(this,"my_lobby");
             running_lobbies.put("my_lobby",newlob);
-            newlob.join_lobby("p2", InetAddress.getByName("192.168.1.67"), 5555);
+            newlob.join_lobby("p2");
             newlob.start_game(); //this will be triggered by lobby itself when properly implemented with client connections
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     public void printLobbies() {
