@@ -173,7 +173,7 @@ public class TetrisServer implements Runnable{
                         if(me.getKey() == lobbie_name){
                             TetrisLobby temp = (TetrisLobby) me.getValue();
                             if(temp.scores.size()<4){
-                                temp.scores.put(player_name,0);
+                                temp.join_lobby(player_name);
                                 running_lobbies.replace(lobbie_name,temp);
                                 for(Map.Entry here: temp.scores.entrySet()){
                                     msg= msg + here.getKey() + " ";

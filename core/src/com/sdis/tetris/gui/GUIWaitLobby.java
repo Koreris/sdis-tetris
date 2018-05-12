@@ -15,6 +15,7 @@ import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
+import com.sdis.tetris.network.Client;
 
 public class GUIWaitLobby  extends GUIScreen{
     private final Stage stage = new Stage();
@@ -43,10 +44,10 @@ public class GUIWaitLobby  extends GUIScreen{
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
         skin  = new Skin(Gdx.files.internal("menu/myskin.json"), new TextureAtlas(Gdx.files.internal("menu/atlas.atlas")));
-        list=new List<String>(skin);
-        String[] strings = new String[4];
-        for (int i = 0, k = 0; i < 4; i++) {
-            strings[k++] = "String: " + i;
+        list= new List<>(skin);
+        String[] strings = new String[Client.players.size()];
+        for (int i = 0; i<strings.length; i++) {
+            strings[i] = Client.players.get(i);
         }
         list.setItems(strings);
         list.setAlignment(1);

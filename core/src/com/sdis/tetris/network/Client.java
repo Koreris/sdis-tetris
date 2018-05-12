@@ -17,8 +17,8 @@ public class Client {
     public static ArrayList<String> players;
     static SocketFactory sslsocket;
     public static InetAddress player_address;
-    public InetAddress server_adress;
-    int server_port;
+    public static InetAddress server_adress;
+    public static int server_port;
 
     static {
         try {
@@ -34,8 +34,8 @@ public class Client {
 
         byte[] msg = ("ASKLIST " + server_name + " " + player_address + " " + player_port + " " + CRLF + CRLF).getBytes();
 
-        this.server_adress = server_adress;
-        this.server_port = server_port;
+        Client.server_adress = server_adress;
+        Client.server_port = server_port;
         OutputStream out = null;
         InputStream in = null;
         sslsocket = SSLSocketFactory.getDefault();
@@ -77,7 +77,7 @@ public class Client {
         OutputStream out = null;
         InputStream in = null;
         sslsocket = SSLSocketFactory.getDefault();
-        socket = (SSLSocket) sslsocket.createSocket(this.server_adress, this.server_port);
+        socket = (SSLSocket) sslsocket.createSocket(server_adress, server_port);
         out = socket.getOutputStream();
         in = socket.getInputStream();
         try {

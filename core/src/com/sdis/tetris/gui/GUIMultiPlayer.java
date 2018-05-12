@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -19,7 +18,6 @@ import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.network.Client;
-import com.sdis.tetris.network.TetrisLobby;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +34,6 @@ public class GUIMultiPlayer extends GUIScreen{
     private Skin skin;
     private Skin skinv2;
     final ScrollPane scroll;
-    ArrayList running_lobbies;
 
     private class JoinLoby implements Runnable
     {
