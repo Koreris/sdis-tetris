@@ -2,14 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="52dec379-8273-455d-b61f-2bf760d3ba6a" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/core/assets/client.keys" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/server.keys" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/servers.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/truststore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/out/production/classes/com/sdis/tetris/network/servers.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -34,11 +26,15 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="TetrisServer.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="TetrisServer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="26" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="26" />
+            <state relative-caret-position="444">
+              <caret line="120" column="37" lean-forward="true" selection-start-line="120" selection-start-column="37" selection-end-line="120" selection-end-column="37" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1535#1545#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -52,11 +48,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TetrisClient.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TetrisClient.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="372">
-              <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
+            <state relative-caret-position="-3">
+              <caret line="22" column="3" selection-start-line="22" selection-start-column="3" selection-end-line="22" selection-end-column="3" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -112,6 +108,7 @@
       <find>current_socket</find>
       <find>current_port</find>
       <find>stream</find>
+      <find>clientConnect</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -777,9 +774,9 @@
         <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/Const.java" />
         <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisSession.java" />
         <option value="$PROJECT_DIR$/core/assets/servers.txt" />
-        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java" />
         <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java" />
         <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisClient.java" />
+        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java" />
       </list>
     </option>
   </component>
@@ -974,12 +971,12 @@
       <workItem from="1525539773865" duration="56000" />
       <workItem from="1525886667059" duration="688000" />
       <workItem from="1525962958903" duration="9754000" />
-      <workItem from="1526070101679" duration="3967000" />
+      <workItem from="1526070101679" duration="5586000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28453000" />
+    <option name="totallyTimeSpent" value="30072000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="0" />
@@ -1030,6 +1027,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
           <caret line="34" column="35" selection-start-line="34" selection-start-column="35" selection-end-line="34" selection-end-column="35" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1535#1545#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1082,6 +1083,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2805">
           <caret line="196" column="70" selection-start-line="196" selection-start-column="70" selection-end-line="196" selection-end-column="70" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1535#1545#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1117,6 +1122,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1680">
           <caret line="121" column="64" selection-start-line="121" selection-start-column="64" selection-end-line="121" selection-end-column="64" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1535#1545#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1152,6 +1161,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1680">
           <caret line="121" column="64" selection-start-line="121" selection-start-column="64" selection-end-line="121" selection-end-column="64" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1535#1545#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1184,6 +1197,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
           <caret line="27" column="57" selection-start-line="27" selection-start-column="57" selection-end-line="27" selection-end-column="57" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1535#1545#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1332,13 +1349,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="26" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="247">
@@ -1351,10 +1361,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="372">
-          <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
+        <state relative-caret-position="-3">
+          <caret line="22" column="3" selection-start-line="22" selection-start-column="3" selection-end-line="22" selection-end-column="3" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="444">
+          <caret line="120" column="37" lean-forward="true" selection-start-line="120" selection-start-column="37" selection-end-line="120" selection-end-column="37" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1535#1545#0" expanded="true" />
           </folding>
         </state>
       </provider>

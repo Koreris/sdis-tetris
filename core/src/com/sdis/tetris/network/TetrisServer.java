@@ -65,76 +65,25 @@ public class TetrisServer implements Runnable{
             simulateLobbyCreation();
 
         Socket socket = null;
-        InputStream in = null;
-        OutputStream out = null;
 
         try {
             socket = client_socket.accept();
-
-            in = socket.getInputStream();
-            out = socket.getOutputStream();
+            thread_pool.execute(new ClientConnectionHandler(socket));
         }catch(IOException e){
             e.printStackTrace();
             return;
         }
 
-        while(true){
-            try {
-                byte []buffer = new byte[256];
-
-                int read = in.read(buffer);
-
-                if(read < 0){
-                    break; //Means error or end of connection
-                }
-
-                String str = new String(buffer);
-                String msg_tokens[] = str.split(" ");
-
-                if(msg_tokens[0].compareTo("CREATE") == 0){
-                    String lobby_name = msg_tokens[1];
-                    String username = msg_tokens[2];
-                    TetrisLobby new_lob = new TetrisLobby(this,lobby_name);
-
-                    if(running_lobbies.get(lobby_name) != null){
-                        //TODO - Error, room already exists
-                        continue;
-                    }
-
-                    running_lobbies.put(lobby_name,new_lob);
-
-                    int port = new_lob.join_lobby(username);
-
-                    String answer = "CREATED " + port;
-
-                    out.write(answer.getBytes());
-                }else if(msg_tokens[0].compareTo("ASKLIST") == 0){
-
-
-                }else if(msg_tokens[0].compareTo("CONNECT") == 0){
-
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ArrayIndexOutOfBoundsException e){
-                e.printStackTrace();
-            }
-        }
     }
 
     /* function just to test replication */
     public void simulateLobbyCreation() {
-        try {
             //when actual thing is implemented, cannot allow creation of lobbies with already existing names
             TetrisLobby newlob = new TetrisLobby(this,"my_lobby");
             running_lobbies.put("my_lobby",newlob);
-            newlob.join_lobby("p2", InetAddress.getByName("192.168.1.67"), 5555);
+            newlob.join_lobby("p2");
             newlob.start_game(); //this will be triggered by lobby itself when properly implemented with client connections
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     public void printLobbies() {
@@ -145,6 +94,71 @@ public class TetrisServer implements Runnable{
         for (String key : replicated_lobbies.keySet())
         {
             System.out.println(replicated_lobbies.get(key).toString());
+        }
+    }
+
+    class ClientConnectionHandler implements Runnable{
+        Socket socket;
+        InputStream in = null;
+        OutputStream out = null;
+
+        public ClientConnectionHandler(Socket connection) {
+            socket=connection;
+            try {
+                socket.setSoTimeout(2000);
+                in = socket.getInputStream();
+                out = socket.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void terminateConnection() {
+            try {
+                out.close();
+                in.close();
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void run() {
+            try {
+                byte []buffer = new byte[512];
+                in.read(buffer);
+
+                String str = new String(buffer);
+                String msg_tokens[] = str.split(" ");
+
+                if(msg_tokens[0].compareTo("CREATE") == 0){
+                    String lobby_name = msg_tokens[1];
+                    TetrisLobby new_lob = new TetrisLobby(TetrisServer.this,lobby_name);
+
+                    if(running_lobbies.get(lobby_name) != null){
+                        //TODO - Error, room already exists
+                        return;
+                    }
+
+                    running_lobbies.put(lobby_name,new_lob);
+                    String answer = "CREATED " + new_lob.join_lobby(msg_tokens[2]);
+                    out.write(answer.getBytes());
+                }
+                else if(msg_tokens[0].compareTo("ASKLIST") == 0){
+
+                }
+                else if(msg_tokens[0].compareTo("CONNECT") == 0){
+
+                }
+                terminateConnection();
+            }
+            catch(SocketTimeoutException e) {
+                terminateConnection();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
