@@ -27,7 +27,11 @@ public class TetrisServer implements Runnable{
     final static int MAX_PACKET_SIZE=64096;
 
     public TetrisServer(String name,int server_port, int client_port) {
-        current_port = client_port++;
+    	 System.setProperty("javax.net.ssl.keyStore", "client.keys");
+         System.setProperty("javax.net.ssl.keyStorePassword", "123456");
+         System.setProperty("javax.net.ssl.trustStore", "truststore");
+         System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+
         server_name=name;
         running_lobbies = new ConcurrentHashMap<String,TetrisLobby>();
         replicated_lobbies = new ConcurrentHashMap<String,TetrisLobbySerializable>();
@@ -42,6 +46,7 @@ public class TetrisServer implements Runnable{
 
         try {
             client_socket = (SSLServerSocket) ssl_socket_factory.createServerSocket(client_port);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,15 +68,18 @@ public class TetrisServer implements Runnable{
         //parse ip/port information from create lobby
         if(server_name.equals("test"))
             simulateLobbyCreation();
-
-        Socket socket = null;
-
-        try {
-            socket = client_socket.accept();
-            thread_pool.execute(new ClientConnectionHandler(socket));
-        }catch(IOException e){
-            e.printStackTrace();
-            return;
+        
+        
+        while(true) {
+        	Socket socket = null;
+	        try {
+	        	System.out.println("Listening to client at port "+client_socket.getLocalPort()+" ip "+client_socket.getLocalSocketAddress());
+	            socket = client_socket.accept();
+	            thread_pool.execute(new ClientConnectionHandler(socket));
+	        }catch(IOException e){
+	            e.printStackTrace();
+	            return;
+	        }
         }
 
     }
@@ -157,7 +165,8 @@ public class TetrisServer implements Runnable{
                 terminateConnection();
             }
             catch (Exception e) {
-                e.printStackTrace();
+            	e.printStackTrace();
+            	terminateConnection();
             }
         }
     }

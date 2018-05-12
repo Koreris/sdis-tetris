@@ -35,8 +35,14 @@ public class TetrisClient {
         byte[] buffer = Arrays.copyOfRange(buf,0,read);
 
         String string = new String(buffer);
-
+        System.out.println("RECEIVED FROM SERVER RESPONSE FOR CREATE: " +string);
+        
         String [] msg_tokenized = string.split(" ");
+        
+        ssos.close();
+        ssis.close();
+        serverSocket.close();
+        
 
         lobbySocket = (SSLSocket) sf.createSocket(args[0],Integer.parseInt(msg_tokenized[1]));
 
@@ -45,6 +51,6 @@ public class TetrisClient {
 
         lsos.write("TEST MESSAGE".getBytes());
 
-        System.out.println(string);
+      
     }
 }

@@ -100,7 +100,7 @@ public class TetrisLobby implements Runnable{
 	            return;
             }
 
-	        while(true) {
+	        while(socket!=null) {
                 try {
                     byte[] buf = new byte[256];
 
@@ -117,6 +117,15 @@ public class TetrisLobby implements Runnable{
                     System.out.println("Received packet in lobby " + lobby_name + ": " + str);
                     //TODO - send packet to other clients
                 }catch(IOException e){
+                	try {
+	                	out.close();
+	                	in.close();
+	                	socket.close();
+	                	socket=null;
+                	}
+                	catch(Exception e1) {
+                		System.out.println("Close socket failed");
+                	}
                     e.printStackTrace();
                 }
             }
