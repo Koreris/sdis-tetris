@@ -27,13 +27,7 @@ public class TetrisServer implements Runnable{
     final static int MAX_PACKET_SIZE=64096;
 
     public TetrisServer(String name,int server_port, int client_port) {
-        System.setProperty("javax.net.ssl.keyStore", "server.keys");
-        System.setProperty("javax.net.ssl.keyStorePassword", "123456");
-        System.setProperty("javax.net.ssl.trustStore", "truststore");
-        System.setProperty("javax.net.ssl.trustStorePassword", "123456");
-
-        current_port = client_port;
-
+        current_port = client_port++;
         server_name=name;
         running_lobbies = new ConcurrentHashMap<String,TetrisLobby>();
         replicated_lobbies = new ConcurrentHashMap<String,TetrisLobbySerializable>();
@@ -131,12 +125,16 @@ public class TetrisServer implements Runnable{
 
     /* function just to test replication */
     public void simulateLobbyCreation() {
+        try {
             //when actual thing is implemented, cannot allow creation of lobbies with already existing names
             TetrisLobby newlob = new TetrisLobby(this,"my_lobby");
             running_lobbies.put("my_lobby",newlob);
-            newlob.join_lobby("p2");
+            newlob.join_lobby("p2", InetAddress.getByName("192.168.1.67"), 5555);
             newlob.start_game(); //this will be triggered by lobby itself when properly implemented with client connections
-
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void printLobbies() {

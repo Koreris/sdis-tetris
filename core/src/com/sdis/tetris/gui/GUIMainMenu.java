@@ -71,7 +71,7 @@ public class GUIMainMenu extends GUIScreen
 		@Override
 		public void run()
 		{
-			parent.switchTo(new GUIMultiPlayer(parent));
+			parent.switchTo(new GUIServer(parent));
 		}
 	}
 
