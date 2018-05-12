@@ -12,6 +12,10 @@ import com.sdis.tetris.Tetris;
 public class DesktopLauncher {
 	public static void main (String[] arg) 
 	{
+		 System.setProperty("javax.net.ssl.keyStore", "client.keys");
+	     System.setProperty("javax.net.ssl.keyStorePassword", "123456");
+	     System.setProperty("javax.net.ssl.trustStore", "truststore");
+	     System.setProperty("javax.net.ssl.trustStorePassword", "123456");
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.addIcon("com/sdis/tetris/res/icon-128x128.png", FileType.Internal);
         config.addIcon("com/sdis/tetris/res/icon-32x32.png", FileType.Internal);

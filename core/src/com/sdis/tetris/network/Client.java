@@ -20,13 +20,13 @@ public class Client {
 
     static {
         try {
-            player_address = InetAddress.getByName("127.1.0.1");
+            player_address = InetAddress.getByName("localhost");
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
     }
 
-    public static int player_port = 4448;
+    public static int player_port = 4500;
 
     public static void join_server(String server_name, InetAddress server_adress, int server_port) throws IOException {
 
