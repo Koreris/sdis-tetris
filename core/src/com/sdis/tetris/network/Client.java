@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -14,9 +13,12 @@ public class Client {
     protected static String CRLF = "\r\n";
     public static String Client_name= "jogador 1";
     static SSLSocket socket;
-    static ArrayList<String> running_lobbies;
+    public static ArrayList<String> running_lobbies;
+    public static ArrayList<String> players;
     static SocketFactory sslsocket;
     public static InetAddress player_address;
+    public InetAddress server_adress;
+    int server_port;
 
     static {
         try {
@@ -32,6 +34,8 @@ public class Client {
 
         byte[] msg = ("ASKLIST " + server_name + " " + player_address + " " + player_port + " " + CRLF + CRLF).getBytes();
 
+        this.server_adress = server_adress;
+        this.server_port = server_port;
         OutputStream out = null;
         InputStream in = null;
         sslsocket = SSLSocketFactory.getDefault();
@@ -64,5 +68,43 @@ public class Client {
         out.close();
         in.close();
         socket.close();
-    }    
+    }
+
+    public static void join_lobbie(String lobbie_name, String player_name) throws IOException {
+
+        byte[] msg = ("CONNECT " + lobbie_name + " " + player_name + " " + CRLF + CRLF).getBytes();
+
+        OutputStream out = null;
+        InputStream in = null;
+        sslsocket = SSLSocketFactory.getDefault();
+        socket = (SSLSocket) sslsocket.createSocket(this.server_adress, this.server_port);
+        out = socket.getOutputStream();
+        in = socket.getInputStream();
+        try {
+            out.write(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        byte[] read = null;
+        String srt;
+        players = new ArrayList<>();
+        in.read(read);
+        srt = String.valueOf(read);
+        String[] temp = srt.split(" ");
+        String  dd= null;
+
+        for(int i = 0;i<temp.length;i++){
+            dd = temp[i];
+            if(dd  == String.valueOf(CRLF)){
+                System.out.println("msg recived");
+            }
+            else{
+                players.add(srt);
+            }
+        }
+        out.close();
+        in.close();
+        socket.close();
+    }
 }

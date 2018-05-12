@@ -18,8 +18,11 @@ import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
+import com.sdis.tetris.network.Client;
+import com.sdis.tetris.network.TetrisLobby;
 
-import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class GUIMultiPlayer extends GUIScreen{
     private final Stage stage = new Stage();
@@ -33,6 +36,7 @@ public class GUIMultiPlayer extends GUIScreen{
     private Skin skin;
     private Skin skinv2;
     final ScrollPane scroll;
+    ArrayList running_lobbies;
 
     private class JoinLoby implements Runnable
     {
@@ -72,9 +76,9 @@ public class GUIMultiPlayer extends GUIScreen{
         skinv2  = new Skin(Gdx.files.internal("menu/menu.json"), new TextureAtlas(Gdx.files.internal("menu/menu.atlas")));
         list=new List<>(skin);
         list.setAlignment(1);
-        String[] strings = new String[5];
-        for (int i = 0, k = 0; i < 5; i++) {
-            strings[k++] = "String: " + (i+1);
+        String[] strings = new String[Client.running_lobbies.size()];
+        for (int i = 0; i<strings.length;i++) {
+            strings[i] = Client.running_lobbies.get(i);
         }
         list.setItems(strings);
         scroll = new ScrollPane(list, skinv2);
@@ -93,6 +97,13 @@ public class GUIMultiPlayer extends GUIScreen{
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
+                String selected = list.getSelected();
+                String player_name = "player 1";
+                try {
+                    Client.join_lobbie(selected, player_name);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinLoby())));
             }
 

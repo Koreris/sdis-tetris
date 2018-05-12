@@ -166,7 +166,25 @@ public class TetrisServer implements Runnable{
                     out.write(end);
                 }
                 else if(msg_tokens[0].compareTo("CONNECT") == 0){
-
+                    String msg = null;
+                    String lobbie_name = msg_tokens[1];
+                    String player_name = msg_tokens[2];
+                    for(Map.Entry me: running_lobbies.entrySet()){
+                        if(me.getKey() == lobbie_name){
+                            TetrisLobby temp = (TetrisLobby) me.getValue();
+                            if(temp.scores.size()<4){
+                                temp.scores.put(player_name,0);
+                                running_lobbies.replace(lobbie_name,temp);
+                                for(Map.Entry here: temp.scores.entrySet()){
+                                    msg= msg + here.getKey() + " ";
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    msg = msg + CRLF;
+                    byte[] end = msg.getBytes();
+                    out.write(end);
                 }
                 terminateConnection();
             }
