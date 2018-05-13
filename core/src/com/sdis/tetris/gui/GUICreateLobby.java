@@ -10,12 +10,16 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
+import com.sdis.tetris.network.Client;
+
+import java.io.IOException;
 
 public class GUICreateLobby extends GUIScreen{
 
@@ -72,6 +76,19 @@ public class GUICreateLobby extends GUIScreen{
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
+                final String[] lobbie_name = new String[1];
+                usernameTextField.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        lobbie_name[0] = usernameTextField.getText();
+                    }
+                });
+                String player_name =  "player 1" ;
+                try {
+                    Client.create_lobbie(String.valueOf(lobbie_name), player_name);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new Back())));
             }
 

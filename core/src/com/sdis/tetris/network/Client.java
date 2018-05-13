@@ -107,4 +107,25 @@ public class Client {
         in.close();
         socket.close();
     }
+
+
+    public static void create_lobbie(String lobbie_name, String player_name) throws IOException {
+
+        byte[] msg = ("CREATE " + lobbie_name + " " + player_name + " " + CRLF + CRLF).getBytes();
+
+        OutputStream out = null;
+        InputStream in = null;
+        sslsocket = SSLSocketFactory.getDefault();
+        socket = (SSLSocket) sslsocket.createSocket(server_adress, server_port);
+        out = socket.getOutputStream();
+        in = socket.getInputStream();
+        try {
+            out.write(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        out.close();
+        in.close();
+        socket.close();
+    }
 }
