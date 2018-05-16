@@ -27,15 +27,16 @@ public class GUIMultiPlayer extends GUIScreen{
     private final Table table = new Table();
     Sprite background = new Sprite(new Texture(Gdx.files.internal("img/main_menu.png"), false));
     Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
-    private final TextButton joinButton = new TextButton("Join_Loby", Buttons.MenuButton);
-    private final TextButton createButton = new TextButton("Create_Loby", Buttons.MenuButton);
-    private final TextButton backButton = new TextButton("Server_Menu", Buttons.MenuButton);
+    private final TextButton joinButton = new TextButton("Join lobby", Buttons.MenuButton);
+    private final TextButton createButton = new TextButton("Create lobby", Buttons.MenuButton);
+    private final TextButton backButton = new TextButton("Server menu", Buttons.MenuButton);
     private final List<String> list;
     private Skin skin;
     private Skin skinv2;
     final ScrollPane scroll;
+    private Client client;
 
-    private class JoinLoby implements Runnable
+    private class JoinLobby implements Runnable
     {
         @Override
         public void run()
@@ -65,6 +66,7 @@ public class GUIMultiPlayer extends GUIScreen{
 
     public GUIMultiPlayer(Tetris paramParent) {
         super(paramParent, Song.THEME_A);
+        client = paramParent.networkClient;
         background.setPosition(0,0);
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
@@ -73,9 +75,9 @@ public class GUIMultiPlayer extends GUIScreen{
         skinv2  = new Skin(Gdx.files.internal("menu/menu.json"), new TextureAtlas(Gdx.files.internal("menu/menu.atlas")));
         list=new List<>(skin);
         list.setAlignment(1);
-        String[] strings = new String[Client.running_lobbies.size()];
+        String[] strings = new String[client.list_lobbies.size()];
         for (int i = 0; i<strings.length;i++) {
-            strings[i] = Client.running_lobbies.get(i);
+            strings[i] = client.list_lobbies.get(i);
         }
         list.setItems(strings);
         scroll = new ScrollPane(list, skinv2);
@@ -95,13 +97,13 @@ public class GUIMultiPlayer extends GUIScreen{
             {
                 audio.playSFX(SFX.HOVER);
                 String selected = list.getSelected();
-                String player_name = "player 1";
+                String player_name = "player2";
                 try {
-                    Client.join_lobbie(selected, player_name);
-                } catch (IOException e) {
+                    client.join_lobby(selected, player_name);
+                    stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinLobby())));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinLoby())));
             }
 
             @Override

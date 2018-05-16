@@ -31,8 +31,9 @@ public class GUICreateLobby extends GUIScreen{
     private final TextButton backButton = new TextButton("< BACK", Buttons.MenuButton);
     private Label label;
     private Skin skin;
-    private TextField usernameTextField;
-
+    private TextField lobbyTextField;
+    private Client client;
+    
     private class Back implements Runnable
     {
         @Override
@@ -53,14 +54,15 @@ public class GUICreateLobby extends GUIScreen{
 
     public GUICreateLobby(Tetris paramParent) {
         super(paramParent, Song.THEME_A);
+        client = paramParent.networkClient;
         background.setPosition(0,0);
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
         skin  = new Skin(Gdx.files.internal("menu/menu.json"), new TextureAtlas(Gdx.files.internal("menu/menu.atlas")));
-        label = new Label("Loby name:", skin);
-        usernameTextField = new TextField("", skin);
-        usernameTextField.setAlignment(Align.center);
+        label = new Label("Lobby name:", skin);
+        lobbyTextField = new TextField("", skin);
+        lobbyTextField.setAlignment(Align.center);
         table.add(label).expandX().center().row();
-        table.add(usernameTextField).size((float)Gdx.graphics.getWidth()/4, (float)Gdx.graphics.getHeight()/10).padBottom(10).row();;
+        table.add(lobbyTextField).size((float)Gdx.graphics.getWidth()/4, (float)Gdx.graphics.getHeight()/10).padBottom(10).row();;
         table.row();
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
         table.add(createButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
@@ -76,20 +78,8 @@ public class GUICreateLobby extends GUIScreen{
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
-                final String[] lobbie_name = new String[1];
-                usernameTextField.addListener(new ChangeListener() {
-                    @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        lobbie_name[0] = usernameTextField.getText();
-                    }
-                });
-                String player_name =  "player 1" ;
-                try {
-                    Client.create_lobbie(String.valueOf(lobbie_name), player_name);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new Back())));
+
             }
 
             @Override
@@ -107,7 +97,14 @@ public class GUICreateLobby extends GUIScreen{
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
-                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLobby())));
+                String player_name =  "player1" ;
+                try {
+                    client.create_lobby(lobbyTextField.getText(), player_name);
+                    stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLobby())));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                
             }
 
             @Override

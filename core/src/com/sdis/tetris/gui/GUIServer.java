@@ -34,9 +34,10 @@ public class GUIServer extends GUIScreen{
     private final List<String> list;
     private Skin skin;
     private Skin skinv2;
+    private Client client;
     final ScrollPane scroll;
     ThreadPoolExecutor executor;
-    ConcurrentHashMap<String,Integer> other_servers;
+    ConcurrentHashMap<String,String> other_servers;
 
     private class JoinServer implements Runnable
     {
@@ -55,9 +56,28 @@ public class GUIServer extends GUIScreen{
             parent.switchTo(new GUIMainMenu(parent));
         }
     }
-
+    
+    public void listServers(){
+    	 other_servers = new ConcurrentHashMap<>();
+         executor.execute(new ParseServersFile(other_servers));
+         executor.shutdown();
+         try {
+             executor.awaitTermination(5, TimeUnit.SECONDS);
+         } catch (InterruptedException e) {
+             e.printStackTrace();
+         }
+         String[] strings = new String[other_servers.size()];
+         int i = 1;
+         for (Map.Entry me: other_servers.entrySet()) {
+             strings[other_servers.size()-i] = me.getKey()+ " " + me.getValue();
+             i++;
+         }
+         list.setItems(strings);
+    }
+    
     public GUIServer(Tetris paramParent) {
         super(paramParent, Song.THEME_A);
+        client = paramParent.networkClient;
         background.setPosition(0,0);
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
@@ -67,23 +87,10 @@ public class GUIServer extends GUIScreen{
         list=new List<>(skin);
         list.setAlignment(1);
         LinkedBlockingQueue<Runnable> queue= new LinkedBlockingQueue<Runnable>();
-        executor = new ThreadPoolExecutor(10, 20, 10, TimeUnit.SECONDS, queue);
-        other_servers = new ConcurrentHashMap<>();
-
-        executor.execute(new ParseServersFile(other_servers));
-        executor.shutdown();
-        try {
-            executor.awaitTermination(10, TimeUnit.DAYS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        String[] strings = new String[other_servers.size()];
-        int i = 0;
-        for (Map.Entry me: other_servers.entrySet()) {
-            strings[i] = me.getKey()+ " " + me.getValue();
-            i++;
-        }
-        list.setItems(strings);
+        executor = new ThreadPoolExecutor(1, 5, 5, TimeUnit.SECONDS, queue);
+        
+        listServers();
+        
         scroll = new ScrollPane(list, skinv2);
         table.add(list).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
         table.add(scroll);
@@ -93,6 +100,7 @@ public class GUIServer extends GUIScreen{
         table.setFillParent(true);
         table.setVisible(true);
         stage.addActor(table);
+        
         joinButton.addListener(new ClickListener()
         {
             @Override
@@ -101,20 +109,20 @@ public class GUIServer extends GUIScreen{
                 audio.playSFX(SFX.HOVER);
                 String selected = list.getSelected();
                 String[] lineComponents = selected.split(" ");
-                InetAddress adress = null;
+                InetAddress address = null;
                 try {
-                    adress = InetAddress.getByName(lineComponents[0]);
+                    address = InetAddress.getByName(lineComponents[1]);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 }
 
-                int port = Integer.parseInt(lineComponents[1]);
+                int port = Integer.parseInt(lineComponents[2]);
                 try {
-                    Client.join_server("server1", adress, port);
+                    client.join_server("server1", address, port);
+                    stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinServer())));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinServer())));
             }
 
             @Override
