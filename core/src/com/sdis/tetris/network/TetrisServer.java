@@ -151,7 +151,7 @@ public class TetrisServer implements Runnable{
                     }
 
                     running_lobbies.put(lobby_name,new_lob);
-                    String answer = "CREATED " + new_lob.join_lobby(msg_tokens[2]);
+                    String answer = "CREATED " + new_lob.join_lobby(msg_tokens[2])+CRLF;
                     out.write(answer.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("ASKLIST") == 0){
@@ -167,26 +167,31 @@ public class TetrisServer implements Runnable{
                     System.out.println("SERVER RESPONSE:"+msg);
                     out.write(msg.getBytes());
                 }
-                else if(msg_tokens[0].compareTo("CONNECT") == 0){
-                    String msg = "";
-                    String lobbie_name = msg_tokens[1];
-                    String player_name = msg_tokens[2];
-                  
-                    if(running_lobbies.containsKey(lobbie_name)){
-                        TetrisLobby lobby = running_lobbies.get(lobbie_name);
-                        if(lobby.scores.size()<4){
-                            lobby.join_lobby(player_name);
-                            for(Map.Entry here: lobby.scores.entrySet()){
-                                msg= msg + here.getKey() + " ";
-                            }
-                        }
-                    }
-                   
-                    msg = msg + CRLF;
-                    System.out.println("SERVER RESPONSE:"+msg);
-                   
-                    out.write(msg.getBytes());
+                else if(msg_tokens[0].compareTo("LISTPLAYERS") == 0){
+            	   String msg = "";
+                   String lobbie_name = msg_tokens[1];
+              
+                   if(running_lobbies.containsKey(lobbie_name)){
+                       for(String key: running_lobbies.get(lobbie_name).scores.keySet()){
+                           msg= msg + key + " ";
+                       }
+                   }
+                    
+                   msg = msg + CRLF;
+                    
+                   System.out.println("SERVER RESPONSE:"+msg);
+                   out.write(msg.getBytes());
                 }
+                else if(msg_tokens[0].compareTo("CONNECT") == 0){
+                    String lobby_name = msg_tokens[1].trim();
+                   
+                    if(running_lobbies.containsKey(lobby_name)){
+                    	String answer = "JOINED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
+                    	out.write(answer.getBytes());  
+                    }
+                    
+                }
+                printLobbies();
                 terminateConnection();
             }
             catch(SocketTimeoutException e) {
