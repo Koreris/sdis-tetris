@@ -28,6 +28,7 @@ public class GUIWaitLobby  extends GUIScreen{
     ScrollPane scrollPane;
     private float gameWidth = Gdx.graphics.getWidth();
     private float gameHeight = Gdx.graphics.getHeight();
+    private Client client;
 
     private class Back implements Runnable
     {
@@ -40,14 +41,15 @@ public class GUIWaitLobby  extends GUIScreen{
 
     public GUIWaitLobby(Tetris paramParent) {
         super(paramParent, Song.THEME_A);
+        client = paramParent.networkClient;
         background.setPosition(0,0);
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
         skin  = new Skin(Gdx.files.internal("menu/myskin.json"), new TextureAtlas(Gdx.files.internal("menu/atlas.atlas")));
         list= new List<>(skin);
-        String[] strings = new String[Client.players.size()];
+        String[] strings = new String[client.players.size()];
         for (int i = 0; i<strings.length; i++) {
-            strings[i] = Client.players.get(i);
+            strings[i] = client.players.get(i);
         }
         list.setItems(strings);
         list.setAlignment(1);

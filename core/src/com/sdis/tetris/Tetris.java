@@ -1,25 +1,22 @@
 package com.sdis.tetris;
 
-
-import java.lang.reflect.Constructor;
-
 import com.sdis.tetris.audio.AudioHandler;
 import com.sdis.tetris.audio.LRUCache;
-import com.sdis.tetris.gui.GUIGame;
 import com.sdis.tetris.gui.GUIMainMenu;
 import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.gui.GUIScreen;
 import com.sdis.tetris.logic.HighScores;
-import com.sdis.tetris.logic.HighScores.Score;
-
+import com.sdis.tetris.network.Client;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 
 public class Tetris extends Game
 {
 	private GUIScreen currentScreen;
+	public Client networkClient = new Client();
 	private AudioHandler audioHandler = AudioHandler.getInstance();
 	HighScores scores= new HighScores();
+	
 
 	private final LRUCache<String, GUIScreen> menuArray = new LRUCache<>(4, new LRUCache.CacheEntryRemovedListener<String, GUIScreen>()
 	{

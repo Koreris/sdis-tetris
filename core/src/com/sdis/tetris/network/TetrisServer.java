@@ -1,7 +1,10 @@
 package com.sdis.tetris.network;
 
+import javax.net.SocketFactory;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,30 +17,31 @@ import java.util.concurrent.TimeUnit;
 
 public class TetrisServer implements Runnable{
     String server_name;
-    DatagramSocket server_socket;
+    SSLServerSocket server_socket;
     SSLServerSocket client_socket;
     SSLServerSocketFactory ssl_socket_factory;
+    SocketFactory socket_factory;
     ThreadPoolExecutor thread_pool;
     ConcurrentHashMap<String,TetrisLobby> running_lobbies;
     ConcurrentHashMap<String,TetrisLobbySerializable> replicated_lobbies;
     ConcurrentHashMap<String,Integer> local_leaderboards;
-    ConcurrentHashMap<String,Integer> other_servers;
+    ConcurrentHashMap<String,String> other_servers;
     ServerReplicationService replication_service;
     public int current_port;
     protected static String CRLF = "\r\n";
     final static int MAX_PACKET_SIZE=64096;
 
     public TetrisServer(String name,int server_port, int client_port) {
-    	 System.setProperty("javax.net.ssl.keyStore", "client.keys");
-         System.setProperty("javax.net.ssl.keyStorePassword", "123456");
-         System.setProperty("javax.net.ssl.trustStore", "truststore");
-         System.setProperty("javax.net.ssl.trustStorePassword", "123456");
-
+    	System.setProperty("javax.net.ssl.keyStore", "server.keys");
+        System.setProperty("javax.net.ssl.keyStorePassword", "123456");
+        System.setProperty("javax.net.ssl.trustStore", "truststore");
+        System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+       // System.setProperty( "user.dir", "/path/to/dir");
         server_name=name;
         running_lobbies = new ConcurrentHashMap<String,TetrisLobby>();
         replicated_lobbies = new ConcurrentHashMap<String,TetrisLobbySerializable>();
         local_leaderboards = new ConcurrentHashMap<String,Integer>();
-        other_servers = new ConcurrentHashMap<String,Integer>();
+        other_servers = new ConcurrentHashMap<String,String>();
 
         LinkedBlockingQueue<Runnable> queue= new LinkedBlockingQueue<Runnable>();
         thread_pool = new ThreadPoolExecutor(10, 20, 10, TimeUnit.SECONDS, queue);
@@ -55,22 +59,18 @@ public class TetrisServer implements Runnable{
         client_socket.setNeedClientAuth(true);
 
         try {
-            server_socket = new DatagramSocket(server_port);
+            server_socket = (SSLServerSocket) ssl_socket_factory.createServerSocket(server_port);
             replication_service = new ServerReplicationService();
             thread_pool.execute(replication_service);
-        } catch (SocketException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        
+        server_socket.setNeedClientAuth(true);
     }
 
     @Override
     public void run() {
-        //accept client requests here to create lobbies
-        //parse ip/port information from create lobby
-        if(server_name.equals("test"))
-            simulateLobbyCreation();
-        
-        
         while(true) {
         	Socket socket = null;
 	        try {
@@ -135,7 +135,7 @@ public class TetrisServer implements Runnable{
         @Override
         public void run() {
             try {
-                byte []buffer = new byte[512];
+                byte []buffer = new byte[1024];
                 in.read(buffer);
 
                 String str = new String(buffer);
@@ -155,36 +155,37 @@ public class TetrisServer implements Runnable{
                     out.write(answer.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("ASKLIST") == 0){
-                    String msg = null;
-
+                    String msg = "";
+                    byte[] response;
+                  
                     for(Map.Entry me: running_lobbies.entrySet()){
                         msg =  msg + me.getKey() + " ";
                     }
-
-                    byte[] end = msg.getBytes();
+                    
                     msg = msg + CRLF;
-                    out.write(end);
+                    
+                    System.out.println("SERVER RESPONSE:"+msg);
+                    out.write(msg.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("CONNECT") == 0){
-                    String msg = null;
+                    String msg = "";
                     String lobbie_name = msg_tokens[1];
                     String player_name = msg_tokens[2];
-                    for(Map.Entry me: running_lobbies.entrySet()){
-                        if(me.getKey() == lobbie_name){
-                            TetrisLobby temp = (TetrisLobby) me.getValue();
-                            if(temp.scores.size()<4){
-                                temp.join_lobby(player_name);
-                                running_lobbies.replace(lobbie_name,temp);
-                                for(Map.Entry here: temp.scores.entrySet()){
-                                    msg= msg + here.getKey() + " ";
-                                }
+                  
+                    if(running_lobbies.containsKey(lobbie_name)){
+                        TetrisLobby lobby = running_lobbies.get(lobbie_name);
+                        if(lobby.scores.size()<4){
+                            lobby.join_lobby(player_name);
+                            for(Map.Entry here: lobby.scores.entrySet()){
+                                msg= msg + here.getKey() + " ";
                             }
-                            break;
                         }
                     }
+                   
                     msg = msg + CRLF;
-                    byte[] end = msg.getBytes();
-                    out.write(end);
+                    System.out.println("SERVER RESPONSE:"+msg);
+                   
+                    out.write(msg.getBytes());
                 }
                 terminateConnection();
             }
@@ -199,18 +200,21 @@ public class TetrisServer implements Runnable{
     }
 
     class ServerReplicationService implements Runnable{
-
+    	
         @Override
         public void run() {
             while(true) {
-                byte[] buf = new byte[TetrisServer.MAX_PACKET_SIZE];
-                DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                try {
-                    server_socket.receive(packet);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                handleReplicationPacket(packet);
+            	Socket socket = null;
+    	        try {
+    	        	System.out.println("Listening to client at port "+client_socket.getLocalPort()+" ip "+client_socket.getLocalSocketAddress());
+    	            socket = server_socket.accept();
+    	           // thread_pool.execute(new ServerConnectionHandler(socket));
+    	        }catch(IOException e){
+    	            e.printStackTrace();
+    	            return;
+    	        }
+               
+                //handleReplicationPacket(packet);
                 printLobbies();
             }
 
@@ -224,9 +228,13 @@ public class TetrisServer implements Runnable{
                 byte[] replicate = Utils.combineByteArrays(header.getBytes(),lobby_bytes);
                 for (String key : other_servers.keySet())
                 {
-                    DatagramPacket packet = new DatagramPacket(replicate, 0, replicate.length,InetAddress.getByName(key),other_servers.get(key));
-                    System.out.println("Sending lobby to "+key+":"+other_servers.get(key));
-                    server_socket.send(packet);
+                	String[] servDetails = other_servers.get(key).split(" ");
+                    System.out.println("Sending lobby to "+servDetails[0]+":"+servDetails[1]);
+                    SSLSocket sendSocket = (SSLSocket) socket_factory.createSocket(InetAddress.getByName(servDetails[0]),Integer.parseInt(servDetails[1]));
+                    OutputStream out = sendSocket.getOutputStream();
+                    out.write(replicate);
+                    out.close();
+                    sendSocket.close();
                 }
 
             } catch (IOException e) {
@@ -240,9 +248,13 @@ public class TetrisServer implements Runnable{
             for (String key : other_servers.keySet())
             {
                 try {
-                    DatagramPacket packet = new DatagramPacket(header.getBytes(), 0, header.getBytes().length,InetAddress.getByName(key),other_servers.get(key));
+                	String[] servDetails = other_servers.get(key).split(" ");
                     System.out.println("Sending delete to "+key+":"+other_servers.get(key));
-                    server_socket.send(packet);
+                    SSLSocket sendSocket = (SSLSocket) socket_factory.createSocket(InetAddress.getByName(servDetails[0]),Integer.parseInt(servDetails[1]));
+                    OutputStream out = sendSocket.getOutputStream();
+                    out.write(header.getBytes());
+                    out.close();
+                    sendSocket.close();
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

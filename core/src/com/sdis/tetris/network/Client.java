@@ -6,40 +6,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Client {
     protected static String CRLF = "\r\n";
-    public static String Client_name= "jogador 1";
-    static SSLSocket socket;
-    public static ArrayList<String> running_lobbies;
-    public static ArrayList<String> players;
-    static SocketFactory sslsocket;
-    public static InetAddress player_address;
-    public static InetAddress server_adress;
-    public static int server_port;
+    SSLSocket lobbySocket;
+    OutputStream lsos;
+    InputStream lsis;
+    SocketFactory sslsocketFactory;
+    public ArrayList<String> list_lobbies = new ArrayList<>();
+    public ArrayList<String> players = new ArrayList<>();
+    InetAddress server_address;
+    int server_port;
 
-    static {
-        try {
-            player_address = InetAddress.getByName("localhost");
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+    public Client() {
+    	 sslsocketFactory = SSLSocketFactory.getDefault();
     }
 
-    public static int player_port = 4500;
+    public void join_server(String server_name, InetAddress server_address, int server_port) throws IOException {
+        byte[] msg = ("ASKLIST " + server_name + CRLF + CRLF).getBytes();
 
-    public static void join_server(String server_name, InetAddress server_adress, int server_port) throws IOException {
-
-        byte[] msg = ("ASKLIST " + server_name + " " + player_address + " " + player_port + " " + CRLF + CRLF).getBytes();
-
-        Client.server_adress = server_adress;
-        Client.server_port = server_port;
+        this.server_address = server_address;
+        this.server_port = server_port;
         OutputStream out = null;
         InputStream in = null;
-        sslsocket = SSLSocketFactory.getDefault();
-        socket = (SSLSocket) sslsocket.createSocket(server_adress, server_port);
+       
+        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
         out = socket.getOutputStream();
         in = socket.getInputStream();
         try {
@@ -48,36 +41,32 @@ public class Client {
             e.printStackTrace();
         }
 
-        byte[] read = null;
-        String srt;
-        running_lobbies = new ArrayList<>();
+        byte[] read = new byte[1024];
+        String readValue;
         in.read(read);
-        srt = String.valueOf(read);
-        String[] temp = srt.split(" ");
-        String  dd= null;
-
-        for(int i = 0;i<temp.length;i++){
-            dd = temp[i];
-            if(dd  == String.valueOf(CRLF)){
-                System.out.println("msg recived");
-            }
-            else{
-                running_lobbies.add(srt);
-            }
+        readValue = new String(read);
+        String[] serverResponseComponents = readValue.split(" ");
+	    if(serverResponseComponents.length>1) {
+	        String responseComponent;
+	        for(int i = 0;i<serverResponseComponents.length;i++){
+	            responseComponent = serverResponseComponents[i];
+	            if(responseComponent.equals(CRLF))
+	                break;
+	            list_lobbies.add(responseComponent);
+	        }
         }
         out.close();
         in.close();
         socket.close();
     }
 
-    public static void join_lobbie(String lobbie_name, String player_name) throws IOException {
+    public void join_lobby(String lobbie_name, String player_name) throws IOException {
 
         byte[] msg = ("CONNECT " + lobbie_name + " " + player_name + " " + CRLF + CRLF).getBytes();
 
         OutputStream out = null;
         InputStream in = null;
-        sslsocket = SSLSocketFactory.getDefault();
-        socket = (SSLSocket) sslsocket.createSocket(server_adress, server_port);
+        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
         out = socket.getOutputStream();
         in = socket.getInputStream();
         try {
@@ -86,22 +75,21 @@ public class Client {
             e.printStackTrace();
         }
 
-        byte[] read = null;
-        String srt;
-        players = new ArrayList<>();
+        byte[] read = new byte[256];
+        String readValue;
+      
         in.read(read);
-        srt = String.valueOf(read);
-        String[] temp = srt.split(" ");
-        String  dd= null;
-
-        for(int i = 0;i<temp.length;i++){
-            dd = temp[i];
-            if(dd  == String.valueOf(CRLF)){
-                System.out.println("msg recived");
-            }
-            else{
-                players.add(srt);
-            }
+        readValue = new String(read);
+        String[] serverResponseComponents = readValue.split(" ");
+        if(serverResponseComponents.length>1) {
+	        String responseComponent;
+	    
+	        for(int i = 0;i<serverResponseComponents.length;i++){
+	        	responseComponent = serverResponseComponents[i];
+	            if(responseComponent.equals(CRLF))
+	                break;
+	            players.add(responseComponent);
+	        }
         }
         out.close();
         in.close();
@@ -109,14 +97,14 @@ public class Client {
     }
 
 
-    public static void create_lobbie(String lobbie_name, String player_name) throws IOException {
+    public void create_lobby(String lobbie_name, String player_name) throws IOException {
 
         byte[] msg = ("CREATE " + lobbie_name + " " + player_name + " " + CRLF + CRLF).getBytes();
 
         OutputStream out = null;
         InputStream in = null;
-        sslsocket = SSLSocketFactory.getDefault();
-        socket = (SSLSocket) sslsocket.createSocket(server_adress, server_port);
+      
+        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
         out = socket.getOutputStream();
         in = socket.getInputStream();
         try {
@@ -124,8 +112,21 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
+        byte[] buf = new byte[256];
+
+        int read = in.read(buf);
+        String string = new String(buf);
+        System.out.println("RECEIVED FROM SERVER RESPONSE FOR CREATE: " +string);
+        
+        String [] msg_tokenized = string.split(" ");
         out.close();
         in.close();
         socket.close();
+        
+        lobbySocket = (SSLSocket) sslsocketFactory.createSocket(server_address,Integer.parseInt(msg_tokenized[1]));
+        lsos = lobbySocket.getOutputStream();
+        lsis = lobbySocket.getInputStream();
+        lsos.write("TEST MESSAGE".getBytes());
     }
 }
