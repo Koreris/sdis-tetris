@@ -103,6 +103,7 @@ public class TetrisLobby implements Runnable{
 	    	}
 	    	
 	    	if(alltrue) {
+	    		game_started=true;
 	    		executor.execute(new Runnable() {
 	    			public void run() {
 	    				for(String key: playerConnections.keySet()) {

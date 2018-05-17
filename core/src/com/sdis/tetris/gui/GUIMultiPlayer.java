@@ -70,8 +70,10 @@ public class GUIMultiPlayer extends GUIScreen{
     	  try {
     			client.list_lobbies(paramParent.serverName, paramParent.serverAddress, paramParent.serverPort);
     			String[] strings = new String[client.list_lobbies.size()];
-    	        if(strings.length==0)
+    	        if(strings.length==0) {
     	        	joinButton.setVisible(false);
+    	        	list.setItems(strings);
+    	        }
     	        else{
 	    	        joinButton.setVisible(true);
 	    	        for (int i = 0; i<strings.length;i++) {
