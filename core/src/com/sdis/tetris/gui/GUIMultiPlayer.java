@@ -125,7 +125,7 @@ public class GUIMultiPlayer extends GUIScreen{
                 audio.playSFX(SFX.HOVER);
                 String selected = list.getSelected();
                 try {
-                    client.join_lobby(selected, paramParent.playerName);
+                    client.join_lobby(selected.split(" ")[0], paramParent.playerName);
                     scheduler.shutdown();
                     stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinLobby())));
                 } catch (Exception e) {

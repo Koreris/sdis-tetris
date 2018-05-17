@@ -48,7 +48,7 @@ public class TetrisClient {
         String readValue;
         in.read(read);
         readValue = new String(read);
-        String[] serverResponseComponents = readValue.split(" ");
+        String[] serverResponseComponents = readValue.split(";");
 	    if(serverResponseComponents.length>1) {
 	        String responseComponent;
 	        for(int i = 0;i<serverResponseComponents.length;i++){

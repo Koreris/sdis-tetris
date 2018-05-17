@@ -17,6 +17,7 @@ public class TetrisLobby implements Runnable{
     ConcurrentHashMap<String,SSLServerSocket> playerSockets;
     SSLServerSocketFactory ssl_socket_factory;
 	transient TetrisServer master;
+	transient boolean game_started=false;
 
 	public TetrisLobby(TetrisServer server,String name) {
 		master = server;
@@ -108,7 +109,13 @@ public class TetrisLobby implements Runnable{
                     int read = in.read(buf);
 
                     if(read < 0){
-                    	System.out.println("CLIENT DISCONNECTED "+username);
+                    	System.out.println("Client left the lobby : "+username);
+                    	if(!game_started) {
+                    		scores.remove(username);
+                    		playerSockets.remove(username);
+                    		if(scores.isEmpty())
+                    			master.deleteEmptyLobby(lobby_name);
+                    	}
                     	break;
 					}
 
@@ -120,7 +127,13 @@ public class TetrisLobby implements Runnable{
                     //TODO - send packet to other clients
                 }
                 catch(SocketException e) {
-                	System.out.println("Client has been disconnected");
+                	System.out.println("Client has been disconnected: "+username);
+                	if(!game_started) {
+                		scores.remove(username);
+                		playerSockets.remove(username);
+                		if(scores.isEmpty())
+                			master.deleteEmptyLobby(lobby_name);
+                	}
                 	break;
                 } catch (IOException e) {
 					e.printStackTrace();

@@ -105,7 +105,12 @@ public class TetrisServer implements Runnable{
             System.out.println(replicated_lobbies.get(key).toString());
         }
     }
-
+    
+    public void deleteEmptyLobby(String lobby_name) {
+    	running_lobbies.remove(lobby_name);
+    }
+    
+    
     class ClientConnectionHandler implements Runnable{
         Socket socket;
         InputStream in = null;
@@ -159,7 +164,8 @@ public class TetrisServer implements Runnable{
                     byte[] response;
                   
                     for(Map.Entry me: running_lobbies.entrySet()){
-                        msg =  msg + me.getKey() + " ";
+                    	if(!running_lobbies.get(me.getKey()).game_started)
+                    		msg =  msg + me.getKey()+"    "+ running_lobbies.get(me.getKey()).scores.size() + " out of " + "4"+ ";";
                     }
                     
                     msg = msg + CRLF;
@@ -184,10 +190,11 @@ public class TetrisServer implements Runnable{
                 }
                 else if(msg_tokens[0].compareTo("CONNECT") == 0){
                     String lobby_name = msg_tokens[1].trim();
-                   
                     if(running_lobbies.containsKey(lobby_name)){
-                    	String answer = "JOINED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
-                    	out.write(answer.getBytes());  
+                    	if(running_lobbies.get(lobby_name).scores.size()<4) {
+	                    	String answer = "JOINED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
+	                    	out.write(answer.getBytes());  
+                    	}
                     }
                     
                 }
@@ -265,7 +272,8 @@ public class TetrisServer implements Runnable{
                 }
             }
         }
-
+        
+       
         public void handleReplicationPacket(DatagramPacket data) {
 
             String packetString = new String(data.getData(),0,data.getLength());
