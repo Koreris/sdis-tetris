@@ -1,11 +1,14 @@
 package com.sdis.tetris.logic;
 
+import java.util.Arrays;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import com.sdis.tetris.audio.AudioHandler;
 import com.sdis.tetris.audio.SFX;
+import com.sdis.tetris.network.ColorSerializable;
 
 public class Board {
 	public int boardWidth = 10;
@@ -13,6 +16,8 @@ public class Board {
 	public int scaleX = 30;
 	public int scaleY = 30;
 	public final Color gameBoard[][] = new Color[boardHeight][boardWidth];
+	public Color cloneBoard[][] = new Color[boardHeight][boardWidth];
+	public String playerName;
 	public Tetromino fallingPiece;
 	private int playerScore;
 	private int currentLevel;
@@ -113,10 +118,7 @@ public class Board {
 	{
 		scaleX = scX;
 		scaleY = scY;
-		fallingPiece = TetrominoProto.generateRandom();
-		fallingPiece.setPosition(boardWidth/2, boardHeight-3);
-		gameBounds = new Bounds(0, 0, boardWidth, boardHeight);
-		gameOver=false;
+		cloneBoard=new Color[boardHeight][boardWidth];
 	}
 	
 	
@@ -137,14 +139,51 @@ public class Board {
 				{
 					if((fallingPiece.getX()+x <= this.boardWidth) && (fallingPiece.getY()+y <= this.boardHeight))
 					{
-					gameBoard[fallingPiece.getY() + y][fallingPiece.getX() + x] = fallingPiece.getColor();
-					AudioHandler.getInstance().playSFX(SFX.SFX_COLL);
+						gameBoard[fallingPiece.getY() + y][fallingPiece.getX() + x] = fallingPiece.getColor();
+						AudioHandler.getInstance().playSFX(SFX.SFX_COLL);
 					}
 				}
 			}
 		}
 
 		
+	}
+	
+	public ColorSerializable[][] screenshotBoard() 
+	{
+		for(int i=0;i<cloneBoard.length;i++) {
+			cloneBoard[i] = Arrays.copyOf(gameBoard[i],gameBoard[i].length);
+		}
+		
+		final boolean[][] currentShape = fallingPiece.getShape();
+		
+		for (int y = 0; y < fallingPiece.getHeight(); y++) 
+		{
+			for (int x = 0; x < fallingPiece.getWidth(); x++) 
+			{
+				if (currentShape[y][x] == true) 
+				{
+					if((fallingPiece.getX()+x < cloneBoard[0].length) && (fallingPiece.getY()+y < cloneBoard.length))
+					{
+						cloneBoard[fallingPiece.getY() + y][fallingPiece.getX() + x] = fallingPiece.getColor();
+					}
+				}
+			}
+		}
+		
+		ColorSerializable[][] screenshot = new ColorSerializable[boardHeight][boardWidth];
+		for(int h=0;h<boardHeight;h++) {
+			for(int w=0;w<boardWidth;w++) {
+				if(cloneBoard[h][w]!=null)
+					screenshot[h][w]= new ColorSerializable(cloneBoard[h][w].r,cloneBoard[h][w].g,cloneBoard[h][w].b,cloneBoard[h][w].a);
+			}	
+		}
+		
+		return screenshot;
+	}
+	
+	public void updateCloneBoard(Color[][] screenshot) {
+		cloneBoard=screenshot;
 	}
 
 	/**

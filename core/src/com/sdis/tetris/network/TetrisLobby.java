@@ -130,6 +130,18 @@ public class TetrisLobby implements Runnable{
 		    		checkAllTrue();
 		    		break;
 		    	case "GAMESTATE":
+		    		executor.execute(new Runnable() {
+		    			public void run() {
+		    				for(String key: playerConnections.keySet()) {
+		    		    		try {
+		    		    			if(!key.equals(username))
+		    		    				playerConnections.get(key).forwardState(packet);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+		    		    	}
+		    			}
+		    		});
 		    		break;
 		    	case "GAMEOVER":
 		    		break;
@@ -138,7 +150,11 @@ public class TetrisLobby implements Runnable{
 		    		
 	    	}
 	    }
-        @Override
+        protected void forwardState(String packet) throws IOException {
+			out.write(packet.getBytes());
+		}
+
+		@Override
         public void run() {
 
 	        Socket socket = null;
@@ -155,7 +171,7 @@ public class TetrisLobby implements Runnable{
 
 	        while(true) {
                 try {
-                    byte[] buf = new byte[256];
+                    byte[] buf = new byte[1024];
 
                     int read = in.read(buf);
 
@@ -172,11 +188,11 @@ public class TetrisLobby implements Runnable{
 					}
 
 					byte[] buffer = Arrays.copyOfRange(buf,0,read);
-
+					
                     String str = new String(buffer);
-                    
+                    //System.out.println("Received packet in lobby " + lobby_name + ": " + str);
                     handlePacket(str);
-                    System.out.println("Received packet in lobby " + lobby_name + ": " + str);
+                    
                     //TODO - send packet to other clients
                 }
                 catch(SocketException e) {

@@ -91,7 +91,7 @@ public class GUIServer extends GUIScreen{
         list=new List<>(skin);
         list.setAlignment(1);
         LinkedBlockingQueue<Runnable> queue= new LinkedBlockingQueue<Runnable>();
-        executor = new ThreadPoolExecutor(1, 5, 5, TimeUnit.SECONDS, queue);
+        executor = new ThreadPoolExecutor(1, 5, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         
         listServers();
         

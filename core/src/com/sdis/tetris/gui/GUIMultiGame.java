@@ -1,6 +1,10 @@
 package com.sdis.tetris.gui;
 
-import java.awt.Button; 
+import java.awt.Button;
+import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -30,6 +34,8 @@ import com.sdis.tetris.TetrisPreferences;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.logic.Board;
+import com.sdis.tetris.network.TetrisClient;
+import com.sdis.tetris.network.Utils;
 
 public class GUIMultiGame extends GUIScreen
 {
@@ -67,8 +73,9 @@ public class GUIMultiGame extends GUIScreen
 	float minBoardHeight=0;
 	float maxBoardHeight=(myBoard.boardHeight*myBoard.scaleY);
 	int count=0;
-
-
+	int sendStateCount=0;
+	private TetrisClient client;
+	ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 	public void changeState(GameState newState)
 	{
 		state = newState;
@@ -79,9 +86,23 @@ public class GUIMultiGame extends GUIScreen
 	{
 		super(paramParent, TetrisPreferences.getTheme());
 		opponentNr=paramParent.opponentNr;
+		client = paramParent.networkClient;
 		reStartGame();
 		t1.cancel();
 		changeState(new GameRunningState());
+		new Thread() {
+			public void run() {
+				try {
+					while(true) {
+						int result = client.listen_lobby_socket(GUIMultiGame.this);
+						if(result==0)
+							break;
+					}
+				} catch (IOException | ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
 	}	
 
 	private void reStartGame(){
@@ -122,11 +143,7 @@ public class GUIMultiGame extends GUIScreen
 		{
 			myBoard.rotatePiece();
 		}
-		else if (keycode == Keys.P)
-		{
-			t1.cancel();
-			changeState(new GamePausedState());
-		}
+		
 
 		return true;
 	} 
@@ -141,10 +158,7 @@ public class GUIMultiGame extends GUIScreen
 		return true;
 	} 
 
-	public boolean isGamePaused()
-	{
-		return !(state instanceof GameRunningState);
-	}
+
 
 	public boolean isGameRunning()
 	{
@@ -152,14 +166,7 @@ public class GUIMultiGame extends GUIScreen
 	}
 
 
-	@Override
-	public void pause()
-	{
-		if (state instanceof GameRunningState)
-		{
-			changeState(new GamePausedState());
-		}
-	}
+
 
 
 
@@ -294,6 +301,22 @@ public class GUIMultiGame extends GUIScreen
 				prevLevel=myBoard.getCurrentLevel();
 				updateTimer();	
 			}
+			sendStateCount++;
+			
+			if(sendStateCount>=20) {
+				
+				executor.execute(new Runnable() {
+					public void run() {
+						try {
+							client.send_game_state(parent.playerName, parent.serverName, Utils.convertToBytes(myBoard.screenshotBoard()));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				sendStateCount=0;
+			}
+			
 		}
 
 		@Override
@@ -308,20 +331,20 @@ public class GUIMultiGame extends GUIScreen
 			background.draw(batch);
 
 			drawBoard(9.1f);
-			
+		
 			switch(opponentNr)
 			{
 			case 3:
-				drawSmallBoard(myBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
-				drawSmallBoard(myBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
-				drawSmallBoard(myBoard, smallBoard3, smallFrame3, 850f, 250f, 1.26f);
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard3, smallFrame3, 850f, 250f, 1.26f);
 				break;
 			case 2:
-				drawSmallBoard(myBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
-				drawSmallBoard(myBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
 				break;
 			default:
-				drawSmallBoard(myBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
 				break;	
 			}
 			
@@ -330,7 +353,7 @@ public class GUIMultiGame extends GUIScreen
 			{
 				parent.addToHighScores(myBoard.getPlayerScore(),"Player1");
 				t1.cancel();
-
+				
 				changeState(new GameOverState());
 			}
 
@@ -348,87 +371,16 @@ public class GUIMultiGame extends GUIScreen
 
 	}
 
-	private class GamePausedState extends GameState
-	{
-		private final Stage stagePause = new Stage();
-		private final Table tablePaused = new Table();
-		private final Label labelRes = new Label("PAUSE", Buttons.SmallLabel);
-		private final TextButton resumeButton = new TextButton("RESUME", Buttons.MenuButton);
-
-		public GamePausedState()
-		{
-			tablePaused.setFillParent(true);
-			tablePaused.defaults().padBottom(16);
-			tablePaused.add(labelRes);
-			tablePaused.row();
-			tablePaused.add(resumeButton);
-			stagePause.addActor(tablePaused);
-			audio.playSFX(SFX.SELECT);
-
-			resumeButton.addListener(new ClickListener()
-			{
-				@Override
-				public void clicked(InputEvent event, float x, float y)
-				{
-					audio.playSFX(SFX.HOVER);
-					changeState(new GameRunningState());
-				}
-
-				@Override
-				public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor)
-				{
-					audio.playSFX(SFX.SELECT);
-				}
-			});
-			Gdx.input.setInputProcessor(stagePause);
-		}
-		@Override
-		public void draw()
-		{
-			stagePause.draw();
-		}
-
-		@Override
-		public void update(float delta) 
-		{	
-			stagePause.act(delta);
-		}
-	}
+	
 
 	private class GameOverState extends GameState
 	{
 		private final Stage stageOver = new Stage();
-		private final Table tableOver = new Table();
-		private final Label labelOver = new Label("GAME OVER", Buttons.SmallLabel);
-		private final TextButton hsButton = new TextButton("Highscores", Buttons.MenuButton);
 
 		public GameOverState()
 		{
-			tableOver.setFillParent(true);
-			tableOver.defaults().padBottom(32);
-			tableOver.add(labelOver);
-			tableOver.row();
-			tableOver.add(hsButton);
-			stageOver.addActor(tableOver);
 			audio.playSong(Song.THEME_GAME_OVER, true);
 
-			hsButton.addListener(new ClickListener()
-			{
-				@Override
-				public void clicked(InputEvent event, float x, float y)
-				{
-					audio.playSFX(SFX.HOVER);
-					reStartGame();
-					parent.switchTo(new GUIHighscores(parent));
-				}
-
-				@Override
-				public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor)
-				{
-					audio.playSFX(SFX.SELECT);
-				}
-			});
-			Gdx.input.setInputProcessor(stageOver);
 		}
 		@Override
 		public void draw()
@@ -550,56 +502,55 @@ public class GUIMultiGame extends GUIScreen
 		}
 	}
 
-	public void drawSmallBoard(Board received, Board smallBoard,Sprite smallFrame, float framePosX, float framePosY, float delta)
+	public void drawSmallBoard(Color[][] receivedScreenshot, Board smallBoard,Sprite smallFrame, float framePosX, float framePosY, float delta)
 	{
 
 		//Draw Board
 		smallFrame.setPosition(minBoardWidth+framePosX,minBoardHeight+framePosY);
 		smallFrame.setScale(1.85f, 1.75f);
-		//smallFrame.setSize(maxBoardWidth+50f, maxBoardHeight+50f);
 		smallFrame.draw(batch);
 		
 		for (int y = 0; y < smallBoard.boardHeight; y++) 
 		{
 			for (int x = 0; x < smallBoard.boardWidth; x++) 
 			{
-				if (received.gameBoard[y][x] != null) 
+				if (receivedScreenshot[y][x] != null) 
 				{
-					if(received.gameBoard[y][x]==Color.GREEN)
+					if(receivedScreenshot[y][x]==Color.GREEN)
 					{
 						greenBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						greenBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						greenBlock.draw(batch);
 					}
-					if(received.gameBoard[y][x]==Color.RED)
+					if(receivedScreenshot[y][x]==Color.RED)
 					{
 						redBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						redBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						redBlock.draw(batch);
 					}
-					if(received.gameBoard[y][x]==Color.BLUE)
+					if(receivedScreenshot[y][x]==Color.BLUE)
 					{
 						blueBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						blueBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						blueBlock.draw(batch);
 					}
-					if(received.gameBoard[y][x]==Color.MAGENTA)
+					if(receivedScreenshot[y][x]==Color.MAGENTA)
 					{
 						purpleBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						purpleBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						purpleBlock.draw(batch);
 					}
-					if(received.gameBoard[y][x]==Color.ORANGE){
+					if(receivedScreenshot[y][x]==Color.ORANGE){
 						orangeBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						orangeBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						orangeBlock.draw(batch);
 					}
-					if(received.gameBoard[y][x]==Color.YELLOW){
+					if(receivedScreenshot[y][x]==Color.YELLOW){
 						yellowBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						yellowBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						yellowBlock.draw(batch);
 					}
-					if(received.gameBoard[y][x]==Color.CYAN){
+					if(receivedScreenshot[y][x]==Color.CYAN){
 						cyanBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						cyanBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						cyanBlock.draw(batch);
@@ -609,56 +560,5 @@ public class GUIMultiGame extends GUIScreen
 			}
 		}
 
-		//Draw falling piece
-
-		
-		for (int y = 0; y < received.fallingPiece.getHeight(); y++) 
-		{
-			for (int x = 0; x < received.fallingPiece.getWidth(); x++) 
-			{
-				if (received.fallingPiece.mMatrix[y][x] == true) 
-				{
-					switch(received.fallingPiece.getColorName())
-					{
-					case "red":
-						redBlock.setPosition(smallBoard.scaleX*(received.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (received.fallingPiece.getY() + y)+208f);
-						redBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
-						redBlock.draw(batch);
-						break;
-					case "blue":
-						blueBlock.setPosition(smallBoard.scaleX*(received.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (received.fallingPiece.getY() + y)+208f);
-						blueBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
-						blueBlock.draw(batch);
-						break;
-					case "magenta":
-						purpleBlock.setPosition(smallBoard.scaleX*(received.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (received.fallingPiece.getY() + y)+208f);
-						purpleBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
-						purpleBlock.draw(batch);
-						break;
-					case "orange":
-						orangeBlock.setPosition(smallBoard.scaleX*(received.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (received.fallingPiece.getY() + y)+208f);
-						orangeBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
-						orangeBlock.draw(batch);
-						break;
-					case "yellow":
-						yellowBlock.setPosition(smallBoard.scaleX*(received.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (received.fallingPiece.getY() + y)+208f);
-						yellowBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
-						yellowBlock.draw(batch);
-						break;
-					case "cyan":
-						cyanBlock.setPosition(smallBoard.scaleX*(received.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (received.fallingPiece.getY() + y)+208f);
-						cyanBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
-						cyanBlock.draw(batch);
-						break;
-					case "green":
-						greenBlock.setPosition(smallBoard.scaleX*(received.fallingPiece.getX() + x)+screenWidth/delta, smallBoard.scaleY * (received.fallingPiece.getY() + y)+208f);
-						greenBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
-						greenBlock.draw(batch);
-						break;
-					}
-
-				}
-			}
-		}
 	}
 }

@@ -112,7 +112,7 @@ public class GUIWaitLobby  extends GUIScreen{
 							try {
 								int nr_players = client.listen_game_begin();
 								if(nr_players!=-1) {
-									paramParent.opponentNr=nr_players;
+									paramParent.opponentNr=nr_players-1;
 									Gdx.app.postRunnable(new Runnable() {
 										public void run() {
 											scheduler.shutdown();
