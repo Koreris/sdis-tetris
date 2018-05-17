@@ -41,7 +41,7 @@ public class GUIMultiGame extends GUIScreen
 	private final Stage stage = new Stage();
 
 	private Board myBoard = new Board();
-	private int opponentNr;
+	protected int opponentNr;
 	public Board smallBoard1 = new Board(15,15);
 	public Board smallBoard2 = new Board(15,15);
 	public Board smallBoard3 = new Board(15,15);
@@ -78,6 +78,7 @@ public class GUIMultiGame extends GUIScreen
 	public GUIMultiGame(Tetris paramParent) 
 	{
 		super(paramParent, TetrisPreferences.getTheme());
+		opponentNr=paramParent.opponentNr;
 		reStartGame();
 		t1.cancel();
 		changeState(new GameRunningState());
@@ -177,14 +178,13 @@ public class GUIMultiGame extends GUIScreen
 		String scores="Score\n"+myBoard.getPlayerScore();
 		Label level= new Label(levels, Buttons.SmallLabel);
 		Label score= new Label(scores, Buttons.SmallLabel);
+
 		int prevLevel=0;
 		Sprite background = lvl1;
-
-
+		
 
 		public GameRunningState()
 		{
-
 			Gdx.input.setInputProcessor(GUIMultiGame.this);
 
 			if(isGameRunning())
@@ -198,7 +198,8 @@ public class GUIMultiGame extends GUIScreen
 			table.add(level).padBottom(10);
 			table.row();
 			table.add(score);
-			table.setPosition(minBoardWidth+115f,minBoardHeight+280f);
+		
+			table.setPosition(0,minBoardHeight+250f);
 
 			stageGame.addActor(table);
 			updateTimer();
@@ -309,9 +310,23 @@ public class GUIMultiGame extends GUIScreen
 			background.draw(batch);
 
 			drawBoard(9.1f);
-			drawSmallBoard(myBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
-			drawSmallBoard(myBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
-			drawSmallBoard(myBoard, smallBoard3, smallFrame3, 850f, 250f, 1.26f);
+			
+			switch(opponentNr)
+			{
+			case 3:
+				drawSmallBoard(myBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				drawSmallBoard(myBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				drawSmallBoard(myBoard, smallBoard3, smallFrame3, 850f, 250f, 1.26f);
+				break;
+			case 2:
+				drawSmallBoard(myBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				drawSmallBoard(myBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				break;
+			default:
+				drawSmallBoard(myBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				break;	
+			}
+			
 
 			if(myBoard.isGameOver())
 			{
@@ -545,7 +560,7 @@ public class GUIMultiGame extends GUIScreen
 		smallFrame.setScale(1.85f, 1.75f);
 		//smallFrame.setSize(maxBoardWidth+50f, maxBoardHeight+50f);
 		smallFrame.draw(batch);
-
+		
 		for (int y = 0; y < smallBoard.boardHeight; y++) 
 		{
 			for (int x = 0; x < smallBoard.boardWidth; x++) 

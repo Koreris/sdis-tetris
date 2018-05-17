@@ -14,6 +14,7 @@ public class Tetris extends Game
 {
 	private GUIScreen currentScreen;
 	public Client networkClient = new Client();
+	public int opponentNr=0;
 	private AudioHandler audioHandler = AudioHandler.getInstance();
 	HighScores scores= new HighScores();
 	
