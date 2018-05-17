@@ -100,14 +100,16 @@ public class TetrisLobby implements Runnable{
 	            return;
             }
 
-	        while(socket!=null) {
+	        while(true) {
                 try {
                     byte[] buf = new byte[256];
 
                     int read = in.read(buf);
 
                     if(read < 0){
-                    	break; //Means error or end of connection
+                    	System.out.println("CLIENT DISCONNECTED "+username);
+                    	Thread.sleep(1000);
+                    	continue; //Means error or end of connection
 					}
 
 					byte[] buffer = Arrays.copyOfRange(buf,0,read);
@@ -116,17 +118,8 @@ public class TetrisLobby implements Runnable{
 
                     System.out.println("Received packet in lobby " + lobby_name + ": " + str);
                     //TODO - send packet to other clients
-                }catch(IOException e){
-                	try {
-	                	out.close();
-	                	in.close();
-	                	socket.close();
-	                	socket=null;
-                	}
-                	catch(Exception e1) {
-                		System.out.println("Close socket failed");
-                	}
-                    e.printStackTrace();
+                }catch(IOException | InterruptedException e){
+                	e.printStackTrace();
                 }
             }
         }

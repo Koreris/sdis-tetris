@@ -15,7 +15,7 @@ import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
-import com.sdis.tetris.network.Client;
+import com.sdis.tetris.network.TetrisClient;
 
 public class GUIWaitLobby  extends GUIScreen{
     private final Stage stage = new Stage();
@@ -28,7 +28,7 @@ public class GUIWaitLobby  extends GUIScreen{
     ScrollPane scrollPane;
     private float gameWidth = Gdx.graphics.getWidth();
     private float gameHeight = Gdx.graphics.getHeight();
-    private Client client;
+    private TetrisClient client;
 
     private class Back implements Runnable
     {
@@ -38,7 +38,7 @@ public class GUIWaitLobby  extends GUIScreen{
             parent.switchTo(new GUIMultiPlayer(parent));
         }
     }
-
+    
     public GUIWaitLobby(Tetris paramParent) {
         super(paramParent, Song.THEME_A);
         client = paramParent.networkClient;
@@ -47,6 +47,7 @@ public class GUIWaitLobby  extends GUIScreen{
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
         skin  = new Skin(Gdx.files.internal("menu/myskin.json"), new TextureAtlas(Gdx.files.internal("menu/atlas.atlas")));
         list= new List<>(skin);
+        //ask for player list
         String[] strings = new String[client.players.size()];
         for (int i = 0; i<strings.length; i++) {
             strings[i] = client.players.get(i);

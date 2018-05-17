@@ -17,7 +17,7 @@ import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
-import com.sdis.tetris.network.Client;
+import com.sdis.tetris.network.TetrisClient;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class GUICreateLobby extends GUIScreen{
     private Label label;
     private Skin skin;
     private TextField lobbyTextField;
-    private Client client;
+    private TetrisClient client;
     
     private class Back implements Runnable
     {
@@ -97,9 +97,9 @@ public class GUICreateLobby extends GUIScreen{
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
-                String player_name =  "player1" ;
+             
                 try {
-                    client.create_lobby(lobbyTextField.getText(), player_name);
+                    client.create_lobby(lobbyTextField.getText(), paramParent.playerName);
                     stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLobby())));
                 } catch (IOException e) {
                     e.printStackTrace();
