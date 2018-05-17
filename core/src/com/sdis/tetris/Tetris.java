@@ -6,15 +6,23 @@ import com.sdis.tetris.gui.GUIMainMenu;
 import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.gui.GUIScreen;
 import com.sdis.tetris.logic.HighScores;
-import com.sdis.tetris.network.Client;
+import com.sdis.tetris.network.TetrisClient;
+
+import java.net.InetAddress;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 
 public class Tetris extends Game
 {
 	private GUIScreen currentScreen;
-	public Client networkClient = new Client();
+
 	public int opponentNr=0;
+	public TetrisClient networkClient = new TetrisClient();
+	public String playerName = "Player";
+	public String serverName;
+	public InetAddress serverAddress;
+	public int serverPort;
 	private AudioHandler audioHandler = AudioHandler.getInstance();
 	HighScores scores= new HighScores();
 	

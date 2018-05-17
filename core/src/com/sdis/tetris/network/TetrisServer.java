@@ -211,7 +211,6 @@ public class TetrisServer implements Runnable{
             while(true) {
             	Socket socket = null;
     	        try {
-    	        	System.out.println("Listening to client at port "+client_socket.getLocalPort()+" ip "+client_socket.getLocalSocketAddress());
     	            socket = server_socket.accept();
     	           // thread_pool.execute(new ServerConnectionHandler(socket));
     	        }catch(IOException e){

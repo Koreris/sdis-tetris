@@ -10,13 +10,15 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.network.ParseServersFile;
-import com.sdis.tetris.network.Client;
+import com.sdis.tetris.network.TetrisClient;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -34,9 +36,11 @@ public class GUIServer extends GUIScreen{
     private final List<String> list;
     private Skin skin;
     private Skin skinv2;
-    private Client client;
+    private TetrisClient client;
     final ScrollPane scroll;
     ThreadPoolExecutor executor;
+    private TextField playerTextField;
+    private Label label;
     ConcurrentHashMap<String,String> other_servers;
 
     private class JoinServer implements Runnable
@@ -92,15 +96,31 @@ public class GUIServer extends GUIScreen{
         listServers();
         
         scroll = new ScrollPane(list, skinv2);
+        label = new Label("Player name:", skinv2);
+        playerTextField = new TextField("", skinv2);
+        playerTextField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if(!playerTextField.getText().equals("") && playerTextField.getText()!=null)
+                	joinButton.setVisible(true);
+                else joinButton.setVisible(false);
+            }
+        });
+        playerTextField.setAlignment(Align.center);
+        table.add(label).expandX().center().row();
+        table.add(playerTextField).size((float)Gdx.graphics.getWidth()/4, (float)Gdx.graphics.getHeight()/10).padBottom(10).row();;
+        table.row();
         table.add(list).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
         table.add(scroll);
         table.row();
         table.add(joinButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
         table.add(backButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
+     
         table.setFillParent(true);
         table.setVisible(true);
         stage.addActor(table);
         
+        joinButton.setVisible(false);
         joinButton.addListener(new ClickListener()
         {
             @Override
@@ -109,20 +129,17 @@ public class GUIServer extends GUIScreen{
                 audio.playSFX(SFX.HOVER);
                 String selected = list.getSelected();
                 String[] lineComponents = selected.split(" ");
-                InetAddress address = null;
+               
                 try {
-                    address = InetAddress.getByName(lineComponents[1]);
+                    paramParent.serverAddress = InetAddress.getByName(lineComponents[1]);
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 }
 
-                int port = Integer.parseInt(lineComponents[2]);
-                try {
-                    client.join_server("server1", address, port);
-                    stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinServer())));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                paramParent.serverPort = Integer.parseInt(lineComponents[2]);
+            	paramParent.playerName=playerTextField.getText();
+            	paramParent.serverName=lineComponents[0];
+                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinServer())));   
             }
 
             @Override
