@@ -16,7 +16,7 @@ public class Board {
 	public int scaleX = 30;
 	public int scaleY = 30;
 	public final Color gameBoard[][] = new Color[boardHeight][boardWidth];
-	public Color cloneBoard[][] = new Color[boardHeight][boardWidth];
+	public volatile Color cloneBoard[][] = new Color[boardHeight][boardWidth];
 	public String playerName;
 	public Tetromino fallingPiece;
 	private int playerScore;

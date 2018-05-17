@@ -164,7 +164,7 @@ public class TetrisClient {
 	        lsos = lobbySocket.getOutputStream();
 	        lsis = lobbySocket.getInputStream();
 	        connectedLobbyName=lobby_name;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -181,54 +181,69 @@ public class TetrisClient {
     }
     
     
-    public int listen_lobby_socket(GUIMultiGame game) throws IOException, ClassNotFoundException {
-   	 	 byte[] buf = new byte[1024];
-		 int read = lsis.read(buf);
-		 byte[] buffer = Arrays.copyOfRange(buf,0,read);
-		 String string = new String(buffer);
-		
-		 String[] parts = string.split(System.getProperty("line.separator"));
-		 String [] header_tokenized = parts[0].split(" ");
-
-		 if(header_tokenized[0].trim().equals("GAMESTATE")) {
-			 ColorSerializable[][] received=(ColorSerializable[][]) Utils.convertFromBytes(parts[2].trim().getBytes());
-			 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
-				 updateSmallBoard(game.smallBoard1,received);
-			 }
-			 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
-				 updateSmallBoard(game.smallBoard2,received);
-			 }
-			 else if(game.smallBoard3.playerName!=null && game.smallBoard3.playerName.equals(header_tokenized[1])) {
-				 updateSmallBoard(game.smallBoard3,received);
-			 }
-			 else {
-				 if(game.smallBoard1.playerName==null) {
-					 System.out.println("Updating smallboard1 with state from player + "+header_tokenized[1]);
-					 game.smallBoard1.playerName=header_tokenized[1];
+    public int listen_lobby_socket(GUIMultiGame game)  {
+		 try {
+			 byte[] buf = new byte[1024];
+			 int read = lsis.read(buf);
+			 byte[] buffer = Arrays.copyOfRange(buf,0,read);
+			 String string = new String(buffer);
+			
+			 String[] parts = string.split(System.getProperty("line.separator"));
+			 String [] header_tokenized = parts[0].split(" ");
+			 if(header_tokenized[0].trim().equals("GAMESTATE")) {
+				 ColorSerializable[][] received=(ColorSerializable[][]) Utils.convertFromBytes(parts[2].trim().getBytes());
+				 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
 					 updateSmallBoard(game.smallBoard1,received);
 				 }
-				 else if(game.smallBoard2.playerName==null) {
-					 game.smallBoard2.playerName=header_tokenized[1];
+				 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
 					 updateSmallBoard(game.smallBoard2,received);
 				 }
-				 else if(game.smallBoard3.playerName==null) {
-					 game.smallBoard3.playerName=header_tokenized[1];
+				 else if(game.smallBoard3.playerName!=null && game.smallBoard3.playerName.equals(header_tokenized[1])) {
 					 updateSmallBoard(game.smallBoard3,received);
 				 }
+				 else {
+					 if(game.smallBoard1.playerName==null) {
+						 game.smallBoard1.playerName=header_tokenized[1];
+						 updateSmallBoard(game.smallBoard1,received);
+					 }
+					 else if(game.smallBoard2.playerName==null) {
+						 game.smallBoard2.playerName=header_tokenized[1];
+						 updateSmallBoard(game.smallBoard2,received);
+					 }
+					 else if(game.smallBoard3.playerName==null) {
+						 game.smallBoard3.playerName=header_tokenized[1];
+						 updateSmallBoard(game.smallBoard3,received);
+					 }
+				 }
+				 return 1;
 			 }
-			 return 1;
+			 else  if(header_tokenized[0].trim().equals("GAMEOVER"))
+				 return 0;
 		 }
-		 else  if(header_tokenized[0].trim().equals("GAMEOVER"))
-			 return 0;
-		 
+		 catch(Exception e) {
+			 return -1;
+		 }
 		 return -1;
     }
    
     public void updateSmallBoard(Board smallboard,ColorSerializable[][] received) {
+    	Color[][] newClone = new Color[smallboard.boardHeight][smallboard.boardWidth];
     	for(int h=0;h<smallboard.boardHeight;h++) {
 			for(int w=0;w<smallboard.boardWidth;w++) {
-				if(received[h][w]!=null)
-					smallboard.cloneBoard[h][w]= new Color(received[h][w].r,received[h][w].g,received[h][w].b,received[h][w].a);
+				if(received[h][w]!=null) {
+					newClone[h][w]= new Color(received[h][w].r,received[h][w].g,received[h][w].b,received[h][w].a);
+				}
+			}	
+		}
+    	smallboard.updateCloneBoard(newClone);
+    }
+    
+    public static void printColor(Color[][] colors) {
+    	for(int h=0;h<colors.length;h++) {
+			for(int w=0;w<colors[0].length;w++) {
+				if(colors[h][w]!=null)
+					System.out.println("Color in position "+h+","+w+": "+colors[h][w].toString());
+				else System.out.println("Color in position "+h+","+w+": null");
 			}	
 		}
     }

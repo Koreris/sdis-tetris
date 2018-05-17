@@ -92,14 +92,10 @@ public class GUIMultiGame extends GUIScreen
 		changeState(new GameRunningState());
 		new Thread() {
 			public void run() {
-				try {
-					while(true) {
-						int result = client.listen_lobby_socket(GUIMultiGame.this);
-						if(result==0)
-							break;
-					}
-				} catch (IOException | ClassNotFoundException e) {
-					e.printStackTrace();
+				while(true) {
+					int result = client.listen_lobby_socket(GUIMultiGame.this);
+					if(result==0)
+						break;
 				}
 			}
 		}.start();
@@ -336,14 +332,15 @@ public class GUIMultiGame extends GUIScreen
 			{
 			case 3:
 				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
-				drawSmallBoard(smallBoard1.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
-				drawSmallBoard(smallBoard1.cloneBoard, smallBoard3, smallFrame3, 850f, 250f, 1.26f);
+				drawSmallBoard(smallBoard2.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				drawSmallBoard(smallBoard3.cloneBoard, smallBoard3, smallFrame3, 850f, 250f, 1.26f);
 				break;
 			case 2:
 				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
-				drawSmallBoard(smallBoard1.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				drawSmallBoard(smallBoard2.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
 				break;
 			default:
+				
 				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
 				break;	
 			}
@@ -516,46 +513,47 @@ public class GUIMultiGame extends GUIScreen
 			{
 				if (receivedScreenshot[y][x] != null) 
 				{
-					if(receivedScreenshot[y][x]==Color.GREEN)
+					if(receivedScreenshot[y][x].equals(Color.GREEN))
 					{
 						greenBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						greenBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						greenBlock.draw(batch);
 					}
-					if(receivedScreenshot[y][x]==Color.RED)
+					else if(receivedScreenshot[y][x].equals(Color.RED))
 					{
 						redBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						redBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						redBlock.draw(batch);
 					}
-					if(receivedScreenshot[y][x]==Color.BLUE)
+					else if(receivedScreenshot[y][x].equals(Color.BLUE))
 					{
 						blueBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						blueBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						blueBlock.draw(batch);
 					}
-					if(receivedScreenshot[y][x]==Color.MAGENTA)
+					else if(receivedScreenshot[y][x].equals(Color.MAGENTA))
 					{
 						purpleBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						purpleBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						purpleBlock.draw(batch);
 					}
-					if(receivedScreenshot[y][x]==Color.ORANGE){
+					else if(receivedScreenshot[y][x].equals(Color.ORANGE)) 
+					{
 						orangeBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						orangeBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						orangeBlock.draw(batch);
 					}
-					if(receivedScreenshot[y][x]==Color.YELLOW){
+					else if(receivedScreenshot[y][x].equals(Color.YELLOW)){
 						yellowBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						yellowBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						yellowBlock.draw(batch);
 					}
-					if(receivedScreenshot[y][x]==Color.CYAN){
+					else if(receivedScreenshot[y][x].equals(Color.CYAN)){
 						cyanBlock.setPosition(smallBoard.scaleX*x+screenWidth/delta, smallBoard.scaleY *y+208f);
 						cyanBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						cyanBlock.draw(batch);
 					}
-
+					else System.out.println("NOT Drawing color "+ y + "," + x+ " "+receivedScreenshot[y][x]);
 				}
 			}
 		}
