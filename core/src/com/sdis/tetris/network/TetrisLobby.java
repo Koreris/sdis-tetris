@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -108,8 +109,7 @@ public class TetrisLobby implements Runnable{
 
                     if(read < 0){
                     	System.out.println("CLIENT DISCONNECTED "+username);
-                    	Thread.sleep(1000);
-                    	continue; //Means error or end of connection
+                    	break;
 					}
 
 					byte[] buffer = Arrays.copyOfRange(buf,0,read);
@@ -118,9 +118,13 @@ public class TetrisLobby implements Runnable{
 
                     System.out.println("Received packet in lobby " + lobby_name + ": " + str);
                     //TODO - send packet to other clients
-                }catch(IOException | InterruptedException e){
-                	e.printStackTrace();
                 }
+                catch(SocketException e) {
+                	System.out.println("Client has been disconnected");
+                	break;
+                } catch (IOException e) {
+					e.printStackTrace();
+				}
             }
         }
     }

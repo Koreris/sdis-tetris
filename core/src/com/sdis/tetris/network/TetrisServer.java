@@ -164,22 +164,22 @@ public class TetrisServer implements Runnable{
                     
                     msg = msg + CRLF;
                     
-                    System.out.println("SERVER RESPONSE:"+msg);
+                    System.out.println("SERVER RESPONSE TO LIST LOBBIES :"+msg);
                     out.write(msg.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("LISTPLAYERS") == 0){
             	   String msg = "";
-                   String lobbie_name = msg_tokens[1];
+                   String lobby_name = msg_tokens[1].trim();
               
-                   if(running_lobbies.containsKey(lobbie_name)){
-                       for(String key: running_lobbies.get(lobbie_name).scores.keySet()){
+                   if(running_lobbies.containsKey(lobby_name)){
+                       for(String key: running_lobbies.get(lobby_name).scores.keySet()){
                            msg= msg + key + " ";
                        }
                    }
                     
                    msg = msg + CRLF;
                     
-                   System.out.println("SERVER RESPONSE:"+msg);
+                   System.out.println("SERVER RESPONSE TO LIST PLAYERS:"+msg);
                    out.write(msg.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("CONNECT") == 0){
@@ -191,7 +191,7 @@ public class TetrisServer implements Runnable{
                     }
                     
                 }
-                printLobbies();
+
                 terminateConnection();
             }
             catch(SocketTimeoutException e) {

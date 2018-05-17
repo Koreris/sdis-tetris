@@ -31,8 +31,8 @@ public class GUIServer extends GUIScreen{
     private final Table table = new Table();
     Sprite background = new Sprite(new Texture(Gdx.files.internal("img/main_menu.png"), false));
     Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
-    private final TextButton joinButton = new TextButton("Join_Server", Buttons.MenuButton);
-    private final TextButton backButton = new TextButton("Main_Menu", Buttons.MenuButton);
+    private final TextButton joinButton = new TextButton("Join Server", Buttons.MenuButton);
+    private final TextButton backButton = new TextButton("Main Menu", Buttons.MenuButton);
     private final List<String> list;
     private Skin skin;
     private Skin skinv2;

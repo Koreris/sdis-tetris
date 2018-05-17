@@ -198,9 +198,7 @@ public class GUIMultiGame extends GUIScreen
 			table.add(level).padBottom(10);
 			table.row();
 			table.add(score);
-		
 			table.setPosition(0,minBoardHeight+250f);
-
 			stageGame.addActor(table);
 			updateTimer();
 

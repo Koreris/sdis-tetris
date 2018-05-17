@@ -1,5 +1,9 @@
 package com.sdis.tetris.gui;
 
+import java.io.IOException;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,7 +26,9 @@ public class GUIWaitLobby  extends GUIScreen{
     private final Table table = new Table();
     Sprite background = new Sprite(new Texture(Gdx.files.internal("img/main_menu.png"), false));
     Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
+    private final TextButton startButton = new TextButton("Start Game", Buttons.MenuButton);
     private final TextButton backButton = new TextButton("< BACK", Buttons.MenuButton);
+    private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(0);
     private final List<String> list;
     private Skin skin;
     ScrollPane scrollPane;
@@ -39,6 +45,24 @@ public class GUIWaitLobby  extends GUIScreen{
         }
     }
     
+    public void listPlayers() 
+    {
+    	try {
+    		client.list_players();
+    		String[] strings = new String[client.players.size()];
+    		for (int i = 0; i<strings.length; i++) 
+    		{
+    			strings[i] = client.players.get(i);
+    		}
+    		list.setItems(strings);
+    	} 
+    	catch (IOException e1) 
+    	{
+    		e1.printStackTrace();
+    	}  
+    }
+
+    
     public GUIWaitLobby(Tetris paramParent) {
         super(paramParent, Song.THEME_A);
         client = paramParent.networkClient;
@@ -47,12 +71,16 @@ public class GUIWaitLobby  extends GUIScreen{
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
         skin  = new Skin(Gdx.files.internal("menu/myskin.json"), new TextureAtlas(Gdx.files.internal("menu/atlas.atlas")));
         list= new List<>(skin);
-        //ask for player list
-        String[] strings = new String[client.players.size()];
-        for (int i = 0; i<strings.length; i++) {
-            strings[i] = client.players.get(i);
-        }
-        list.setItems(strings);
+        
+        scheduler.scheduleAtFixedRate(new Runnable() 
+        {
+        	public void run() 
+        	{
+        		System.out.println("requesting players");
+        		listPlayers();
+        	}
+        }, 0, 1,TimeUnit.SECONDS);
+        
         list.setAlignment(1);
         scrollPane = new ScrollPane(list);
         scrollPane.setBounds(0, 0, 5, 20);
@@ -64,18 +92,21 @@ public class GUIWaitLobby  extends GUIScreen{
         table.add(list).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
         table.add(scrollPane);
         table.row();
-        table.add(backButton).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
+        table.add(startButton).padBottom(10).row();
+        table.add(backButton);
         table.setFillParent(true);
         table.setVisible(true);
         stage.addActor(table);
         backButton.setPosition(48, 30);
+        startButton.setPosition(48, 50);
         backButton.addListener(new ClickListener()
         {
             @Override
             public void clicked(InputEvent event, float x, float y)
             {
                 audio.playSFX(SFX.HOVER);
-                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new Back())));
+                scheduler.shutdown();
+                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new Back())));  
             }
 
             @Override

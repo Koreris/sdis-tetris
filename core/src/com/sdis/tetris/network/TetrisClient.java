@@ -63,9 +63,9 @@ public class TetrisClient {
         socket.close();
     }
     
-    public void list_players(String lobbie_name) throws IOException {
+    public void list_players() throws IOException {
     	players = new ArrayList<>();
-        byte[] msg = ("LISTPLAYERS " + lobbie_name + CRLF + CRLF).getBytes();
+        byte[] msg = ("LISTPLAYERS " + connectedLobbyName + CRLF + CRLF).getBytes();
 
         OutputStream out = null;
         InputStream in = null;

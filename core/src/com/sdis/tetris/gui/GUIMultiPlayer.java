@@ -21,6 +21,8 @@ import com.sdis.tetris.network.TetrisClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class GUIMultiPlayer extends GUIScreen{
     private final Stage stage = new Stage();
@@ -31,6 +33,7 @@ public class GUIMultiPlayer extends GUIScreen{
     private final TextButton createButton = new TextButton("Create lobby", Buttons.MenuButton);
     private final TextButton backButton = new TextButton("Server menu", Buttons.MenuButton);
     private final List<String> list;
+    private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(0);
     private Skin skin;
     private Skin skinv2;
     final ScrollPane scroll;
@@ -78,6 +81,7 @@ public class GUIMultiPlayer extends GUIScreen{
     	  		}
             } catch (IOException e1) {
     			e1.printStackTrace();
+    			 scheduler.shutdown();
     			 stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new Back())));
     		}  
     }
@@ -93,8 +97,15 @@ public class GUIMultiPlayer extends GUIScreen{
         skinv2  = new Skin(Gdx.files.internal("menu/menu.json"), new TextureAtlas(Gdx.files.internal("menu/menu.atlas")));
         list=new List<>(skin);
         list.setAlignment(1);
-        
-        listLobbies(paramParent);
+        joinButton.setVisible(false);
+        scheduler.scheduleAtFixedRate(new Runnable() 
+        {
+        	public void run() 
+        	{
+        		System.out.println("requesting lobbies");
+        		listLobbies(paramParent);
+        	}
+        }, 0, 1,TimeUnit.SECONDS);
         
         scroll = new ScrollPane(list, skinv2);
         table.add(list).size((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/8).padBottom(10).row();
@@ -115,6 +126,7 @@ public class GUIMultiPlayer extends GUIScreen{
                 String selected = list.getSelected();
                 try {
                     client.join_lobby(selected, paramParent.playerName);
+                    scheduler.shutdown();
                     stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinLobby())));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -136,6 +148,7 @@ public class GUIMultiPlayer extends GUIScreen{
             @Override
             public void clicked(InputEvent event, float x, float y)
             {
+            	scheduler.shutdown();
                 audio.playSFX(SFX.HOVER);
                 stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLobby())));
             }
@@ -155,6 +168,7 @@ public class GUIMultiPlayer extends GUIScreen{
             @Override
             public void clicked(InputEvent event, float x, float y)
             {
+            	scheduler.shutdown();
                 audio.playSFX(SFX.HOVER);
                 stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new Back())));
             }
