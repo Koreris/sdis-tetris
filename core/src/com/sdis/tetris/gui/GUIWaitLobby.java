@@ -76,7 +76,6 @@ public class GUIWaitLobby  extends GUIScreen{
         {
         	public void run() 
         	{
-        		System.out.println("requesting players");
         		listPlayers();
         	}
         }, 0, 1,TimeUnit.SECONDS);
@@ -99,6 +98,48 @@ public class GUIWaitLobby  extends GUIScreen{
         stage.addActor(table);
         backButton.setPosition(48, 30);
         startButton.setPosition(48, 50);
+        startButton.addListener(new ClickListener()
+        {
+            @Override
+            public void clicked(InputEvent event, float x, float y)
+            {
+                audio.playSFX(SFX.HOVER);
+                try {
+					client.start_game(paramParent.playerName);
+					listPlayers();
+					scheduler.execute(new Runnable() {
+						public void run() {
+							try {
+								int nr_players = client.listen_game_begin();
+								if(nr_players!=-1) {
+									paramParent.opponentNr=nr_players;
+									Gdx.app.postRunnable(new Runnable() {
+										public void run() {
+											scheduler.shutdown();
+											paramParent.switchTo(new GUIMultiGame(paramParent));  
+										}
+									});
+								}
+							}
+							catch(Exception e) {
+								scheduler.shutdown();
+							}
+						}
+					});
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+            }
+
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor)
+            {
+                if (! backButton.isPressed())
+                {
+                    audio.playSFX(SFX.SELECT);
+                }
+            }
+        });	
         backButton.addListener(new ClickListener()
         {
             @Override

@@ -2,6 +2,7 @@ package com.sdis.tetris;
 
 import com.sdis.tetris.audio.AudioHandler;
 import com.sdis.tetris.audio.LRUCache;
+import com.sdis.tetris.gui.GUIGame;
 import com.sdis.tetris.gui.GUIMainMenu;
 import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.gui.GUIScreen;
@@ -65,7 +66,7 @@ public class Tetris extends Game
 	
 	public void startGame()
 	{
-		switchTo(new GUIMultiGame(this));
+		switchTo(new GUIGame(this));
 	}
 
 	@Override

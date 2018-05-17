@@ -83,7 +83,7 @@ public class TetrisClient {
       
         in.read(read);
         readValue = new String(read);
-        String[] serverResponseComponents = readValue.split(" ");
+        String[] serverResponseComponents = readValue.split(";");
         if(serverResponseComponents.length>1) {
 	        String responseComponent;
 	    
@@ -165,6 +165,28 @@ public class TetrisClient {
         lsis = lobbySocket.getInputStream();
         connectedLobbyName=lobby_name;
         lsos.write("TEST MESSAGE".getBytes());
+    }
+    
+    public void start_game(String player_name) throws IOException {
+    	 byte[] msg = ("READY " + player_name + " " + CRLF + CRLF).getBytes();
+    	 lsos.write(msg);
+    }
+    
+    public int listen_game_begin() {
+    	 byte[] buf = new byte[1024];
+
+         try {
+			 int read = lsis.read(buf);
+			 String string = new String(buf);
+			 String [] msg_tokenized = string.split(" ");
+			 if(msg_tokenized[0].trim().equals("BEGIN"))
+				 return Integer.parseInt(msg_tokenized[1].trim());
+			 return -1;
+	        
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -1;
+		}
     }
     
     public void disconnectLobby() throws IOException {

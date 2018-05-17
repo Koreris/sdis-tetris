@@ -9,22 +9,28 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class TetrisLobby implements Runnable{
 	String lobby_name;
 	ConcurrentHashMap<String,Integer> scores; /* Save player username and score here */
-    ConcurrentHashMap<String,SSLServerSocket> playerSockets;
+	ConcurrentHashMap<String,Boolean> playersReady;
+    ConcurrentHashMap<String,ClientListener> playerConnections;
     SSLServerSocketFactory ssl_socket_factory;
-	transient TetrisServer master;
-	transient boolean game_started=false;
+	TetrisServer master;
+	ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 50, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+	boolean game_started=false;
 
 	public TetrisLobby(TetrisServer server,String name) {
 		master = server;
 		lobby_name = name;
 		scores = new ConcurrentHashMap<>();
-		playerSockets = new ConcurrentHashMap<>();
-
+		playerConnections = new ConcurrentHashMap<>();
+		playersReady = new ConcurrentHashMap<>();
         ssl_socket_factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
 		//establish socket1 connection with lobby creator
 	}
@@ -39,8 +45,10 @@ public class TetrisLobby implements Runnable{
         SSLServerSocket socket;
         try {
             socket = (SSLServerSocket) ssl_socket_factory.createServerSocket(0);
-            playerSockets.put(player_name,socket);
-            master.thread_pool.execute(new ClientListener(player_name));
+            ClientListener newlistener =new ClientListener(player_name,socket);
+            playerConnections.put(player_name,newlistener);
+            playersReady.put(player_name, false);
+            master.thread_pool.execute(newlistener);
         } catch (IOException e) {
             e.printStackTrace();
             return -1;
@@ -79,19 +87,61 @@ public class TetrisLobby implements Runnable{
 
 	    String username;
 	    SSLServerSocket sslsocket;
+	    InputStream in;
+        OutputStream out;
 
-	    public ClientListener(String username){
+	    public ClientListener(String username,SSLServerSocket ssl){
 	        this.username = username;
-	        this.sslsocket = playerSockets.get(username);
+	        this.sslsocket = ssl;
         }
-
+	    
+	    public void checkAllTrue() throws IOException {
+	    	boolean alltrue=true;
+	    	for(String key: playersReady.keySet()) {
+	    		if(!playersReady.get(key))
+	    			alltrue=false;
+	    	}
+	    	
+	    	if(alltrue) {
+	    		executor.execute(new Runnable() {
+	    			public void run() {
+	    				for(String key: playerConnections.keySet()) {
+	    		    		try {
+								playerConnections.get(key).startGame();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+	    		    	}
+	    			}
+	    		});
+	    	}
+	    }
+	    
+	    public void startGame() throws IOException {
+	    	out.write(("BEGIN "+playersReady.size()+" "+master.CRLF).getBytes());
+	    }
+	    
+	    public void handlePacket(String packet) throws IOException {
+	    	String[] packetComponents = packet.split(" ");
+	    	switch(packetComponents[0]) {
+		    	case "READY":
+		    		playersReady.put(packetComponents[1], true);
+		    		checkAllTrue();
+		    		break;
+		    	case "GAMESTATE":
+		    		break;
+		    	case "GAMEOVER":
+		    		break;
+		    	default:
+		    		break;
+		    		
+	    	}
+	    }
         @Override
         public void run() {
 
 	        Socket socket = null;
-	        InputStream in = null;
-	        OutputStream out = null;
-
+	       
 	        try{
                 socket = sslsocket.accept();
 				System.out.println("Starting socket in port " + socket.getLocalPort());
@@ -112,7 +162,8 @@ public class TetrisLobby implements Runnable{
                     	System.out.println("Client left the lobby : "+username);
                     	if(!game_started) {
                     		scores.remove(username);
-                    		playerSockets.remove(username);
+                    		playerConnections.remove(username);
+                    		playersReady.remove(username);
                     		if(scores.isEmpty())
                     			master.deleteEmptyLobby(lobby_name);
                     	}
@@ -122,7 +173,8 @@ public class TetrisLobby implements Runnable{
 					byte[] buffer = Arrays.copyOfRange(buf,0,read);
 
                     String str = new String(buffer);
-
+                    
+                    handlePacket(str);
                     System.out.println("Received packet in lobby " + lobby_name + ": " + str);
                     //TODO - send packet to other clients
                 }
@@ -130,7 +182,8 @@ public class TetrisLobby implements Runnable{
                 	System.out.println("Client has been disconnected: "+username);
                 	if(!game_started) {
                 		scores.remove(username);
-                		playerSockets.remove(username);
+                		playerConnections.remove(username);
+                		playersReady.remove(username);
                 		if(scores.isEmpty())
                 			master.deleteEmptyLobby(lobby_name);
                 	}

@@ -179,7 +179,9 @@ public class TetrisServer implements Runnable{
               
                    if(running_lobbies.containsKey(lobby_name)){
                        for(String key: running_lobbies.get(lobby_name).scores.keySet()){
-                           msg= msg + key + " ";
+                    	   if(running_lobbies.get(lobby_name).playersReady.get(key))
+                    		   msg= msg + key + " "+ " READY" + ";";
+                    	   else  msg= msg + key + " "+ " WAITING" + ";";
                        }
                    }
                     
