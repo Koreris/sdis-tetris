@@ -177,7 +177,7 @@ public class TetrisClient {
     public void send_game_state(String player_name,String server_name, ArrayList<ColorJSON> colors) throws IOException {
 	   	 String msg = "GAMESTATE " + player_name + " " + connectedLobbyName + " " + server_name + " " + CRLF + CRLF;
 	   	 String contents = ColorJSON.toJSONfromArrayList(colors).toString();
-	   	 lsos.write((msg+contents+CRLF).getBytes());
+	   	 lsos.write((msg+contents+CRLF+CRLF).getBytes());
     }
     
     
