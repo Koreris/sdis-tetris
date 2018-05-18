@@ -299,12 +299,12 @@ public class GUIMultiGame extends GUIScreen
 			}
 			sendStateCount++;
 			
-			if(sendStateCount>=20) {
+			if(sendStateCount>=5) {
 				
 				executor.execute(new Runnable() {
 					public void run() {
 						try {
-							client.send_game_state(parent.playerName, parent.serverName, Utils.convertToBytes(myBoard.screenshotBoard()));
+							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard());
 						} catch (IOException e) {
 							e.printStackTrace();
 						}

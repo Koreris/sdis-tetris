@@ -174,24 +174,28 @@ public class TetrisClient {
     	 lsos.write(msg);
     }
     
-    public void send_game_state(String player_name,String server_name, byte[] data) throws IOException {
-	   	 byte[] msg = ("GAMESTATE " + player_name + " " + connectedLobbyName + " " + server_name + " " + CRLF + CRLF).getBytes();
-	   	 byte[] state = Utils.combineByteArrays(msg, data);
-	   	 lsos.write(state);
+    public void send_game_state(String player_name,String server_name, ArrayList<ColorJSON> colors) throws IOException {
+	   	 String msg = "GAMESTATE " + player_name + " " + connectedLobbyName + " " + server_name + " " + CRLF + CRLF;
+	   	 String contents = ColorJSON.toJSONfromArrayList(colors).toString();
+	   	 lsos.write((msg+contents+CRLF).getBytes());
     }
     
     
     public int listen_lobby_socket(GUIMultiGame game)  {
 		 try {
-			 byte[] buf = new byte[1024];
+			 byte[] buf = new byte[64000];
 			 int read = lsis.read(buf);
 			 byte[] buffer = Arrays.copyOfRange(buf,0,read);
 			 String string = new String(buffer);
 			
 			 String[] parts = string.split(System.getProperty("line.separator"));
+			 System.out.println("Received parts: "+parts.length);
+			 for(String part:parts) {
+				 System.out.println("Im a part: "+part.trim());
+			 }
 			 String [] header_tokenized = parts[0].split(" ");
 			 if(header_tokenized[0].trim().equals("GAMESTATE")) {
-				 ColorSerializable[][] received=(ColorSerializable[][]) Utils.convertFromBytes(parts[2].trim().getBytes());
+				 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[2].trim());
 				 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
 					 updateSmallBoard(game.smallBoard1,received);
 				 }
@@ -221,21 +225,17 @@ public class TetrisClient {
 				 return 0;
 		 }
 		 catch(Exception e) {
+			 e.printStackTrace();
 			 return -1;
 		 }
 		 return -1;
     }
    
-    public void updateSmallBoard(Board smallboard,ColorSerializable[][] received) {
-    	Color[][] newClone = new Color[smallboard.boardHeight][smallboard.boardWidth];
-    	for(int h=0;h<smallboard.boardHeight;h++) {
-			for(int w=0;w<smallboard.boardWidth;w++) {
-				if(received[h][w]!=null) {
-					newClone[h][w]= new Color(received[h][w].r,received[h][w].g,received[h][w].b,received[h][w].a);
-				}
-			}	
-		}
-    	smallboard.updateCloneBoard(newClone);
+    public void updateSmallBoard(Board smallboard,ArrayList<ColorJSON> received) {
+    	smallboard.cloneBoard = new Color[smallboard.boardHeight][smallboard.boardWidth];
+    	for(ColorJSON color: received) {
+    		smallboard.cloneBoard[color.y][color.x]=new Color(color.r,color.g,color.b,color.a);
+    	}
     }
     
     public static void printColor(Color[][] colors) {
@@ -247,6 +247,7 @@ public class TetrisClient {
 			}	
 		}
     }
+    
     public int listen_game_begin() {
     	 byte[] buf = new byte[1024];
          try {

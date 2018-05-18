@@ -1,5 +1,6 @@
 package com.sdis.tetris.logic;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.badlogic.gdx.graphics.Color;
@@ -8,7 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import com.sdis.tetris.audio.AudioHandler;
 import com.sdis.tetris.audio.SFX;
-import com.sdis.tetris.network.ColorSerializable;
+import com.sdis.tetris.network.ColorJSON;
 
 public class Board {
 	public int boardWidth = 10;
@@ -149,7 +150,7 @@ public class Board {
 		
 	}
 	
-	public ColorSerializable[][] screenshotBoard() 
+	public ArrayList<ColorJSON> screenshotBoard() 
 	{
 		for(int i=0;i<cloneBoard.length;i++) {
 			cloneBoard[i] = Arrays.copyOf(gameBoard[i],gameBoard[i].length);
@@ -171,11 +172,12 @@ public class Board {
 			}
 		}
 		
-		ColorSerializable[][] screenshot = new ColorSerializable[boardHeight][boardWidth];
+		ArrayList<ColorJSON> screenshot = new ArrayList<>();
+		int i=0;
 		for(int h=0;h<boardHeight;h++) {
 			for(int w=0;w<boardWidth;w++) {
 				if(cloneBoard[h][w]!=null)
-					screenshot[h][w]= new ColorSerializable(cloneBoard[h][w].r,cloneBoard[h][w].g,cloneBoard[h][w].b,cloneBoard[h][w].a);
+					screenshot.add(new ColorJSON(cloneBoard[h][w].r,cloneBoard[h][w].g,cloneBoard[h][w].b,cloneBoard[h][w].a,h,w));
 			}	
 		}
 		
