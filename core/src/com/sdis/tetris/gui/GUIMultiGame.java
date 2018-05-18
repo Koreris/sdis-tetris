@@ -299,7 +299,7 @@ public class GUIMultiGame extends GUIScreen
 			}
 			sendStateCount++;
 			
-			if(sendStateCount>=20) {
+			if(sendStateCount>=5) {
 				
 				executor.execute(new Runnable() {
 					public void run() {

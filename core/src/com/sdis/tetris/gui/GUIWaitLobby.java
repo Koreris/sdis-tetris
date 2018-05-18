@@ -111,14 +111,20 @@ public class GUIWaitLobby  extends GUIScreen{
 						public void run() {
 							try {
 								int nr_players = client.listen_game_begin();
-								if(nr_players!=-1) {
+								if(nr_players!=-1) 
+								{
 									paramParent.opponentNr=nr_players-1;
-									Gdx.app.postRunnable(new Runnable() {
-										public void run() {
-											scheduler.shutdown();
-											paramParent.switchTo(new GUIMultiGame(paramParent));  
-										}
-									});
+									if(paramParent.opponentNr>0)
+									{
+										Gdx.app.postRunnable(new Runnable() 
+										{
+											public void run() 
+											{
+												scheduler.shutdown();
+												paramParent.switchTo(new GUIMultiGame(paramParent));  
+											}
+										});
+									}
 								}
 							}
 							catch(Exception e) {

@@ -183,7 +183,7 @@ public class TetrisClient {
     
     public int listen_lobby_socket(GUIMultiGame game)  {
 		 try {
-			 byte[] buf = new byte[1024];
+			 byte[] buf = new byte[64000];
 			 int read = lsis.read(buf);
 			 byte[] buffer = Arrays.copyOfRange(buf,0,read);
 			 String string = new String(buffer);
