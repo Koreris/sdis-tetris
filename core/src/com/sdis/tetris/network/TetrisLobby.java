@@ -206,6 +206,14 @@ public class TetrisLobby implements Runnable{
                 	}
                 	break;
                 } catch (IOException e) {
+                	System.out.println("Client has been disconnected: "+username);
+                	if(!game_started) {
+                		scores.remove(username);
+                		playerConnections.remove(username);
+                		playersReady.remove(username);
+                		if(scores.isEmpty())
+                			master.deleteEmptyLobby(lobby_name);
+                	}
 					e.printStackTrace();
 				}
             }
