@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class TetrisLobby implements Runnable{
+public class TetrisLobby{
 	String lobby_name;
 	ConcurrentHashMap<String,Integer> scores; /* Save player username and score here */
 	ConcurrentHashMap<String,Boolean> playersReady;
@@ -51,6 +51,7 @@ public class TetrisLobby implements Runnable{
             socket = (SSLServerSocket) ssl_socket_factory.createServerSocket(0);
             ClientListener newlistener =new ClientListener(player_name,socket);
             playerConnections.put(player_name,newlistener);
+            scores.putIfAbsent(player_name, 0);
             playersReady.put(player_name, false);
             playersGameover.put(player_name, false);
             master.thread_pool.execute(newlistener);
@@ -61,8 +62,9 @@ public class TetrisLobby implements Runnable{
         return socket.getLocalPort();
 	}
 
-	public void start_game() {
+	public void start_and_replicate_game() {
 		//prevent other joins from this point on?
+		game_started=true;
 		TetrisLobbySerializable static_representation = 
 				new TetrisLobbySerializable()
 				.setLobbyName(lobby_name)
@@ -83,11 +85,6 @@ public class TetrisLobby implements Runnable{
 		return "Lobby Name: "+lobby_name+ "\nPlayers:\n"+players;
 	}
 	
-	@Override
-	public void run() {
-        //TODO - Might not be needed, implement this method or remove Runnable implementation
-	}
-
 	class ClientListener implements Runnable {
 
 	    String username;
@@ -108,12 +105,12 @@ public class TetrisLobby implements Runnable{
 	    	}
 	    	
 	    	if(alltrue) {
-	    		game_started=true;
+	    		start_and_replicate_game();
 	    		executor.execute(new Runnable() {
 	    			public void run() {
 	    				for(String key: playerConnections.keySet()) {
 	    		    		try {
-								playerConnections.get(key).startGame();
+								playerConnections.get(key).signalGameStarted();
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -123,7 +120,7 @@ public class TetrisLobby implements Runnable{
 	    	}
 	    }
 	    
-	    public void startGame() throws IOException {
+	    public void signalGameStarted() throws IOException {
 	    	out.write(("BEGIN "+playersReady.size()+" "+master.CRLF).getBytes());
 	    }
 	    

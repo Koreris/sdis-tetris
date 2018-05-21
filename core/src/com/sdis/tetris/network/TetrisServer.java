@@ -4,6 +4,7 @@ import javax.net.SocketFactory;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +49,7 @@ public class TetrisServer implements Runnable{
         thread_pool.execute(new ParseServersFile(other_servers));
 
         ssl_socket_factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        socket_factory = SSLSocketFactory.getDefault();
 
         try {
             client_socket = (SSLServerSocket) ssl_socket_factory.createServerSocket(client_port);
@@ -74,7 +76,7 @@ public class TetrisServer implements Runnable{
         while(true) {
         	Socket socket = null;
 	        try {
-	        	System.out.println("Listening to client at port "+client_socket.getLocalPort()+" ip "+client_socket.getLocalSocketAddress());
+	        	//System.out.println("Listening to client at port "+client_socket.getLocalPort()+" ip "+client_socket.getLocalSocketAddress());
 	            socket = client_socket.accept();
 	            thread_pool.execute(new ClientConnectionHandler(socket));
 	        }catch(IOException e){
@@ -82,16 +84,6 @@ public class TetrisServer implements Runnable{
 	            return;
 	        }
         }
-
-    }
-
-    /* function just to test replication */
-    public void simulateLobbyCreation() {
-            //when actual thing is implemented, cannot allow creation of lobbies with already existing names
-            TetrisLobby newlob = new TetrisLobby(this,"my_lobby");
-            running_lobbies.put("my_lobby",newlob);
-            newlob.join_lobby("p2");
-            newlob.start_game(); //this will be triggered by lobby itself when properly implemented with client connections
 
     }
 
@@ -151,12 +143,14 @@ public class TetrisServer implements Runnable{
                     TetrisLobby new_lob = new TetrisLobby(TetrisServer.this,lobby_name);
 
                     if(running_lobbies.get(lobby_name) != null){
-                        //TODO - Error, room already exists
+                        System.out.println("lobby already exists");
+                        terminateConnection();
                         return;
                     }
 
                     running_lobbies.put(lobby_name,new_lob);
                     String answer = "CREATED " + new_lob.join_lobby(msg_tokens[2])+CRLF;
+                    System.out.println("SERVER RESPONSE TO CREATE LOBBY  :"+answer);
                     out.write(answer.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("ASKLIST") == 0){
@@ -170,7 +164,7 @@ public class TetrisServer implements Runnable{
                     
                     msg = msg + CRLF;
                     
-                    System.out.println("SERVER RESPONSE TO LIST LOBBIES :"+msg);
+                    //System.out.println("SERVER RESPONSE TO LIST LOBBIES :"+msg);
                     out.write(msg.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("LISTPLAYERS") == 0){
@@ -187,7 +181,7 @@ public class TetrisServer implements Runnable{
                     
                    msg = msg + CRLF;
                     
-                   System.out.println("SERVER RESPONSE TO LIST PLAYERS:"+msg);
+                  // System.out.println("SERVER RESPONSE TO LIST PLAYERS:"+msg);
                    out.write(msg.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("CONNECT") == 0){
@@ -214,50 +208,55 @@ public class TetrisServer implements Runnable{
     }
 
     class ServerReplicationService implements Runnable{
-    	
         @Override
         public void run() {
             while(true) {
-            	Socket socket = null;
     	        try {
-    	            socket = server_socket.accept();
-    	           // thread_pool.execute(new ServerConnectionHandler(socket));
+    	            final Socket socket = server_socket.accept();
+    	            thread_pool.execute(new Runnable() {
+    	            	public void run() {
+    	            		handleReplicationPacket(socket);
+    	            	}
+    	            });
     	        }catch(IOException e){
     	            e.printStackTrace();
-    	            return;
     	        }
-               
-                //handleReplicationPacket(packet);
-                printLobbies();
             }
 
         }
 
         public void triggerReplication(TetrisLobbySerializable lobby) {
             running_lobbies.get(lobby.lobby_name);
-            try {
-                String header = "REPLICATE" +  " " + server_name + " " + lobby.lobby_name + CRLF + CRLF;
-                byte[] lobby_bytes = Utils.convertToBytes(lobby);
+           
+                String header = "REPLICATE" +  " " + server_name + " " + lobby.lobby_name + CRLF;
+                byte[] lobby_bytes = null;
+				try {
+					lobby_bytes = Utils.convertToBytes(lobby);
+				} catch (IOException e1) {
+				}
                 byte[] replicate = Utils.combineByteArrays(header.getBytes(),lobby_bytes);
                 for (String key : other_servers.keySet())
                 {
+                	if(key.equals(server_name))
+                		continue;
                 	String[] servDetails = other_servers.get(key).split(" ");
                     System.out.println("Sending lobby to "+servDetails[0]+":"+servDetails[1]);
-                    SSLSocket sendSocket = (SSLSocket) socket_factory.createSocket(InetAddress.getByName(servDetails[0]),Integer.parseInt(servDetails[1]));
-                    OutputStream out = sendSocket.getOutputStream();
-                    out.write(replicate);
-                    out.close();
-                    sendSocket.close();
+                    try {
+	                    SSLSocket sendSocket = (SSLSocket) socket_factory.createSocket(InetAddress.getByName(servDetails[0]),Integer.parseInt(servDetails[1]));
+	                    OutputStream out = sendSocket.getOutputStream();
+	                    out.write(replicate);
+	                    out.close();
+	                    sendSocket.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+				
         }
 
         public void deleteLobby(String lobby_name) {
             running_lobbies.remove(lobby_name);
-            String header = "DELETE" +  " " + server_name + " " + lobby_name + CRLF + CRLF;
+            String header = "DELETE" +  " " + server_name + " " + lobby_name + CRLF;
             for (String key : other_servers.keySet())
             {
                 try {
@@ -276,31 +275,35 @@ public class TetrisServer implements Runnable{
         }
         
        
-        public void handleReplicationPacket(DatagramPacket data) {
-
-            String packetString = new String(data.getData(),0,data.getLength());
-
-            String[] lines = packetString.split(System.getProperty("line.separator"));
-            String header = lines[0];
-
-            String[] headerComponents = header.split(" ");
-
-            switch(headerComponents[0]) {
-                case "REPLICATE":
-                    try {
-                        TetrisLobbySerializable lobby = (TetrisLobbySerializable) Utils.convertFromBytes(lines[2].trim().getBytes());
+        public void handleReplicationPacket(Socket sock){
+			try {
+				InputStream sockin = sock.getInputStream();
+	        	byte []buffer = new byte[64000];
+				int read = sockin.read(buffer);
+	            String packetString = new String(buffer,0,read);
+	
+	            String[] lines = packetString.split(System.getProperty("line.separator"));
+	            String header = lines[0];
+	
+	            String[] headerComponents = header.split(" ");
+	
+	            switch(headerComponents[0]) {
+	                case "REPLICATE":
+                        TetrisLobbySerializable lobby = (TetrisLobbySerializable) Utils.convertFromBytes(lines[1].trim().getBytes());
                         //Key = original server name + lobby name
                         replicated_lobbies.put(headerComponents[1]+headerComponents[2], lobby);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "DELETE":
-                    replicated_lobbies.remove((headerComponents[1]+headerComponents[2]));
-                    break;
-                default:
-                    break;
-            }
+                        printLobbies();
+	                    break;
+	                case "DELETE":
+	                    replicated_lobbies.remove((headerComponents[1]+headerComponents[2]));
+	                    break;
+	                default:
+	                    break;
+	            }
+			} catch (IOException | ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
         }
 
     }

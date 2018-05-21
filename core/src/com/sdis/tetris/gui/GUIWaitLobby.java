@@ -126,6 +126,10 @@ public class GUIWaitLobby  extends GUIScreen{
 										});
 									}
 								}
+								else {
+								 	scheduler.shutdown();
+					                stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new Back())));  
+								}
 							}
 							catch(Exception e) {
 								scheduler.shutdown();
