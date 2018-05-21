@@ -146,7 +146,8 @@ public class TetrisLobby{
 		    		});
 		    		break;
 		    	case "GAMEOVER":
-		    		playersReady.put(packetComponents[1], true);
+		    		System.out.println("Received gameover message");
+		    		playersGameover.put(packetComponents[1].split("\r\n")[0], true);
 		    		boolean finished = true;
 		    		for(Boolean player:playersGameover.values()){
 		    			if(!player){
@@ -155,6 +156,7 @@ public class TetrisLobby{
 						}
 					}
 					if(finished){
+		    			System.out.println("Game is finished, broadcasting gameended");
 		    			for(ClientListener cl: playerConnections.values()){
 		    				cl.out.write("GAMEENDED".getBytes());
 						}

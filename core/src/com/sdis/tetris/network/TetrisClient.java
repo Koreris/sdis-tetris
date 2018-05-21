@@ -185,7 +185,7 @@ public class TetrisClient {
 
     public void send_game_over(String player_name) throws IOException {
     	String msg = "GAMEOVER " + player_name;
-    	lsos.write((msg+CRLF+CRLF).getBytes());
+    	lsos.write((msg+CRLF).getBytes());
 	}
     
     
