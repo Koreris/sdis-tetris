@@ -49,7 +49,21 @@ public class TetrisLobbyJSON{
 				.build();
 	}
 	
+	public static TetrisLobbyJSON fromJSON(String jsonstr) {
 		JsonReader jsonReader = Json.createReader(new StringReader(jsonstr));
+		JsonObject obj = jsonReader.readObject();
+		
+		String name = obj.getString("name");
+		JsonArray arr = obj.getJsonArray("scores");
+		
+		String[] scores = new String[arr.size()];
+		int i=0;
+		for(JsonValue score:arr) {
+			scores[i]=score.toString().substring(1, score.toString().length()-1);
+			i++;
+		}
+		return new TetrisLobbyJSON(name,scores);
+	}
 	
 	public String toString() {
 		String players = "";
