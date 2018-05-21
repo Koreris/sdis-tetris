@@ -179,6 +179,11 @@ public class TetrisClient {
 	   	 String contents = ColorJSON.toJSONfromArrayList(colors).toString();
 	   	 lsos.write((msg+contents+CRLF+CRLF).getBytes());
     }
+
+    public void send_game_over(String player_name) throws IOException {
+    	String msg = "GAMEOVER " + player_name;
+    	lsos.write((msg+CRLF+CRLF).getBytes());
+	}
     
     
     public int listen_lobby_socket(GUIMultiGame game)  {
@@ -221,8 +226,10 @@ public class TetrisClient {
 				 }
 				 return 1;
 			 }
-			 else  if(header_tokenized[0].trim().equals("GAMEOVER"))
-				 return 0;
+			 else if(header_tokenized[0].trim().equals("GAMEENDED")){
+			 	System.out.println("Received game ended message");
+				 //TODO -  !!!JOSÉ!!!  - Aqui deve passar para o ecra de mostrar as pontuacoes finais de todos os jogadores (ecra de gameover)
+			 }
 		 }
 		 catch(Exception e) {
 			 e.printStackTrace();

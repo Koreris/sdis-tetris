@@ -1,5 +1,7 @@
 package com.sdis.tetris.network;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
@@ -20,6 +22,7 @@ public class TetrisLobby implements Runnable{
 	ConcurrentHashMap<String,Integer> scores; /* Save player username and score here */
 	ConcurrentHashMap<String,Boolean> playersReady;
     ConcurrentHashMap<String,ClientListener> playerConnections;
+    ConcurrentHashMap<String,Boolean> playersGameover;
     SSLServerSocketFactory ssl_socket_factory;
 	TetrisServer master;
 	ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 50, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
@@ -31,6 +34,7 @@ public class TetrisLobby implements Runnable{
 		scores = new ConcurrentHashMap<>();
 		playerConnections = new ConcurrentHashMap<>();
 		playersReady = new ConcurrentHashMap<>();
+		playersGameover = new ConcurrentHashMap<>();
         ssl_socket_factory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
 		//establish socket1 connection with lobby creator
 	}
@@ -48,6 +52,7 @@ public class TetrisLobby implements Runnable{
             ClientListener newlistener =new ClientListener(player_name,socket);
             playerConnections.put(player_name,newlistener);
             playersReady.put(player_name, false);
+            playersGameover.put(player_name, false);
             master.thread_pool.execute(newlistener);
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,13 +149,26 @@ public class TetrisLobby implements Runnable{
 		    		});
 		    		break;
 		    	case "GAMEOVER":
+		    		playersReady.put(packetComponents[1], true);
+		    		boolean finished = true;
+		    		for(Boolean player:playersGameover.values()){
+		    			if(!player){
+		    				finished = false;
+		    				break;
+						}
+					}
+					if(finished){
+		    			for(ClientListener cl: playerConnections.values()){
+		    				cl.out.write("GAMEENDED".getBytes());
+						}
+					}
 		    		break;
 		    	default:
 		    		break;
-		    		
 	    	}
 	    }
-        protected void forwardState(String packet) throws IOException {
+
+		protected void forwardState(String packet) throws IOException {
 			out.write(packet.getBytes());
 		}
 
