@@ -99,8 +99,8 @@ public class GUICreateLobby extends GUIScreen{
                 audio.playSFX(SFX.HOVER);
              
                 try {
-                    client.create_lobby(lobbyTextField.getText(), paramParent.playerName);
-                    stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLobby())));
+                    if(client.create_lobby(lobbyTextField.getText(), paramParent.playerName)==0)
+                    	stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new CreateLobby())));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

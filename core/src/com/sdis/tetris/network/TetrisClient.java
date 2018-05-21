@@ -139,7 +139,7 @@ public class TetrisClient {
     }
 
 
-    public void create_lobby(String lobby_name, String player_name) throws IOException {
+    public int create_lobby(String lobby_name, String player_name) throws IOException {
     	disconnectLobby();
         byte[] msg = ("CREATE " + lobby_name + " " + player_name + " " + CRLF).getBytes();
         OutputStream out = null;
@@ -165,8 +165,10 @@ public class TetrisClient {
 	        lsos = lobbySocket.getOutputStream();
 	        lsis = lobbySocket.getInputStream();
 	        connectedLobbyName=lobby_name;
+	        return 0;
         } catch (Exception e) {
             e.printStackTrace();
+            return -1;
         }
     }
     
@@ -275,20 +277,25 @@ public class TetrisClient {
 			 String [] msg_tokenized = string.split(" ");
 			 if(msg_tokenized[0].trim().equals("BEGIN"))
 				 return Integer.parseInt(msg_tokenized[1].trim());
+			 disconnectLobby();
 			 return -1;
-	        
 		} catch (IOException e) {
-			e.printStackTrace();
+			disconnectLobby();
 			return -1;
 		}
     }
     
-    public void disconnectLobby() throws IOException {
+    public void disconnectLobby(){
     	if(lobbySocket!=null) {
     		connectedLobbyName="";
-    		lsos.close();
-	    	lsis.close();
-	    	lobbySocket.close();
+    		try {
+				lsos.close();
+		    	lsis.close();
+		    	lobbySocket.close();
+    		} 
+	    	catch (IOException e) {
+				e.printStackTrace();
+			}
     	}
     }
 }
