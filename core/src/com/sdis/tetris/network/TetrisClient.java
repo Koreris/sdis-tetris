@@ -1,5 +1,6 @@
 package com.sdis.tetris.network;
 
+import javax.json.stream.JsonParsingException;
 import javax.net.SocketFactory;
 import javax.net.ssl.*;
 
@@ -33,7 +34,7 @@ public class TetrisClient {
     public void list_lobbies(String server_name, InetAddress server_address, int server_port) throws IOException {
     	disconnectLobby();
     	list_lobbies = new ArrayList<>();
-    	byte[] msg = ("ASKLIST " + server_name + CRLF + CRLF).getBytes();
+    	byte[] msg = ("ASKLIST " + server_name + CRLF).getBytes();
 
         this.server_address = server_address;
         this.server_port = server_port;
@@ -70,7 +71,7 @@ public class TetrisClient {
     
     public void list_players() throws IOException {
     	players = new ArrayList<>();
-        byte[] msg = ("LISTPLAYERS " + connectedLobbyName + CRLF + CRLF).getBytes();
+        byte[] msg = ("LISTPLAYERS " + connectedLobbyName + CRLF).getBytes();
 
         OutputStream out = null;
         InputStream in = null;
@@ -106,7 +107,7 @@ public class TetrisClient {
     
     public void join_lobby(String lobby_name, String player_name) throws IOException {
     	disconnectLobby();
-        byte[] msg = ("CONNECT " + lobby_name + " " + player_name + " " + CRLF + CRLF).getBytes();
+        byte[] msg = ("CONNECT " + lobby_name + " " + player_name + " " + CRLF).getBytes();
 
         OutputStream out = null;
         InputStream in = null;
@@ -140,7 +141,7 @@ public class TetrisClient {
 
     public void create_lobby(String lobby_name, String player_name) throws IOException {
     	disconnectLobby();
-        byte[] msg = ("CREATE " + lobby_name + " " + player_name + " " + CRLF + CRLF).getBytes();
+        byte[] msg = ("CREATE " + lobby_name + " " + player_name + " " + CRLF).getBytes();
         OutputStream out = null;
         InputStream in = null;
       
@@ -170,14 +171,14 @@ public class TetrisClient {
     }
     
     public void start_game(String player_name) throws IOException {
-    	 byte[] msg = ("READY " + player_name + " " + CRLF + CRLF).getBytes();
+    	 byte[] msg = ("READY " + player_name + " " + CRLF).getBytes();
     	 lsos.write(msg);
     }
     
     public void send_game_state(String player_name,String server_name, ArrayList<ColorJSON> colors) throws IOException {
-	   	 String msg = "GAMESTATE " + player_name + " " + connectedLobbyName + " " + server_name + " " + CRLF + CRLF;
+	   	 String msg = "GAMESTATE " + player_name + " " + connectedLobbyName + " " + server_name + " " + CRLF;
 	   	 String contents = ColorJSON.toJSONfromArrayList(colors).toString();
-	   	 lsos.write((msg+contents+CRLF+CRLF).getBytes());
+	   	 lsos.write((msg+contents+CRLF).getBytes());
     }
 
     public void send_game_over(String player_name) throws IOException {
@@ -188,7 +189,7 @@ public class TetrisClient {
     
     public int listen_lobby_socket(GUIMultiGame game)  {
 		 try {
-			 byte[] buf = new byte[64000];
+			 byte[] buf = new byte[20000];
 			 int read = lsis.read(buf);
 			 byte[] buffer = Arrays.copyOfRange(buf,0,read);
 			 String string = new String(buffer);
@@ -200,31 +201,49 @@ public class TetrisClient {
 			 }
 			 String [] header_tokenized = parts[0].split(" ");
 			 if(header_tokenized[0].trim().equals("GAMESTATE")) {
-				 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[2].trim());
-				 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
-					 updateSmallBoard(game.smallBoard1,received);
-				 }
-				 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
-					 updateSmallBoard(game.smallBoard2,received);
-				 }
-				 else if(game.smallBoard3.playerName!=null && game.smallBoard3.playerName.equals(header_tokenized[1])) {
-					 updateSmallBoard(game.smallBoard3,received);
-				 }
-				 else {
-					 if(game.smallBoard1.playerName==null) {
-						 game.smallBoard1.playerName=header_tokenized[1];
-						 updateSmallBoard(game.smallBoard1,received);
+				 while(true) {
+				 try {
+						 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[1].trim());
+						
+						 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
+							 updateSmallBoard(game.smallBoard1,received);
+						 }
+						 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
+							 updateSmallBoard(game.smallBoard2,received);
+						 }
+						 else if(game.smallBoard3.playerName!=null && game.smallBoard3.playerName.equals(header_tokenized[1])) {
+							 updateSmallBoard(game.smallBoard3,received);
+						 }
+						 else {
+							 if(game.smallBoard1.playerName==null) {
+								 game.smallBoard1.playerName=header_tokenized[1];
+								 updateSmallBoard(game.smallBoard1,received);
+							 }
+							 else if(game.smallBoard2.playerName==null) {
+								 game.smallBoard2.playerName=header_tokenized[1];
+								 updateSmallBoard(game.smallBoard2,received);
+							 }
+							 else if(game.smallBoard3.playerName==null) {
+								 game.smallBoard3.playerName=header_tokenized[1];
+								 updateSmallBoard(game.smallBoard3,received);
+							 }
+						 }
+						 return 1;
 					 }
-					 else if(game.smallBoard2.playerName==null) {
-						 game.smallBoard2.playerName=header_tokenized[1];
-						 updateSmallBoard(game.smallBoard2,received);
-					 }
-					 else if(game.smallBoard3.playerName==null) {
-						 game.smallBoard3.playerName=header_tokenized[1];
-						 updateSmallBoard(game.smallBoard3,received);
+					 catch(Exception e) {
+						 e.printStackTrace();
+						 buf = new byte[20000];
+						 read = lsis.read(buf);
+						 buffer = Arrays.copyOfRange(buf,0,read);
+						 string = new String(buffer);
+						 parts = string.split(System.getProperty("line.separator"));
+						 System.out.println("Received parts2: "+parts.length);
+						 for(String part:parts) {
+							 System.out.println("Im a part2: "+part.trim());
+						 }
 					 }
 				 }
-				 return 1;
+				
 			 }
 			 else if(header_tokenized[0].trim().equals("GAMEENDED")){
 			 	System.out.println("Received game ended message");

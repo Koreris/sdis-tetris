@@ -99,7 +99,7 @@ public class TetrisLobby implements Runnable{
 	        this.username = username;
 	        this.sslsocket = ssl;
         }
-	    
+	    	
 	    public void checkAllTrue() throws IOException {
 	    	boolean alltrue=true;
 	    	for(String key: playersReady.keySet()) {
@@ -167,8 +167,29 @@ public class TetrisLobby implements Runnable{
 		    		break;
 	    	}
 	    }
-
-		protected void forwardState(String packet) throws IOException {
+	    
+	    void closeSockets(Socket sock) {
+	    	try {
+				out.close();
+				in.close();
+	        	sock.close();
+	        	sslsocket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	    }
+	    
+	    void handlePlayerDisconnection() {
+	    	if(!game_started) {
+        		scores.remove(username);
+        		playerConnections.remove(username);
+        		playersReady.remove(username);
+        		if(scores.isEmpty())
+        			master.deleteEmptyLobby(lobby_name);
+        	}
+	    }
+	    
+        protected void forwardState(String packet) throws IOException {
 			out.write(packet.getBytes());
 		}
 
@@ -195,13 +216,8 @@ public class TetrisLobby implements Runnable{
 
                     if(read < 0){
                     	System.out.println("Client left the lobby : "+username);
-                    	if(!game_started) {
-                    		scores.remove(username);
-                    		playerConnections.remove(username);
-                    		playersReady.remove(username);
-                    		if(scores.isEmpty())
-                    			master.deleteEmptyLobby(lobby_name);
-                    	}
+                    	handlePlayerDisconnection();
+                    	closeSockets(socket);
                     	break;
 					}
 
@@ -210,28 +226,16 @@ public class TetrisLobby implements Runnable{
                     String str = new String(buffer);
                     //System.out.println("Received packet in lobby " + lobby_name + ": " + str);
                     handlePacket(str);
-                    
-                    //TODO - send packet to other clients
                 }
                 catch(SocketException e) {
                 	System.out.println("Client has been disconnected: "+username);
-                	if(!game_started) {
-                		scores.remove(username);
-                		playerConnections.remove(username);
-                		playersReady.remove(username);
-                		if(scores.isEmpty())
-                			master.deleteEmptyLobby(lobby_name);
-                	}
+                	handlePlayerDisconnection();
+                	closeSockets(socket);
                 	break;
                 } catch (IOException e) {
                 	System.out.println("Client has been disconnected: "+username);
-                	if(!game_started) {
-                		scores.remove(username);
-                		playerConnections.remove(username);
-                		playersReady.remove(username);
-                		if(scores.isEmpty())
-                			master.deleteEmptyLobby(lobby_name);
-                	}
+                	handlePlayerDisconnection();
+                	closeSockets(socket);
 					e.printStackTrace();
 				}
             }
