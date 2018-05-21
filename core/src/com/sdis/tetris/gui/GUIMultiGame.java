@@ -312,6 +312,18 @@ public class GUIMultiGame extends GUIScreen
 				});
 				sendStateCount=0;
 			}
+
+			if(myBoard.isGameOver()){
+				executor.execute(new Runnable() {
+					public void run() {
+						try {
+							client.send_game_over(parent.playerName);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
 			
 		}
 
