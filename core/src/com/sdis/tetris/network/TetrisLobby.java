@@ -60,11 +60,11 @@ public class TetrisLobby{
 	public void start_and_replicate_game() {
 		//prevent other joins from this point on?
 		game_started=true;
-		TetrisLobbySerializable static_representation = 
-				new TetrisLobbySerializable()
+		TetrisLobbyJSON json_representation = 
+				new TetrisLobbyJSON()
 				.setLobbyName(lobby_name)
 				.setScores(scores);
-		this.master.replication_service.triggerReplication(static_representation);
+		this.master.replication_service.triggerReplication(json_representation);
 	}
 	
 	public void end_game() {

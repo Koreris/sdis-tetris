@@ -24,7 +24,7 @@ public class TetrisServer implements Runnable{
     SocketFactory socket_factory;
     ThreadPoolExecutor thread_pool;
     ConcurrentHashMap<String,TetrisLobby> running_lobbies;
-    ConcurrentHashMap<String,TetrisLobbySerializable> replicated_lobbies;
+    ConcurrentHashMap<String,TetrisLobbyJSON> replicated_lobbies;
     ConcurrentHashMap<String,Integer> local_leaderboards;
     ConcurrentHashMap<String,String> other_servers;
     ServerReplicationService replication_service;
@@ -40,7 +40,7 @@ public class TetrisServer implements Runnable{
        // System.setProperty( "user.dir", "/path/to/dir");
         server_name=name;
         running_lobbies = new ConcurrentHashMap<String,TetrisLobby>();
-        replicated_lobbies = new ConcurrentHashMap<String,TetrisLobbySerializable>();
+        replicated_lobbies = new ConcurrentHashMap<String,TetrisLobbyJSON>();
         local_leaderboards = new ConcurrentHashMap<String,Integer>();
         other_servers = new ConcurrentHashMap<String,String>();
 
@@ -225,16 +225,10 @@ public class TetrisServer implements Runnable{
 
         }
 
-        public void triggerReplication(TetrisLobbySerializable lobby) {
-            running_lobbies.get(lobby.lobby_name);
-           
+        public void triggerReplication(TetrisLobbyJSON lobby) {
+        		running_lobbies.get(lobby.lobby_name);
                 String header = "REPLICATE" +  " " + server_name + " " + lobby.lobby_name + CRLF;
-                byte[] lobby_bytes = null;
-				try {
-					lobby_bytes = Utils.convertToBytes(lobby);
-				} catch (IOException e1) {
-				}
-                byte[] replicate = Utils.combineByteArrays(header.getBytes(),lobby_bytes);
+                byte[] replicate = Utils.combineByteArrays(header.getBytes(),lobby.toJSON().toString().getBytes());
                 for (String key : other_servers.keySet())
                 {
                 	if(key.equals(server_name))
@@ -278,7 +272,7 @@ public class TetrisServer implements Runnable{
         public void handleReplicationPacket(Socket sock){
 			try {
 				InputStream sockin = sock.getInputStream();
-	        	byte []buffer = new byte[64000];
+	        	byte[] buffer = new byte[2048];
 				int read = sockin.read(buffer);
 	            String packetString = new String(buffer,0,read);
 	
@@ -289,7 +283,7 @@ public class TetrisServer implements Runnable{
 	
 	            switch(headerComponents[0]) {
 	                case "REPLICATE":
-                        TetrisLobbySerializable lobby = (TetrisLobbySerializable) Utils.convertFromBytes(lines[1].trim().getBytes());
+                        TetrisLobbyJSON lobby = TetrisLobbyJSON.fromJSON(lines[1].trim());
                         //Key = original server name + lobby name
                         replicated_lobbies.put(headerComponents[1]+headerComponents[2], lobby);
                         printLobbies();
@@ -300,8 +294,7 @@ public class TetrisServer implements Runnable{
 	                default:
 	                    break;
 	            }
-			} catch (IOException | ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
+			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
         }
