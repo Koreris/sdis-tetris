@@ -159,6 +159,7 @@ public class TetrisLobby{
 		    			System.out.println("Game is finished, broadcasting gameended");
 		    			for(ClientListener cl: playerConnections.values()){
 		    				cl.out.write("GAMEENDED".getBytes());
+		    				master.replication_service.deleteLobby(lobby_name);
 						}
 					}
 		    		break;
