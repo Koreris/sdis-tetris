@@ -10,6 +10,7 @@ import com.sdis.tetris.logic.HighScores;
 import com.sdis.tetris.network.TetrisClient;
 
 import java.net.InetAddress;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -24,6 +25,7 @@ public class Tetris extends Game
 	public String serverName;
 	public InetAddress serverAddress;
 	public int serverPort;
+	public ConcurrentHashMap<String,String> other_servers = new ConcurrentHashMap<>();
 	private AudioHandler audioHandler = AudioHandler.getInstance();
 	HighScores scores= new HighScores();
 	

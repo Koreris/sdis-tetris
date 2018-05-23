@@ -1,7 +1,4 @@
 package com.sdis.tetris.network;
-
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
@@ -10,8 +7,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
-import java.util.Queue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -52,8 +47,8 @@ public class TetrisLobby{
             ClientListener newlistener =new ClientListener(player_name,socket);
             playerConnections.put(player_name,newlistener);
             scores.putIfAbsent(player_name, 0);
-            playersReady.put(player_name, false);
-            playersGameover.put(player_name, false);
+            playersReady.putIfAbsent(player_name, false);
+            playersGameover.putIfAbsent(player_name, false);
             master.thread_pool.execute(newlistener);
         } catch (IOException e) {
             e.printStackTrace();
@@ -61,7 +56,15 @@ public class TetrisLobby{
         }
         return socket.getLocalPort();
 	}
-
+	
+	public TetrisLobby set_scores_from_replication(String[] replicated_scores) {
+		for(String sc:replicated_scores) {
+			String[] scoreComponents = sc.split(":");
+			scores.put(scoreComponents[0], Integer.parseInt(scoreComponents[1].trim()));
+		}
+		return this;
+	}
+	
 	public void start_and_replicate_game() {
 		//prevent other joins from this point on?
 		game_started=true;
@@ -199,7 +202,6 @@ public class TetrisLobby{
 	       
 	        try{
                 socket = sslsocket.accept();
-				System.out.println("Starting socket in port " + socket.getLocalPort());
 				out = socket.getOutputStream();
                 in = socket.getInputStream();
             }catch (IOException e){
@@ -240,4 +242,6 @@ public class TetrisLobby{
             }
         }
     }
+
+
 }

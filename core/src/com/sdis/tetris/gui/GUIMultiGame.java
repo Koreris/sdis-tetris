@@ -2,6 +2,7 @@ package com.sdis.tetris.gui;
 
 import java.awt.Button;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -73,9 +74,11 @@ public class GUIMultiGame extends GUIScreen
 	float minBoardHeight=0;
 	float maxBoardHeight=(myBoard.boardHeight*myBoard.scaleY);
 	int count=0;
+	boolean lockServerChange=false;
 	int sendStateCount=0;
 	private TetrisClient client;
 	ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+	
 	public void changeState(GameState newState)
 	{
 		state = newState;
@@ -299,14 +302,21 @@ public class GUIMultiGame extends GUIScreen
 			}
 			sendStateCount++;
 			
-			if(sendStateCount>=5) {
-				
+			if(sendStateCount>=5 && !myBoard.isGameOver() && !lockServerChange) {
 				executor.execute(new Runnable() {
 					public void run() {
 						try {
 							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard());
 						} catch (IOException e) {
 							e.printStackTrace();
+							if(!lockServerChange) {
+								lockServerChange=true;
+								if(client.canReachAnyServer(parent.other_servers)) {
+									client.reconnectLobbyOnBackupServer(parent.serverName,parent.playerName);
+									lockServerChange=false;
+								}
+							}
+							//else it was a client failure
 						}
 					}
 				});

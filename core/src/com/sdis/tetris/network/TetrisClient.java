@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TetrisClient {
     protected static String CRLF = "\r\n";
@@ -22,6 +24,7 @@ public class TetrisClient {
     InputStream lsis;
     public String connectedLobbyName;
     SocketFactory sslsocketFactory;
+    public String backupServer;
     public ArrayList<String> list_lobbies = new ArrayList<>();
     public ArrayList<String> players = new ArrayList<>();
     InetAddress server_address;
@@ -190,6 +193,8 @@ public class TetrisClient {
     
     
     public int listen_lobby_socket(GUIMultiGame game)  {
+    	if(lobbySocket.isClosed())
+    		return -1;
 		 try {
 			 byte[] buf = new byte[20000];
 			 int read = lsis.read(buf);
@@ -204,58 +209,45 @@ public class TetrisClient {
 			 String [] header_tokenized = parts[0].split(" ");
 			 if(header_tokenized[0].trim().equals("GAMESTATE")) {
 				 while(true) {
-				 try {
-						 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[1].trim());
-						
-						 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
+					 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[1].trim());
+					
+					 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
+						 updateSmallBoard(game.smallBoard1,received);
+					 }
+					 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
+						 updateSmallBoard(game.smallBoard2,received);
+					 }
+					 else if(game.smallBoard3.playerName!=null && game.smallBoard3.playerName.equals(header_tokenized[1])) {
+						 updateSmallBoard(game.smallBoard3,received);
+					 }
+					 else {
+						 if(game.smallBoard1.playerName==null) {
+							 game.smallBoard1.playerName=header_tokenized[1];
 							 updateSmallBoard(game.smallBoard1,received);
 						 }
-						 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
+						 else if(game.smallBoard2.playerName==null) {
+							 game.smallBoard2.playerName=header_tokenized[1];
 							 updateSmallBoard(game.smallBoard2,received);
 						 }
-						 else if(game.smallBoard3.playerName!=null && game.smallBoard3.playerName.equals(header_tokenized[1])) {
+						 else if(game.smallBoard3.playerName==null) {
+							 game.smallBoard3.playerName=header_tokenized[1];
 							 updateSmallBoard(game.smallBoard3,received);
 						 }
-						 else {
-							 if(game.smallBoard1.playerName==null) {
-								 game.smallBoard1.playerName=header_tokenized[1];
-								 updateSmallBoard(game.smallBoard1,received);
-							 }
-							 else if(game.smallBoard2.playerName==null) {
-								 game.smallBoard2.playerName=header_tokenized[1];
-								 updateSmallBoard(game.smallBoard2,received);
-							 }
-							 else if(game.smallBoard3.playerName==null) {
-								 game.smallBoard3.playerName=header_tokenized[1];
-								 updateSmallBoard(game.smallBoard3,received);
-							 }
-						 }
-						 return 1;
 					 }
-					 catch(Exception e) {
-						 e.printStackTrace();
-						 buf = new byte[20000];
-						 read = lsis.read(buf);
-						 buffer = Arrays.copyOfRange(buf,0,read);
-						 string = new String(buffer);
-						 parts = string.split(System.getProperty("line.separator"));
-						 System.out.println("Received parts2: "+parts.length);
-						 for(String part:parts) {
-							 System.out.println("Im a part2: "+part.trim());
-						 }
-					 }
+					 return 1;
 				 }
 				
 			 }
 			 else if(header_tokenized[0].trim().equals("GAMEENDED")){
 			 	System.out.println("Received game ended message");
 				 //TODO -  !!!JOSÉ!!!  - Aqui deve passar para o ecra de mostrar as pontuacoes finais de todos os jogadores (ecra de gameover)
+			 	return 0;
 			 }
 		 }
-		 catch(Exception e) {
-			 e.printStackTrace();
-			 return -1;
-		 }
+		catch (IOException e) {
+			//e.printStackTrace();
+			return -1;
+		}
 		 return -1;
     }
    
@@ -280,7 +272,7 @@ public class TetrisClient {
     	 byte[] buf = new byte[1024];
          try {
 			 int read = lsis.read(buf);
-			 String string = new String(buf);
+			 String string = new String(buf,0,read);
 			 String [] msg_tokenized = string.split(" ");
 			 if(msg_tokenized[0].trim().equals("BEGIN"))
 				 return Integer.parseInt(msg_tokenized[1].trim());
@@ -294,7 +286,6 @@ public class TetrisClient {
     
     public void disconnectLobby(){
     	if(lobbySocket!=null) {
-    		connectedLobbyName="";
     		try {
 				lsos.close();
 		    	lsis.close();
@@ -305,4 +296,54 @@ public class TetrisClient {
 			}
     	}
     }
+
+	public boolean canReachAnyServer(ConcurrentHashMap<String,String> servers) {
+		if(servers.isEmpty())
+			System.out.println("SERVERS HASHMAP IS EMPTY");
+		for(String key: servers.keySet()) {
+			try {
+				String[] serverInfo = servers.get(key).split(" ");
+				InetAddress server_address = InetAddress.getByName(serverInfo[0]);
+		        int server_port = Integer.parseInt(serverInfo[1]);
+		        OutputStream out = null;
+		        InputStream in = null;
+		        System.out.println("TRYING SERVER "+serverInfo[0]+":"+serverInfo[1]);
+		        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
+		        out = socket.getOutputStream();
+		        in = socket.getInputStream();
+		        
+		        out.write(("TESTCONNECTION "+CRLF).getBytes());
+			
+		        byte[] read = new byte[1024];
+		        String readValue;
+		        int readBytes = in.read(read);
+		        if(readBytes>0) {
+		        	out.close();
+		  	        in.close();
+		  	        socket.close();
+		  	        this.backupServer=key;
+		  	        this.server_address=server_address;
+		  	        this.server_port=server_port;
+		  	        System.out.println("SERVER FAULT: CHOSE NEW SERVER "+key+"-"+server_address+":"+server_port);
+		        	return true;
+		        }
+		        out.close();
+		        in.close();
+		        socket.close();
+			} catch (IOException e) {
+	            e.printStackTrace();   
+	        }
+		}
+		System.out.println("CLIENT FAULT: CAN'T REACH ANY SERVER");
+		return false;
+	}
+
+	public void reconnectLobbyOnBackupServer(String original_server,String player_name) {
+		try {
+			join_lobby(original_server+connectedLobbyName, player_name);
+			 System.out.println("RESUMING GAME IN NEW SERVER SUCCESSFULLY");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
 }

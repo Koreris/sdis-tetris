@@ -41,7 +41,6 @@ public class GUIServer extends GUIScreen{
     ThreadPoolExecutor executor;
     private TextField playerTextField;
     private Label label;
-    ConcurrentHashMap<String,String> other_servers;
 
     private class JoinServer implements Runnable
     {
@@ -61,8 +60,8 @@ public class GUIServer extends GUIScreen{
         }
     }
     
-    public void listServers(){
-    	 other_servers = new ConcurrentHashMap<>();
+    public void listServers(ConcurrentHashMap<String,String> other_servers){
+    	 other_servers.clear();
          executor.execute(new ParseServersFile(other_servers));
          executor.shutdown();
          try {
@@ -93,7 +92,7 @@ public class GUIServer extends GUIScreen{
         LinkedBlockingQueue<Runnable> queue= new LinkedBlockingQueue<Runnable>();
         executor = new ThreadPoolExecutor(1, 5, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         
-        listServers();
+        listServers(paramParent.other_servers);
         
         scroll = new ScrollPane(list, skinv2);
         label = new Label("Player name:", skinv2);
@@ -139,6 +138,7 @@ public class GUIServer extends GUIScreen{
                 paramParent.serverPort = Integer.parseInt(lineComponents[2]);
             	paramParent.playerName=playerTextField.getText();
             	paramParent.serverName=lineComponents[0];
+
                 stage.addAction(Actions.sequence(Actions.moveTo(-480.0f, 0.0f, 0.5f), Actions.run(new JoinServer())));   
             }
 

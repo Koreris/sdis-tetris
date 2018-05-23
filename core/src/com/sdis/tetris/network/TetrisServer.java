@@ -163,8 +163,6 @@ public class TetrisServer implements Runnable{
                     }
                     
                     msg = msg + CRLF;
-                    
-                    //System.out.println("SERVER RESPONSE TO LIST LOBBIES :"+msg);
                     out.write(msg.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("LISTPLAYERS") == 0){
@@ -180,24 +178,33 @@ public class TetrisServer implements Runnable{
                    }
                     
                    msg = msg + CRLF;
-                    
-                  // System.out.println("SERVER RESPONSE TO LIST PLAYERS:"+msg);
                    out.write(msg.getBytes());
                 }
                 else if(msg_tokens[0].compareTo("CONNECT") == 0){
                     String lobby_name = msg_tokens[1].trim();
+                    String answer="";
                     if(running_lobbies.containsKey(lobby_name)){
-                    	if(running_lobbies.get(lobby_name).scores.size()<4) {
-	                    	String answer = "JOINED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
+                    	if(running_lobbies.get(lobby_name).scores.containsKey(msg_tokens[2])) {
+                    		answer = "RECONNECTED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
+	                    	out.write(answer.getBytes());  
+                    	}
+                    	else if(running_lobbies.get(lobby_name).scores.size()<4 && !running_lobbies.get(lobby_name).game_started) {
+	                    	answer = "JOINED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
 	                    	out.write(answer.getBytes());  
                     	}
                     }
-                    
+                    else if(replicated_lobbies.containsKey(lobby_name)){
+                    	running_lobbies.putIfAbsent(lobby_name, new TetrisLobby(TetrisServer.this,lobby_name).set_scores_from_replication(replicated_lobbies.get(lobby_name).scores));
+                    	answer = "CHANGEDSERVER " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
+                    	out.write(answer.getBytes()); 
+                    }   
+                    System.out.println("RESPONSE TO JOIN: "+answer);
                 }
-
-                terminateConnection();
-            }
-            catch(SocketTimeoutException e) {
+                else if(msg_tokens[0].compareTo("TESTCONNECTION") == 0){
+                	System.out.println("RECEIVED TEST CONNECTION");
+                	String answer = "ACKNOWLEDGED "+CRLF;
+                	out.write(answer.getBytes());  
+                }
                 terminateConnection();
             }
             catch (Exception e) {
@@ -284,7 +291,8 @@ public class TetrisServer implements Runnable{
 	            switch(headerComponents[0]) {
 	                case "REPLICATE":
                         TetrisLobbyJSON lobby = TetrisLobbyJSON.fromJSON(lines[1].trim());
-                        //Key = original server name + lobby name
+                        //Key = original server name + lobby name´
+                        replicated_lobbies.remove(headerComponents[1]+headerComponents[2]);
                         replicated_lobbies.put(headerComponents[1]+headerComponents[2], lobby);
                         printLobbies();
 	                    break;
