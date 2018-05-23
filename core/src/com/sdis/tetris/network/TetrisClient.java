@@ -177,8 +177,8 @@ public class TetrisClient {
     	 lsos.write(msg);
     }
     
-    public void send_game_state(String player_name,String server_name, ArrayList<ColorJSON> colors) throws IOException {
-	   	 String msg = "GAMESTATE " + player_name + " " + connectedLobbyName + " " + server_name + " " + CRLF;
+    public void send_game_state(String player_name,String server_name, ArrayList<ColorJSON> colors, int player_score) throws IOException {
+	   	 String msg = "GAMESTATE " + player_name + " " + connectedLobbyName + " " + server_name + " " + player_score + " " + CRLF;
 	   	 String contents = ColorJSON.toJSONfromArrayList(colors).toString();
 	   	 lsos.write((msg+contents+CRLF).getBytes());
     }
@@ -202,7 +202,7 @@ public class TetrisClient {
 				 System.out.println("Im a part: "+part.trim());
 			 }
 			 String [] header_tokenized = parts[0].split(" ");
-			 if(header_tokenized[0].trim().equals("GAMESTATE")) {
+			 if(header_tokenized[0].trim().equals("GAMESTATE")) { //FORMAT: GAMESTATE player_name connectedLobbyName server_name player_score
 				 while(true) {
 				 try {
 						 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[1].trim());
