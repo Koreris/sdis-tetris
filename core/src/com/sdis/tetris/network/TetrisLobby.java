@@ -124,7 +124,7 @@ public class TetrisLobby{
 	    }
 	    
 	    public void signalGameStarted() throws IOException {
-	    	out.write(("BEGIN "+playersReady.size()+" "+master.CRLF).getBytes());
+	    	out.write(("BEGIN "+playersReady.size()+" "+TetrisServer.CRLF).getBytes());
 	    }
 	    
 	    public void handlePacket(String packet) throws IOException {
@@ -135,6 +135,11 @@ public class TetrisLobby{
 		    		checkAllTrue();
 		    		break;
 		    	case "GAMESTATE":
+		    		if(scores.get(packetComponents[1]) == null){
+		    			System.out.println("Warning - Could not get current score for player " + packetComponents[1]);
+					}
+					scores.put(packetComponents[1],Integer.parseInt(packetComponents[4]));
+
 		    		executor.execute(new Runnable() {
 		    			public void run() {
 		    				for(String key: playerConnections.keySet()) {
@@ -160,9 +165,17 @@ public class TetrisLobby{
 					}
 					if(finished){
 		    			System.out.println("Game is finished, broadcasting gameended");
-		    			for(ClientListener cl: playerConnections.values()){
-		    				cl.out.write("GAMEENDED".getBytes());
+						String msg = "GAMEENDED";
+
+						for(String key : scores.keySet()) {
+							msg += " " + key + " " + scores.get(key);
 						}
+						
+						for(ClientListener cl: playerConnections.values()){
+							cl.out.write(msg.getBytes());
+							master.replication_service.deleteLobby(lobby_name);
+						}
+
 					}
 		    		break;
 		    	default:

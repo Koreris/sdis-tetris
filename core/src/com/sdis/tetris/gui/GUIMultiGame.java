@@ -1,42 +1,26 @@
 package com.sdis.tetris.gui;
-
-import java.awt.Button;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
-
 import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.TetrisPreferences;
-import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.logic.Board;
 import com.sdis.tetris.network.TetrisClient;
-import com.sdis.tetris.network.Utils;
 
 public class GUIMultiGame extends GUIScreen
 {
@@ -76,6 +60,7 @@ public class GUIMultiGame extends GUIScreen
 	int count=0;
 	boolean lockServerChange=false;
 	int sendStateCount=0;
+	String playerName;
 	private TetrisClient client;
 	ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 	
@@ -90,6 +75,7 @@ public class GUIMultiGame extends GUIScreen
 		super(paramParent, TetrisPreferences.getTheme());
 		opponentNr=paramParent.opponentNr;
 		client = paramParent.networkClient;
+		playerName = paramParent.playerName;
 		reStartGame();
 		t1.cancel();
 		changeState(new GameRunningState());
@@ -306,7 +292,7 @@ public class GUIMultiGame extends GUIScreen
 				executor.execute(new Runnable() {
 					public void run() {
 						try {
-							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard());
+							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard(), myBoard.getPlayerScore());
 						} catch (IOException e) {
 							e.printStackTrace();
 							if(!lockServerChange) {
@@ -370,7 +356,7 @@ public class GUIMultiGame extends GUIScreen
 
 			if(myBoard.isGameOver())
 			{
-				parent.addToHighScores(myBoard.getPlayerScore(),"Player1");
+				parent.addToHighScores(myBoard.getPlayerScore(), playerName);
 				t1.cancel();
 				
 				changeState(new GameOverState());

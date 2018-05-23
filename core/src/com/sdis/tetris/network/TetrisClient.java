@@ -1,9 +1,6 @@
 package com.sdis.tetris.network;
-
-import javax.json.stream.JsonParsingException;
 import javax.net.SocketFactory;
 import javax.net.ssl.*;
-
 import com.badlogic.gdx.graphics.Color;
 import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.logic.Board;
@@ -27,6 +24,7 @@ public class TetrisClient {
     public String backupServer;
     public ArrayList<String> list_lobbies = new ArrayList<>();
     public ArrayList<String> players = new ArrayList<>();
+	public ConcurrentHashMap<String,Integer> multiscores;
     InetAddress server_address;
     int server_port;
 
@@ -180,8 +178,8 @@ public class TetrisClient {
     	 lsos.write(msg);
     }
     
-    public void send_game_state(String player_name,String server_name, ArrayList<ColorJSON> colors) throws IOException {
-	   	 String msg = "GAMESTATE " + player_name + " " + connectedLobbyName + " " + server_name + " " + CRLF;
+    public void send_game_state(String player_name,String server_name, ArrayList<ColorJSON> colors, int player_score) throws IOException {
+	   	 String msg = "GAMESTATE " + player_name + " " + connectedLobbyName + " " + server_name + " " + player_score + " " + CRLF;
 	   	 String contents = ColorJSON.toJSONfromArrayList(colors).toString();
 	   	 lsos.write((msg+contents+CRLF).getBytes());
     }
@@ -207,7 +205,7 @@ public class TetrisClient {
 				 System.out.println("Im a part: "+part.trim());
 			 }
 			 String [] header_tokenized = parts[0].split(" ");
-			 if(header_tokenized[0].trim().equals("GAMESTATE")) {
+			 if(header_tokenized[0].trim().equals("GAMESTATE")) { //FORMAT: GAMESTATE player_name connectedLobbyName server_name player_score
 				 while(true) {
 					 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[1].trim());
 					
@@ -240,6 +238,14 @@ public class TetrisClient {
 			 }
 			 else if(header_tokenized[0].trim().equals("GAMEENDED")){
 			 	System.out.println("Received game ended message");
+				 String stringtemp;
+				 int tempscores;
+				 for(int i=1; i+1<header_tokenized.length;i++){
+				 	stringtemp = header_tokenized[i];
+				 	i++;
+				 	tempscores = Integer.parseInt(header_tokenized[i]);
+					multiscores.put(stringtemp, tempscores);
+				 }
 				 //TODO -  !!!JOSÉ!!!  - Aqui deve passar para o ecra de mostrar as pontuacoes finais de todos os jogadores (ecra de gameover)
 			 	return 0;
 			 }
