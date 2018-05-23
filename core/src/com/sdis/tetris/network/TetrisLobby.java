@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -133,11 +132,6 @@ public class TetrisLobby{
 		    		checkAllTrue();
 		    		break;
 		    	case "GAMESTATE":
-		    		if(scores.get(packetComponents[1]) == null){
-		    			System.out.println("Warning - Could not get current score for player " + packetComponents[1]);
-					}
-					scores.put(packetComponents[1],Integer.parseInt(packetComponents[4]));
-
 		    		executor.execute(new Runnable() {
 		    			public void run() {
 		    				for(String key: playerConnections.keySet()) {
@@ -163,17 +157,10 @@ public class TetrisLobby{
 					}
 					if(finished){
 		    			System.out.println("Game is finished, broadcasting gameended");
-						String msg = "GAMEENDED";
-
-						for(Map.Entry<String, Integer> score : scores.entrySet()) {
-							msg += " " + score.getKey() + " " + score.getValue();
+		    			for(ClientListener cl: playerConnections.values()){
+		    				cl.out.write("GAMEENDED".getBytes());
+		    				master.replication_service.deleteLobby(lobby_name);
 						}
-						
-						for(ClientListener cl: playerConnections.values()){
-							cl.out.write(msg.getBytes());
-							master.replication_service.deleteLobby(lobby_name);
-						}
-
 					}
 		    		break;
 		    	default:
