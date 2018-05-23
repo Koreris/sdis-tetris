@@ -290,7 +290,7 @@ public class GUIMultiGame extends GUIScreen
 				executor.execute(new Runnable() {
 					public void run() {
 						try {
-							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard());
+							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard(), myBoard.getPlayerScore());
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
