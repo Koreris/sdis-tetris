@@ -1,9 +1,6 @@
 package com.sdis.tetris.network;
-
-import javax.json.stream.JsonParsingException;
 import javax.net.SocketFactory;
 import javax.net.ssl.*;
-
 import com.badlogic.gdx.graphics.Color;
 import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.logic.Board;
@@ -14,6 +11,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TetrisClient {
     protected static String CRLF = "\r\n";
@@ -24,6 +22,7 @@ public class TetrisClient {
     SocketFactory sslsocketFactory;
     public ArrayList<String> list_lobbies = new ArrayList<>();
     public ArrayList<String> players = new ArrayList<>();
+	public ConcurrentHashMap<String,Integer> multiscores;
     InetAddress server_address;
     int server_port;
 
@@ -249,6 +248,14 @@ public class TetrisClient {
 			 }
 			 else if(header_tokenized[0].trim().equals("GAMEENDED")){
 			 	System.out.println("Received game ended message");
+				 String stringtemp;
+				 int tempscores;
+				 for(int i=1; i+1<header_tokenized.length;i++){
+				 	stringtemp = header_tokenized[i];
+				 	i++;
+				 	tempscores = Integer.parseInt(header_tokenized[i]);
+					multiscores.put(stringtemp, tempscores);
+				 }
 				 //TODO -  !!!JOSÉ!!!  - Aqui deve passar para o ecra de mostrar as pontuacoes finais de todos os jogadores (ecra de gameover)
 			 }
 		 }

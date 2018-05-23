@@ -19,8 +19,6 @@ import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.network.ParseServersFile;
 import com.sdis.tetris.network.TetrisClient;
-
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;

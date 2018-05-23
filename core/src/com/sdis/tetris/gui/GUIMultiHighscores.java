@@ -11,25 +11,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-
 import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
-import com.sdis.tetris.TetrisPreferences;
-import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.audio.SFX;
-import com.sdis.tetris.logic.HighScores;
+import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.network.TetrisClient;
 
 import java.util.Map;
 
-public class GUIHighscores extends GUIScreen
+public class GUIMultiHighscores extends GUIScreen
 {
 
 	Sprite background = new Sprite(new Texture(Gdx.files.internal("img/hsbg.png"), false));
 	private final Stage stage = new Stage();
 	private final Table table = new Table();
-	private final TextButton MainMenuButton = new TextButton("Main Menu", Buttons.MenuButton);
-	public GUIHighscores(Tetris paramParent)
+	private final TextButton MainMenuButton = new TextButton("Lobby", Buttons.MenuButton);
+	public GUIMultiHighscores(Tetris paramParent)
 	{
 		super(paramParent, Song.THEME_CREDITS);
 
@@ -37,12 +34,11 @@ public class GUIHighscores extends GUIScreen
 		background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
 		table.setPosition(0,75);
 		table.add(new Label("HIGHSCORES", Buttons.TitleLabel)).padBottom(32).row();
-
 		TetrisClient cliente = new TetrisClient();
 		for (Map.Entry me: cliente.multiscores.entrySet())
 		{
 			String highscore="i+1\n"+me.getKey() + " " + me.getValue();
-
+			
 			table.add(new Label(highscore, Buttons.TitleLabel)).padBottom(20).row();
 		}
 		table.add(MainMenuButton);
