@@ -150,11 +150,6 @@ public class GUIMultiGame extends GUIScreen
 		return !(state instanceof GameRunningState);
 	}
 
-
-
-
-
-
 	private abstract class GameState
 	{
 		public abstract void update(float delta);

@@ -197,9 +197,9 @@ public class TetrisLobby{
 	    }
 	    
 	    void handlePlayerDisconnection() {
+	    	playerConnections.remove(username);
 	    	if(!game_started) {
         		scores.remove(username);
-        		playerConnections.remove(username);
         		playersReady.remove(username);
         		if(scores.isEmpty())
         			master.deleteEmptyLobby(lobby_name);
