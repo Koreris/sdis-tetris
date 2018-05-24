@@ -1,6 +1,5 @@
 package com.sdis.tetris.gui;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -165,11 +164,27 @@ public class GUIMultiGame extends GUIScreen
 	private class GameRunningState extends GameState
 	{
 		private final Stage stageGame = new Stage();
-		private Table table = new Table();
+		private Table tableLocal = new Table();
+		private Table smallTable1 = new Table();
+		private Table smallTable2 = new Table();
+		private Table smallTable3 = new Table();
 		String levels="Level\n"+myBoard.getCurrentLevel();
 		String scores="Score\n"+myBoard.getPlayerScore();
+		String smallScores1 = "123";
+		String smallUsernames1 = "123";
+		String smallScores2 = "123";
+		String smallUsernames2 = "123";
+		String smallScores3 = "123";
+		String smallUsernames3 = "123";
 		Label level= new Label(levels, Buttons.SmallLabel);
 		Label score= new Label(scores, Buttons.SmallLabel);
+		Label smallScore1 = new Label(smallScores1, Buttons.SmallLabel);
+		Label smallUsername1 = new Label(smallUsernames1, Buttons.SmallLabel);
+		Label smallScore2 = new Label(smallScores2, Buttons.SmallLabel);
+		Label smallUsername2 = new Label(smallUsernames2, Buttons.SmallLabel);
+		Label smallScore3 = new Label(smallScores3, Buttons.SmallLabel);
+		Label smallUsername3 = new Label(smallUsernames3, Buttons.SmallLabel);
+
 
 		int prevLevel=0;
 		Sprite background = lvl1;
@@ -184,14 +199,47 @@ public class GUIMultiGame extends GUIScreen
 				t1.run();
 			}
 
-			table.setFillParent(true);
+			tableLocal.setFillParent(true);
 			level.setFontScale(0.8f,0.8f);
 			score.setFontScale(0.8f,0.8f);
-			table.add(level).padBottom(10);
-			table.row();
-			table.add(score);
-			table.setPosition(0,minBoardHeight+250f);
-			stageGame.addActor(table);
+			tableLocal.add(level).padBottom(10);
+			tableLocal.row();
+			tableLocal.add(score);
+			tableLocal.setPosition(0,minBoardHeight+250f);
+			stageGame.addActor(tableLocal);
+
+			if(opponentNr > 0){
+				smallTable1.setFillParent(true);
+				smallUsername1.setFontScale(0.8f,0.8f);
+				smallScore1.setFontScale(0.8f,0.8f);
+				smallTable1.add(smallUsernames1).padBottom(10);
+				smallTable1.row();
+				smallTable1.add(smallScores1);
+				smallTable1.setPosition(300,minBoardHeight+250f);
+				stageGame.addActor(smallTable1);
+			}
+			if(opponentNr > 1){
+				smallTable2.setFillParent(true);
+				smallUsername2.setFontScale(0.8f,0.8f);
+				smallScore2.setFontScale(0.8f,0.8f);
+				smallTable2.add(smallUsernames2).padBottom(10);
+				smallTable2.row();
+				smallTable2.add(smallScores2);
+				smallTable2.setPosition(600,minBoardHeight+250f);
+				stageGame.addActor(smallTable2);
+			}
+			if(opponentNr > 2){
+				smallTable3.setFillParent(true);
+				smallUsername3.setFontScale(0.8f,0.8f);
+				smallScore3.setFontScale(0.8f,0.8f);
+				smallTable3.add(smallUsernames3).padBottom(10);
+				smallTable3.row();
+				smallTable3.add(smallScores3);
+				smallTable3.setPosition(-900,minBoardHeight+250f);
+				stageGame.addActor(smallTable3);
+			}
+
+
 			updateTimer();
 
 		}
@@ -282,6 +330,29 @@ public class GUIMultiGame extends GUIScreen
 
 			level.setText(levels);
 			score.setText(scores);
+
+			if(opponentNr > 0){
+				smallUsernames1="Username\n"+smallBoard1.playerName;
+				smallScores1="Score\n"+smallBoard1.getPlayerScore();
+
+				smallUsername1.setText(smallUsernames1);
+				smallScore1.setText(smallScores1);
+			}
+			if(opponentNr > 1){
+				smallUsernames2="Username\n"+smallBoard2.playerName;
+				smallScores2="Score\n"+smallBoard2.getPlayerScore();
+
+				smallUsername2.setText(smallUsernames2);
+				smallScore2.setText(smallScores2);
+			}
+			if(opponentNr > 2){
+				smallUsernames3="Username\n"+smallBoard3.playerName;
+				smallScores3="Score\n"+smallBoard3.getPlayerScore();
+
+				smallUsername3.setText(smallUsernames3);
+				smallScore3.setText(smallScores3);
+			}
+
 			if(prevLevel!=myBoard.getCurrentLevel()){
 				prevLevel=myBoard.getCurrentLevel();
 				updateTimer();	
