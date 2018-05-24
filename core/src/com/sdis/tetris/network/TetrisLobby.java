@@ -203,7 +203,7 @@ public class TetrisLobby{
         		playersReady.remove(username);
         		if(scores.isEmpty())
         			master.deleteEmptyLobby(lobby_name);
-        	}
+	    	}
 	    }
 	    
         protected void forwardState(String packet) throws IOException {
