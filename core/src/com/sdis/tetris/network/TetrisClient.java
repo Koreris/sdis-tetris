@@ -207,7 +207,7 @@ public class TetrisClient {
 			 String [] header_tokenized = parts[0].split(" ");
 			 if(header_tokenized[0].trim().equals("GAMESTATE")) 
 			 {
-				 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[2].trim());
+				 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[1].trim());
 				 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
 					 updateSmallBoard(game.smallBoard1,received);
 				 }
