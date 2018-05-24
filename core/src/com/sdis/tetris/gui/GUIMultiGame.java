@@ -288,7 +288,7 @@ public class GUIMultiGame extends GUIScreen
 			}
 			sendStateCount++;
 			
-			if(sendStateCount>=5 && !myBoard.isGameOver()) {
+			if(sendStateCount>=5 && !myBoard.isGameOver() && !lockServerChange) {
 				executor.execute(new Runnable() {
 					public void run() {
 						try {
