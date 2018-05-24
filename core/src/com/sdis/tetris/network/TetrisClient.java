@@ -311,8 +311,6 @@ public class TetrisClient {
     }
 
 	public boolean canReachAnyServer(ConcurrentHashMap<String,String> servers) {
-		if(servers.isEmpty())
-			System.out.println("SERVERS HASHMAP IS EMPTY");
 		for(String key: servers.keySet()) {
 			try {
 				String[] serverInfo = servers.get(key).split(" ");

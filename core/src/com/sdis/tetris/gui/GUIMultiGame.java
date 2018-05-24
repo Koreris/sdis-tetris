@@ -89,7 +89,21 @@ public class GUIMultiGame extends GUIScreen
 			}
 		}.start();
 	}	
-
+	
+	private void handleDisconnect() {
+		if(!lockServerChange) {
+			lockServerChange=true;
+			if(client.canReachAnyServer(parent.other_servers)) {
+				try {
+					client.join_lobby(client.connectedLobbyName, parent.playerName);
+				} catch (Exception e1) {
+					client.reconnectLobbyOnBackupServer(parent.serverName,parent.playerName);
+				}
+				lockServerChange=false;
+			}
+		}
+	}
+	
 	private void reStartGame(){
 		myBoard=new Board();
 		myBoard.setGameOver(false);
@@ -169,7 +183,7 @@ public class GUIMultiGame extends GUIScreen
 		int prevLevel=0;
 		Sprite background = lvl1;
 		
-
+		
 		public GameRunningState()
 		{
 			Gdx.input.setInputProcessor(GUIMultiGame.this);
@@ -289,14 +303,7 @@ public class GUIMultiGame extends GUIScreen
 						try {
 							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard(), myBoard.getPlayerScore());
 						} catch (IOException e) {
-							if(!lockServerChange) {
-								lockServerChange=true;
-								if(client.canReachAnyServer(parent.other_servers)) {
-									client.reconnectLobbyOnBackupServer(parent.serverName,parent.playerName);
-									lockServerChange=false;
-								}
-							}
-							//else it was a client failure
+							handleDisconnect();
 						}
 					}
 				});
@@ -404,14 +411,7 @@ public class GUIMultiGame extends GUIScreen
 						try {
 							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard(), myBoard.getPlayerScore());
 						} catch (IOException e) {
-							if(!lockServerChange) {
-								lockServerChange=true;
-								if(client.canReachAnyServer(parent.other_servers)) {
-									client.reconnectLobbyOnBackupServer(parent.serverName,parent.playerName);
-									lockServerChange=false;
-								}
-							}
-							//else it was a client failure
+							handleDisconnect();
 						}
 					}
 				});
