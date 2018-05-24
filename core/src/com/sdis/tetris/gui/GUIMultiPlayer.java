@@ -104,7 +104,6 @@ public class GUIMultiPlayer extends GUIScreen{
         {
         	public void run() 
         	{
-        		System.out.println("requesting lobbies");
         		listLobbies(paramParent);
         	}
         }, 0, 1,TimeUnit.SECONDS);

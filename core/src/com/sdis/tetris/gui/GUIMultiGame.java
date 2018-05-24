@@ -358,7 +358,7 @@ public class GUIMultiGame extends GUIScreen
 				parent.addToHighScores(myBoard.getPlayerScore(), playerName);
 				t1.cancel();
 				
-				changeState(new GameOverState());
+				changeState(new GameOverState(level,score));
 			}
 
 
@@ -380,15 +380,70 @@ public class GUIMultiGame extends GUIScreen
 	private class GameOverState extends GameState
 	{
 		private final Stage stageOver = new Stage();
-
-		public GameOverState()
+		Label level;
+		Label score;
+		private Table table = new Table();
+		public GameOverState(Label level, Label score)
 		{
 			audio.playSong(Song.THEME_GAME_OVER, true);
-
+			this.level=level;
+			this.score=score;
+			sendStateCount=60;
+			table.setFillParent(true);
+			this.level.setFontScale(0.8f,0.8f);
+			this.score.setFontScale(0.8f,0.8f);
+			table.add(level).padBottom(10);
+			table.row();
+			table.add(score);
+			table.setPosition(0,minBoardHeight+250f);
+			stageOver.addActor(table);
 		}
 		@Override
 		public void draw()
 		{
+			sendStateCount++;
+			
+			if(sendStateCount>=60 && !myBoard.isGameOver() && !lockServerChange) {
+				executor.execute(new Runnable() {
+					public void run() {
+						try {
+							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard(), myBoard.getPlayerScore());
+						} catch (IOException e) {
+							if(!lockServerChange) {
+								lockServerChange=true;
+								if(client.canReachAnyServer(parent.other_servers)) {
+									client.reconnectLobbyOnBackupServer(parent.serverName,parent.playerName);
+									lockServerChange=false;
+								}
+							}
+							//else it was a client failure
+						}
+					}
+				});
+				sendStateCount=0;
+			}
+			
+			Gdx.gl.glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+			Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+			batch.begin();
+			drawBoard(9.1f);
+			switch(opponentNr)
+			{
+			case 3:
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				drawSmallBoard(smallBoard2.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				drawSmallBoard(smallBoard3.cloneBoard, smallBoard3, smallFrame3, 850f, 250f, 1.26f);
+				break;
+			case 2:
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				drawSmallBoard(smallBoard2.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				break;
+			default:
+				
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				break;	
+			}
+			batch.end();
 			stageOver.draw();
 		}
 

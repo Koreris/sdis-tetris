@@ -101,6 +101,8 @@ public class TetrisLobby{
         }
 	    	
 	    public void checkAllTrue() throws IOException {
+	    	if(playersReady.size()<2)
+	    		return;
 	    	boolean alltrue=true;
 	    	for(String key: playersReady.keySet()) {
 	    		if(!playersReady.get(key))

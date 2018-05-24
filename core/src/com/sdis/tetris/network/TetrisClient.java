@@ -200,10 +200,7 @@ public class TetrisClient {
 			 String string = new String(buffer);
 			
 			 String[] parts = string.split(System.getProperty("line.separator"));
-			 System.out.println("Received parts: "+parts.length);
-			 for(String part:parts) {
-				 System.out.println("Im a part: "+part.trim());
-			 }
+
 			 String [] header_tokenized = parts[0].split(" ");
 			 if(header_tokenized[0].trim().equals("GAMESTATE")) 
 			 {
