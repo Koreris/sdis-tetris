@@ -205,11 +205,21 @@ public class TetrisClient {
 				 System.out.println("Im a part: "+part.trim());
 			 }
 			 String [] header_tokenized = parts[0].split(" ");
-			 if(header_tokenized[0].trim().equals("GAMESTATE")) { //FORMAT: GAMESTATE player_name connectedLobbyName server_name player_score
-				 while(true) {
-					 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[1].trim());
-					
-					 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
+			 if(header_tokenized[0].trim().equals("GAMESTATE")) 
+			 {
+				 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[2].trim());
+				 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
+					 updateSmallBoard(game.smallBoard1,received);
+				 }
+				 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
+					 updateSmallBoard(game.smallBoard2,received);
+				 }
+				 else if(game.smallBoard3.playerName!=null && game.smallBoard3.playerName.equals(header_tokenized[1])) {
+					 updateSmallBoard(game.smallBoard3,received);
+				 }
+				 else {
+					 if(game.smallBoard1.playerName==null) {
+						 game.smallBoard1.playerName=header_tokenized[1];
 						 updateSmallBoard(game.smallBoard1,received);
 					 }
 					 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
