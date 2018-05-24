@@ -59,6 +59,7 @@ public class GUIMultiGame extends GUIScreen
 	float maxBoardHeight=(myBoard.boardHeight*myBoard.scaleY);
 	int count=0;
 	boolean lockServerChange=false;
+	boolean lockSendState=false;
 	int sendStateCount=0;
 	String playerName;
 	private TetrisClient client;
@@ -288,14 +289,17 @@ public class GUIMultiGame extends GUIScreen
 			}
 			sendStateCount++;
 			
-			if(sendStateCount>=5 && !myBoard.isGameOver() && !lockServerChange) {
+			if(sendStateCount>=5 && !myBoard.isGameOver() && !lockSendState) {
 				executor.execute(new Runnable() {
 					public void run() {
 						try {
+							lockSendState=true;
 							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard(), myBoard.getPlayerScore());
+							lockSendState=false;
 						} catch (IOException e) {
+							lockSendState=false;
 							e.printStackTrace();
-							if(!lockServerChange) {
+							if(!lockSendState) {
 								lockServerChange=true;
 								if(client.canReachAnyServer(parent.other_servers)) {
 									client.reconnectLobbyOnBackupServer(parent.serverName,parent.playerName);
