@@ -10,13 +10,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import com.sdis.tetris.Buttons;
@@ -32,7 +29,7 @@ public class GUIMultiGame extends GUIScreen
 	private GameState state;
 	private final float screenWidth = Gdx.graphics.getWidth();
 
-	private Board myBoard = new Board();
+	public Board myBoard = new Board();
 	protected int opponentNr;
 	public Board smallBoard1 = new Board(15,15);
 	public Board smallBoard2 = new Board(15,15);
@@ -60,6 +57,7 @@ public class GUIMultiGame extends GUIScreen
 	float maxBoardHeight=(myBoard.boardHeight*myBoard.scaleY);
 	int count=0;
 	boolean lockServerChange=false;
+	boolean superPowerActive=false;
 	int sendStateCount=0;
 	String playerName;
 	private TetrisClient client;
@@ -88,16 +86,9 @@ public class GUIMultiGame extends GUIScreen
 						Gdx.app.postRunnable(new Runnable() {
 							@Override
 							public void run() {
-								try {
-									sleep(1000);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
 								parent.switchTo(new GUIMultiHighscores(parent,scores));
-								System.out.println("DONE");
 							}
 						});
-
 						break;
 					}
 
@@ -133,7 +124,8 @@ public class GUIMultiGame extends GUIScreen
 		@Override
 		public void run()
 		{
-			myBoard.moveDown();
+			if(myBoard.moveDown()>2)
+				superPowerActive=true;
 		}
 	}
 
@@ -158,8 +150,42 @@ public class GUIMultiGame extends GUIScreen
 		{
 			myBoard.rotatePiece();
 		}
-
-
+		else if (keycode == Keys.NUM_1)
+		{
+			if(smallBoard1.playerName!=null && superPowerActive && !myBoard.isGameOver()) {
+				executor.execute(()->{
+					try {
+						client.swap_pieces(GUIMultiGame.this, playerName, smallBoard1.playerName);
+					} catch (IOException e) {
+					}
+				});
+				superPowerActive=false;
+			}
+		}
+		else if (keycode == Keys.NUM_2)
+		{
+			if(smallBoard2.playerName!=null && superPowerActive && !myBoard.isGameOver()) {
+				executor.execute(()->{
+					try {
+						client.swap_pieces(GUIMultiGame.this, playerName, smallBoard2.playerName);
+					} catch (IOException e) {
+					}
+				});
+				superPowerActive=false;
+			}
+		}
+		else if (keycode == Keys.NUM_3)
+		{
+			if(smallBoard3.playerName!=null && superPowerActive && !myBoard.isGameOver()) {
+				executor.execute(()->{
+					try {
+						client.swap_pieces(GUIMultiGame.this, playerName, smallBoard3.playerName);
+					} catch (IOException e) {
+					}
+				});
+				superPowerActive=false;
+			}
+		}
 		return true;
 	}
 
@@ -167,7 +193,8 @@ public class GUIMultiGame extends GUIScreen
 	{
 		if (Gdx.input.isKeyPressed(Keys.DOWN))
 		{
-			myBoard.moveDown();
+			if(myBoard.moveDown()>2)
+				superPowerActive=true;
 			myBoard.incPlayerScore(3);
 		}
 		return true;
@@ -210,23 +237,20 @@ public class GUIMultiGame extends GUIScreen
 		Label smallUsername2 = new Label(smallUsernames2, Buttons.SmallLabel);
 		Label smallScore3 = new Label(smallScores3, Buttons.SmallLabel);
 		Label smallUsername3 = new Label(smallUsernames3, Buttons.SmallLabel);
-		TextButton actionButton1 = new TextButton("ACTION 1", Buttons.MenuButton);
-		TextButton actionButton2 = new TextButton("ACTION 2", Buttons.MenuButton);
-		TextButton actionButton3 = new TextButton("ACTION 3", Buttons.MenuButton);
+		TextButton actionButton1 = new TextButton("Press 1", Buttons.MenuButton);
+		TextButton actionButton2 = new TextButton("Press 2", Buttons.MenuButton);
+		TextButton actionButton3 = new TextButton("Press 3", Buttons.MenuButton);
 
 		int prevLevel=0;
 		Sprite background = lvl1;
-
+			
 
 		public GameRunningState()
 		{
-			Gdx.input.setInputProcessor(GUIMultiGame.this);
-			Gdx.input.setInputProcessor(stageGame);
+			
 
-			if(isGameRunning())
-			{
-				t1.run();
-			}
+			Gdx.input.setInputProcessor(stageGame);
+			t1.run();
 
 			tableLocal.setFillParent(true);
 			level.setFontScale(0.8f,0.8f);
@@ -247,13 +271,8 @@ public class GUIMultiGame extends GUIScreen
 				smallTable1.setPosition(-45,minBoardHeight-320f);
 				smallTable1.row();
 				smallTable1.add(actionButton1).size(140,35).row();
-				actionButton1.addListener(new ClickListener() {
-					@Override
-					public void clicked(InputEvent event, float x, float y) {
-						System.out.println("Button1");
-					}
-				});
 				stageGame.addActor(smallTable1);
+				actionButton1.setVisible(false);
 			}
 			if(opponentNr > 1){
 				smallTable2.setFillParent(true);
@@ -265,13 +284,8 @@ public class GUIMultiGame extends GUIScreen
 				smallTable2.setPosition(205,minBoardHeight-320f);
 				smallTable2.row();
 				smallTable2.add(actionButton2).size(140,30).row();
-				actionButton2.addListener(new ClickListener() {
-					@Override
-					public void clicked(InputEvent event, float x, float y) {
-						System.out.println("Button2");
-					}
-				});
 				stageGame.addActor(smallTable2);
+				actionButton2.setVisible(false);
 			}
 			if(opponentNr > 2){
 				smallTable3.setFillParent(true);
@@ -283,59 +297,15 @@ public class GUIMultiGame extends GUIScreen
 				smallTable3.setPosition(455,minBoardHeight-320f);
 				smallTable3.row();
 				smallTable3.add(actionButton3).size(140,30).row();
-				actionButton3.addListener(new ClickListener() {
-					@Override
-					public void clicked(InputEvent event, float x, float y) {
-						System.out.println("Button3");
-					}
-				});
 				stageGame.addActor(smallTable3);
+				actionButton3.setVisible(false);		
 			}
 
 			updateTimer();
 
 		}
 
-		void enableAction(String username){
-			TextButton button = null;
-
-			if(username == null){
-				return;
-			}
-
-			if(username.equals(smallBoard1.playerName)){
-				button = actionButton1;
-			}else if(username.equals(smallBoard2.playerName)){
-				button = actionButton2;
-			}else if(username.equals(smallBoard3.playerName)){
-				button = actionButton3;
-			}else{
-				System.out.println("Error - Asking button for unknown player " + username);
-			}
-
-			button.setTouchable(Touchable.enabled);
-		}
-
-		void disableAction(String username){
-			TextButton button = null;
-
-			if(username == null){
-				return;
-			}
-
-			if(smallBoard1 != null && username.equals(smallBoard1.playerName)){
-				button = actionButton1;
-			}else if(smallBoard2 != null && username.equals(smallBoard2.playerName)){
-				button = actionButton2;
-			}else if(smallBoard3 != null && username.equals(smallBoard3.playerName)){
-				button = actionButton3;
-			}else{
-				System.out.println("Error - Asking button for unknown player " + username);
-				return;
-			}
-
-			button.setTouchable(Touchable.disabled);
-		}
+		
 
 		void setBackground(){
 			background.setPosition(0,0);
@@ -426,40 +396,34 @@ public class GUIMultiGame extends GUIScreen
 			score.setText(scores);
 
 			if(opponentNr > 0){
-				if(smallBoard1.getPlayerScore() < 300){
-					disableAction(smallBoard1.playerName);
-				}else{
-					enableAction(smallBoard1.playerName);
+				if(smallBoard1.playerName!=null) {
+					smallUsernames1=smallBoard1.playerName;
+					smallScores1="Score - "+smallBoard1.getPlayerScore();
+	
+					smallUsername1.setText(smallUsernames1);
+					smallScore1.setText(smallScores1);
+					actionButton1.setVisible(superPowerActive);
 				}
-				smallUsernames1=smallBoard1.playerName;
-				smallScores1="Score - "+smallBoard1.getPlayerScore();
-
-				smallUsername1.setText(smallUsernames1);
-				smallScore1.setText(smallScores1);
 			}
 			if(opponentNr > 1){
-				if(smallBoard2.getPlayerScore() < 300){
-					disableAction(smallBoard2.playerName);
-				}else{
-					enableAction(smallBoard2.playerName);
+				if(smallBoard2.playerName!=null) {
+					smallUsernames2=smallBoard2.playerName;
+					smallScores2="Score - "+smallBoard2.getPlayerScore();
+	
+					smallUsername2.setText(smallUsernames2);
+					smallScore2.setText(smallScores2);
+					actionButton2.setVisible(superPowerActive);
 				}
-				smallUsernames2=smallBoard2.playerName;
-				smallScores2="Score - "+smallBoard2.getPlayerScore();
-
-				smallUsername2.setText(smallUsernames2);
-				smallScore2.setText(smallScores2);
 			}
 			if(opponentNr > 2){
-				if(smallBoard3.getPlayerScore() < 300){
-					disableAction(smallBoard3.playerName);
-				}else{
-					enableAction(smallBoard3.playerName);
+				if(smallBoard3.playerName!=null) {
+					smallUsernames3=smallBoard3.playerName;
+					smallScores3="Score - "+smallBoard3.getPlayerScore();
+	
+					smallUsername3.setText(smallUsernames3);
+					smallScore3.setText(smallScores3);
+					actionButton3.setVisible(superPowerActive);
 				}
-				smallUsernames3=smallBoard3.playerName;
-				smallScores3="Score - "+smallBoard3.getPlayerScore();
-
-				smallUsername3.setText(smallUsernames3);
-				smallScore3.setText(smallScores3);
 			}
 
 			if(prevLevel!=myBoard.getCurrentLevel()){
@@ -487,7 +451,6 @@ public class GUIMultiGame extends GUIScreen
 						try {
 							client.send_game_over(parent.playerName);
 						} catch (IOException e) {
-							e.printStackTrace();
 						}
 					}
 				});
@@ -502,7 +465,7 @@ public class GUIMultiGame extends GUIScreen
 			update();
 			Gdx.gl.glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 			Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-
+			stageGame.act();
 			batch.begin();
 			background.draw(batch);
 
@@ -541,7 +504,7 @@ public class GUIMultiGame extends GUIScreen
 
 
 		}
-
+		
 		@Override
 		public void update(float delta)
 		{
@@ -558,6 +521,22 @@ public class GUIMultiGame extends GUIScreen
 		Label level;
 		Label score;
 		private Table table = new Table();
+		String smallScores1 = "123";
+		String smallUsernames1 = "123";
+		String smallScores2 = "123";
+		String smallUsernames2 = "123";
+		String smallScores3 = "123";
+		String smallUsernames3 = "123";
+		private Table smallTable1 = new Table();
+		private Table smallTable2 = new Table();
+		private Table smallTable3 = new Table();
+		Label smallScore1 = new Label(smallScores1, Buttons.SmallLabel);
+		Label smallUsername1 = new Label(smallUsernames1, Buttons.SmallLabel);
+		Label smallScore2 = new Label(smallScores2, Buttons.SmallLabel);
+		Label smallUsername2 = new Label(smallUsernames2, Buttons.SmallLabel);
+		Label smallScore3 = new Label(smallScores3, Buttons.SmallLabel);
+		Label smallUsername3 = new Label(smallUsernames3, Buttons.SmallLabel);
+		
 		public GameOverState(Label level, Label score)
 		{
 			audio.playSong(Song.THEME_GAME_OVER, true);
@@ -572,6 +551,41 @@ public class GUIMultiGame extends GUIScreen
 			table.add(score);
 			table.setPosition(0,minBoardHeight+250f);
 			stageOver.addActor(table);
+			
+			if(opponentNr > 0){
+				smallTable1.setFillParent(true);
+				smallUsername1.setFontScale(0.8f,0.8f);
+				smallScore1.setFontScale(0.8f,0.8f);
+				smallTable1.add(smallUsername1).center().padBottom(10);
+				smallTable1.row();
+				smallTable1.add(smallScore1).center().padBottom(10);
+				smallTable1.setPosition(-45,minBoardHeight-320f);
+				smallTable1.row();
+				stageOver.addActor(smallTable1);
+			}
+			if(opponentNr > 1){
+				smallTable2.setFillParent(true);
+				smallUsername2.setFontScale(0.8f,0.8f);
+				smallScore2.setFontScale(0.8f,0.8f);
+				smallTable2.add(smallUsername2).center().padBottom(10);
+				smallTable2.row();
+				smallTable2.add(smallScore2).center().padBottom(10);
+				smallTable2.setPosition(205,minBoardHeight-320f);
+				smallTable2.row();
+				stageOver.addActor(smallTable2);
+			}
+			if(opponentNr > 2){
+				smallTable3.setFillParent(true);
+				smallUsername3.setFontScale(0.8f,0.8f);
+				smallScore3.setFontScale(0.8f,0.8f);
+				smallTable3.add(smallUsername3).center().padBottom(10);
+				smallTable3.row();
+				smallTable3.add(smallScore3).center().padBottom(10);
+				smallTable3.setPosition(455,minBoardHeight-320f);
+				smallTable3.row();
+				stageOver.addActor(smallTable3);
+			}
+
 		}
 		@Override
 		public void draw()
@@ -595,6 +609,35 @@ public class GUIMultiGame extends GUIScreen
 			Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 			batch.begin();
 			drawBoard(9.1f);
+			
+			if(opponentNr > 0){
+				if(smallBoard1.playerName!=null) {
+					smallUsernames1=smallBoard1.playerName;
+					smallScores1="Score - "+smallBoard1.getPlayerScore();
+	
+					smallUsername1.setText(smallUsernames1);
+					smallScore1.setText(smallScores1);
+				}
+			}
+			if(opponentNr > 1){
+				if(smallBoard2.playerName!=null) {
+					smallUsernames2=smallBoard2.playerName;
+					smallScores2="Score - "+smallBoard2.getPlayerScore();
+	
+					smallUsername2.setText(smallUsernames2);
+					smallScore2.setText(smallScores2);
+				}
+			}
+			if(opponentNr > 2){
+				if(smallBoard3.playerName!=null) {
+					smallUsernames3=smallBoard3.playerName;
+					smallScores3="Score - "+smallBoard3.getPlayerScore();
+	
+					smallUsername3.setText(smallUsernames3);
+					smallScore3.setText(smallScores3);
+				}
+			}
+			
 			switch(opponentNr)
 			{
 				case 3:

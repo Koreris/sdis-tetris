@@ -297,7 +297,8 @@ public class TetrisServer implements Runnable{
                         printLobbies();
 	                    break;
 	                case "DELETE":
-	                    replicated_lobbies.remove((headerComponents[1]+headerComponents[2]));
+	                    replicated_lobbies.remove(headerComponents[1]+headerComponents[2]);
+	                    printLobbies();
 	                    break;
 	                default:
 	                    break;

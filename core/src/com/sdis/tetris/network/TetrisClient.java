@@ -4,6 +4,8 @@ import javax.net.ssl.*;
 import com.badlogic.gdx.graphics.Color;
 import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.logic.Board;
+import com.sdis.tetris.logic.TetrominoProto;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,7 +49,7 @@ public class TetrisClient {
         try {
             out.write(msg);
         } catch (IOException e) {
-            e.printStackTrace();
+            
         }
 
         byte[] read = new byte[1024];
@@ -82,7 +84,7 @@ public class TetrisClient {
         try {
             out.write(msg);
         } catch (IOException e) {
-            e.printStackTrace();
+            
         }
 
         byte[] read = new byte[256];
@@ -120,7 +122,7 @@ public class TetrisClient {
         try {
             out.write(msg);
         } catch (IOException e) {
-            e.printStackTrace();
+            
         }
         
         byte[] buf = new byte[1024];
@@ -166,7 +168,7 @@ public class TetrisClient {
 	        connectedLobbyName=lobby_name;
 	        return 0;
         } catch (Exception e) {
-            e.printStackTrace();
+            
             return -1;
         }
     }
@@ -181,7 +183,38 @@ public class TetrisClient {
 	   	 String contents = ColorJSON.toJSONfromArrayList(colors).toString();
 	   	 lsos.write((msg+contents+CRLF).getBytes());
     }
-
+    
+    public void swap_pieces(GUIMultiGame game,String player_name,String target) throws IOException {
+    	if(lobbySocket.isClosed())
+    		return;
+    	 String myPiece="";
+		 switch(game.myBoard.fallingPiece.getColorName()) {
+		 case "red":
+			 myPiece="I";
+			 break;
+		 case "green":
+			 myPiece="Z";
+			 break;
+		 case "magenta":
+			 myPiece="S";
+			 break;
+		 case "yellow":
+			 myPiece="O";
+			 break;
+		 case "cyan":
+			 myPiece="T";
+			 break;
+		 case "blue":
+			 myPiece="J";
+			 break;
+		 case "orange":
+			 myPiece="L";
+			 break;
+		 }
+    	 String msg = "SWAP " + player_name + " " + connectedLobbyName + " " + myPiece + " " + target + " " + CRLF;
+	   	 lsos.write(msg.getBytes());
+   }
+    
     public void send_game_over(String player_name) throws IOException {
     	String msg = "GAMEOVER " + player_name;
     	lsos.write((msg+CRLF).getBytes());
@@ -238,6 +271,44 @@ public class TetrisClient {
 					 return 1;
 				 }
 				
+			 }
+			 else if(header_tokenized[0].trim().equals("SWAP")){
+				 if(game.myBoard.isGameOver())
+					 return 2;
+				 String myPiece="";
+				 switch(game.myBoard.fallingPiece.getColorName()) {
+				 case "red":
+					 myPiece="I";
+					 break;
+				 case "green":
+					 myPiece="Z";
+					 break;
+				 case "magenta":
+					 myPiece="S";
+					 break;
+				 case "yellow":
+					 myPiece="O";
+					 break;
+				 case "cyan":
+					 myPiece="T";
+					 break;
+				 case "blue":
+					 myPiece="J";
+					 break;
+				 case "orange":
+					 myPiece="L";
+					 break;
+				 }
+				 game.myBoard.fallingPiece = TetrominoProto.generateTetromino(header_tokenized[3].charAt(0));
+				 game.myBoard.fallingPiece.setPosition(game.myBoard.boardWidth/2, game.myBoard.boardHeight-3);
+				 game.myBoard.fallingPiece.mFalling=true;
+				 String response = "SWAPRESPONSE "+header_tokenized[1].trim()+" "+myPiece+CRLF;
+				 lsos.write(response.getBytes());
+			 }
+			 else if(header_tokenized[0].trim().equals("SWAPRESPONSE")) {
+				 game.myBoard.fallingPiece = TetrominoProto.generateTetromino(header_tokenized[2].charAt(0));
+				 game.myBoard.fallingPiece.setPosition(game.myBoard.boardWidth/2, game.myBoard.boardHeight-3);
+				 game.myBoard.fallingPiece.mFalling=true;
 			 }
 			 else if(header_tokenized[0].trim().equals("GAMEENDED")){
 				 String playername;
@@ -299,7 +370,7 @@ public class TetrisClient {
 		    	lobbySocket.close();
     		} 
 	    	catch (IOException e) {
-				e.printStackTrace();
+				
 			}
     	}
     }
@@ -335,7 +406,7 @@ public class TetrisClient {
 		        in.close();
 		        socket.close();
 			} catch (IOException e) {
-	            e.printStackTrace();   
+	               
 	        }
 		}
 		return false;
@@ -345,7 +416,7 @@ public class TetrisClient {
 		try {
 			join_lobby(original_server+connectedLobbyName, player_name);
 		} catch (IOException e) {
-			e.printStackTrace();
+			
 		}	
 	}
 }

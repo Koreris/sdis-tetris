@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -137,6 +136,28 @@ public class TetrisLobby{
 		    		playersReady.put(packetComponents[1], true);
 		    		checkAllTrue();
 		    		break;
+		    	case "SWAP":
+		    		executor.execute(new Runnable() {
+		    			public void run() {
+		    		    	try {
+								playerConnections.get(packetComponents[4].trim()).out.write(packet.getBytes());
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+		    			}
+		    		});
+		    		break;
+		    	case "SWAPRESPONSE":
+		    		executor.execute(new Runnable() {
+		    			public void run() {
+		    		    	try {
+								playerConnections.get(packetComponents[1].trim()).out.write(packet.getBytes());
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+		    			}
+		    		});
+		    		break;
 		    	case "GAMESTATE":
 		    		if(scores.get(packetComponents[1]) == null){
 		    			System.out.println("Warning - Could not get current score for player " + packetComponents[1]);
@@ -167,18 +188,14 @@ public class TetrisLobby{
 						}
 					}
 					if(finished){
-		    			System.out.println("Game is finished, broadcasting gameended");
 						String msg = "GAMEENDED";
-
 						for(String key : scores.keySet()) {
 							msg += " " + key + " " + scores.get(key);
 						}
-						
 						for(ClientListener cl: playerConnections.values()){
 							cl.out.write(msg.getBytes());
-							master.replication_service.deleteLobby(lobby_name);
 						}
-
+						end_game();
 					}
 		    		break;
 		    	default:
@@ -208,7 +225,7 @@ public class TetrisLobby{
 	    	}
 	    	else {
 	    		if(playerConnections.isEmpty())
-	    			master.deleteEmptyLobby(lobby_name);
+	    			end_game();
 	    	}
 	    }
 	    
@@ -243,9 +260,8 @@ public class TetrisLobby{
                     	break;
 					}
 
-					byte[] buffer = Arrays.copyOfRange(buf,0,read);
 					
-                    String str = new String(buffer);
+                    String str = new String(buf,0,read);
                     //System.out.println("Received packet in lobby " + lobby_name + ": " + str);
                     handlePacket(str);
                 }

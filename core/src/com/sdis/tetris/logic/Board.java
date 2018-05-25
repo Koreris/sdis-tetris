@@ -32,10 +32,10 @@ public class Board {
 	 * Generates new Pieces after the previous one gets Stuck
 	 * @return
 	 */
-	public void moveDown() 
+	public int moveDown() 
 	{
 		if(gameOver)
-			return;
+			return -1;
 		fallingPiece.moveDown(this);
 		AudioHandler.getInstance().playSFX(SFX.SFX_MOVE);
 		if (fallingPiece.isStuck()) 
@@ -45,12 +45,13 @@ public class Board {
 			{
 				gameOver=true;
 			}
-			checkRows();
+			int rowsDeleted = checkRows();
 			fallingPiece = TetrominoProto.generateRandom();
 			fallingPiece.setPosition(boardWidth/2, boardHeight-3);
 			fallingPiece.mFalling=true;
+			return rowsDeleted;
 		}
-
+		return 0;
 	}
 	
 	/**
@@ -135,7 +136,7 @@ public class Board {
 			{
 				if (currentShape[y][x] == true) 
 				{
-					if((fallingPiece.getX()+x <= this.boardWidth) && (fallingPiece.getY()+y <= this.boardHeight))
+					if((fallingPiece.getX()+x < this.boardWidth) && (fallingPiece.getY()+y < this.boardHeight))
 					{
 						gameBoard[fallingPiece.getY() + y][fallingPiece.getX() + x] = fallingPiece.getColor();
 						AudioHandler.getInstance().playSFX(SFX.SFX_COLL);
@@ -191,7 +192,7 @@ public class Board {
 	 * Depending on the number of rows cleared, a sound effect will play
 	 * @return
 	 */
-	private void checkRows() 
+	private int checkRows() 
 	{
 
 		int rowsRemoved = 0;
@@ -250,6 +251,8 @@ public class Board {
 			AudioHandler.getInstance().playSFX(SFX.HOVER);
 
 		}
+		
+		return rowsRemoved;
 	}
 
 	
