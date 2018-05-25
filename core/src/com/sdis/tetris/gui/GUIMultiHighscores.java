@@ -15,31 +15,30 @@ import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
-import com.sdis.tetris.network.TetrisClient;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GUIMultiHighscores extends GUIScreen
 {
-
 	Sprite background = new Sprite(new Texture(Gdx.files.internal("img/hsbg.png"), false));
 	private final Stage stage = new Stage();
 	private final Table table = new Table();
 	private final TextButton MainMenuButton = new TextButton("Lobby", Buttons.MenuButton);
-	public GUIMultiHighscores(Tetris paramParent)
+	public ConcurrentHashMap<String, Integer> scores;
+	public GUIMultiHighscores(Tetris paramParent,ConcurrentHashMap<String,Integer> score)
 	{
 		super(paramParent, Song.THEME_CREDITS);
-
+		scores=score;
 		background.setPosition(0,0);
 		background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
 		table.setPosition(0,75);
 		table.add(new Label("HIGHSCORES", Buttons.TitleLabel)).padBottom(32).row();
-		TetrisClient cliente = new TetrisClient();
-		for (Map.Entry<String,Integer> me: cliente.multiscores.entrySet())
+		for (Map.Entry<String,Integer> me: scores.entrySet())
 		{
-			String highscore="i+1\n"+me.getKey() + " " + me.getValue();
-			
-			table.add(new Label(highscore, Buttons.TitleLabel)).padBottom(20).row();
+			String highscore=me.getKey() + "                        " + me.getValue();
+
+			table.add(new Label(highscore, Buttons.TitleLabel)).padBottom(32).row();
 		}
 		table.add(MainMenuButton);
 		table.row();
@@ -71,8 +70,7 @@ public class GUIMultiHighscores extends GUIScreen
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 
 		stage.act();
-		//camera.update();
-		//batch.setProjectionMatrix(camera.combined);
+
 		batch.begin();
 		
 		background.draw(batch);
@@ -83,8 +81,7 @@ public class GUIMultiHighscores extends GUIScreen
 	@Override
 	public void resize(int width, int height)
 	{
-		//stage.getViewport().update(width, height);
-		//camera.position.set(camera.viewportWidth/2, camera.viewportHeight/2, 0);
+
 	}
 
 	@Override
