@@ -47,7 +47,9 @@ public class TetrisLobby{
             ClientListener newlistener =new ClientListener(player_name,socket);
             playerConnections.put(player_name,newlistener);
             scores.putIfAbsent(player_name, 0);
-            playersReady.putIfAbsent(player_name, false);
+            if(!game_started)
+            	playersReady.putIfAbsent(player_name, false);
+            else playersReady.putIfAbsent(player_name,true);
             playersGameover.putIfAbsent(player_name, false);
             master.thread_pool.execute(newlistener);
         } catch (IOException e) {
@@ -201,6 +203,7 @@ public class TetrisLobby{
 	    	if(!game_started) {
         		scores.remove(username);
         		playersReady.remove(username);
+        		playersGameover.remove(username);
         		if(scores.isEmpty())
         			master.deleteEmptyLobby(lobby_name);
 	    	}
@@ -243,17 +246,12 @@ public class TetrisLobby{
                     //System.out.println("Received packet in lobby " + lobby_name + ": " + str);
                     handlePacket(str);
                 }
-                catch(SocketException e) {
+                catch(Exception e) {
                 	System.out.println("Client has been disconnected: "+username);
                 	handlePlayerDisconnection();
                 	closeSockets(socket);
                 	break;
-                } catch (IOException e) {
-                	System.out.println("Client has been disconnected: "+username);
-                	handlePlayerDisconnection();
-                	closeSockets(socket);
-					e.printStackTrace();
-				}
+                }
             }
         }
     }
