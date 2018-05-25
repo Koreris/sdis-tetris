@@ -273,12 +273,41 @@ public class GUIMultiGame extends GUIScreen
 		}
 
 		void enableAction(String username){
-			TextButton button = (username.equals(smallBoard1.playerName)) ? actionButton1 : ((username.equals(smallBoard2)) ? actionButton2 : actionButton3);
+			TextButton button = null;
+
+			if(username.equals(smallBoard1.playerName)){
+				button = actionButton1;
+			}else if(username.equals(smallBoard2.playerName)){
+				button = actionButton2;
+			}else if(username.equals(smallBoard3.playerName)){
+				button = actionButton3;
+			}else{
+				System.out.println("Error - Asking button for unknown player " + username);
+			}
+
 			button.setTouchable(Touchable.enabled);
+			return;
 		}
 
 		void disableAction(String username){
-			TextButton button = (username.equals(smallBoard1.playerName)) ? actionButton1 : ((username.equals(smallBoard2)) ? actionButton2 : actionButton3);
+			TextButton button = null;
+
+			if(username == null){
+				System.out.println("Warning - passing null username");
+				return;
+			}
+
+			if(smallBoard1 != null && username.equals(smallBoard1.playerName)){
+				button = actionButton1;
+			}else if(smallBoard2 != null && username.equals(smallBoard2.playerName)){
+				button = actionButton2;
+			}else if(smallBoard3 != null && username.equals(smallBoard3.playerName)){
+				button = actionButton3;
+			}else{
+				System.out.println("Error - Asking button for unknown player " + username);
+				return;
+			}
+
 			button.setTouchable(Touchable.disabled);
 		}
 
