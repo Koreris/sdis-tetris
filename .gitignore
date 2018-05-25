@@ -19,3 +19,8 @@ hs_err_pid*
 .idea/workspace.xml
 core/.classpath
 desktop/.classpath
+core/assets/servers.txt
+core/assets/wdserver/client.keys
+core/assets/wdserver/server.keys
+core/assets/wdserver/servers.txt
+core/assets/wdserver/truststore

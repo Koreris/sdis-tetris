@@ -202,37 +202,37 @@ public class TetrisClient {
 			 {
 				 ArrayList<ColorJSON> received=ColorJSON.fromJSONtoArrayList(parts[1].trim());
 				 if(game.smallBoard1.playerName!=null && game.smallBoard1.playerName.equals(header_tokenized[1])) {
-					 updateSmallBoard(game.smallBoard1,received);
+					 updateSmallBoard(game.smallBoard1,received,Integer.parseInt(header_tokenized[4]));
 				 }
 				 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
-					 updateSmallBoard(game.smallBoard2,received);
+					 updateSmallBoard(game.smallBoard2,received,Integer.parseInt(header_tokenized[4]));
 				 }
 				 else if(game.smallBoard3.playerName!=null && game.smallBoard3.playerName.equals(header_tokenized[1])) {
-					 updateSmallBoard(game.smallBoard3,received);
+					 updateSmallBoard(game.smallBoard3,received,Integer.parseInt(header_tokenized[4]));
 				 }
 				 else {
 					 if(game.smallBoard1.playerName==null) {
 						 game.smallBoard1.playerName=header_tokenized[1];
-						 updateSmallBoard(game.smallBoard1,received);
+						 updateSmallBoard(game.smallBoard1,received,Integer.parseInt(header_tokenized[4]));
 					 }
 					 else if(game.smallBoard2.playerName!=null && game.smallBoard2.playerName.equals(header_tokenized[1])) {
-						 updateSmallBoard(game.smallBoard2,received);
+						 updateSmallBoard(game.smallBoard2,received,Integer.parseInt(header_tokenized[4]));
 					 }
 					 else if(game.smallBoard3.playerName!=null && game.smallBoard3.playerName.equals(header_tokenized[1])) {
-						 updateSmallBoard(game.smallBoard3,received);
+						 updateSmallBoard(game.smallBoard3,received,Integer.parseInt(header_tokenized[4]));
 					 }
 					 else {
 						 if(game.smallBoard1.playerName==null) {
 							 game.smallBoard1.playerName=header_tokenized[1];
-							 updateSmallBoard(game.smallBoard1,received);
+							 updateSmallBoard(game.smallBoard1,received,Integer.parseInt(header_tokenized[4]));
 						 }
 						 else if(game.smallBoard2.playerName==null) {
 							 game.smallBoard2.playerName=header_tokenized[1];
-							 updateSmallBoard(game.smallBoard2,received);
+							 updateSmallBoard(game.smallBoard2,received,Integer.parseInt(header_tokenized[4]));
 						 }
 						 else if(game.smallBoard3.playerName==null) {
 							 game.smallBoard3.playerName=header_tokenized[1];
-							 updateSmallBoard(game.smallBoard3,received);
+							 updateSmallBoard(game.smallBoard3,received,Integer.parseInt(header_tokenized[4]));
 						 }
 					 }
 					 return 1;
@@ -257,11 +257,12 @@ public class TetrisClient {
 		 return -1;
     }
    
-    public void updateSmallBoard(Board smallboard,ArrayList<ColorJSON> received) {
+    public void updateSmallBoard(Board smallboard, ArrayList<ColorJSON> received, int score) {
     	smallboard.cloneBoard = new Color[smallboard.boardHeight][smallboard.boardWidth];
     	for(ColorJSON color: received) {
     		smallboard.cloneBoard[color.y][color.x]=new Color(color.r,color.g,color.b,color.a);
     	}
+    	smallboard.setPlayerScore(score);
     }
 
     public static void printColor(Color[][] colors) {
