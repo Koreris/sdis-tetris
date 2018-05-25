@@ -206,6 +206,10 @@ public class TetrisLobby{
         		if(scores.isEmpty())
         			master.deleteEmptyLobby(lobby_name);
 	    	}
+	    	else {
+	    		if(playerConnections.isEmpty())
+	    			master.deleteEmptyLobby(lobby_name);
+	    	}
 	    }
 	    
         protected void forwardState(String packet) throws IOException {

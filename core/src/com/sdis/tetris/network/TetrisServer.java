@@ -290,7 +290,6 @@ public class TetrisServer implements Runnable{
 	            switch(headerComponents[0]) {
 	                case "REPLICATE":
                         TetrisLobbyJSON lobby = TetrisLobbyJSON.fromJSON(lines[1].trim());
-                        //Key = original server name + lobby name´
                         replicated_lobbies.remove(headerComponents[1]+headerComponents[2]);
                         replicated_lobbies.put(headerComponents[1]+headerComponents[2], lobby);
                         printLobbies();
