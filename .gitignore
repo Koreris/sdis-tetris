@@ -12,12 +12,9 @@ hs_err_pid*
 /.gradle/
 .project
 
-.project
-*
-.prefs
-*
-.png
-*
+*.project
+*.prefs
+*.png
 
 .idea/workspace.xml
 core/.classpath
