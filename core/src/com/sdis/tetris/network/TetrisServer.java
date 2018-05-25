@@ -242,7 +242,8 @@ public class TetrisServer implements Runnable{
                 	String[] servDetails = other_servers.get(key).split(" ");
                     System.out.println("Sending lobby to "+servDetails[0]+":"+servDetails[1]);
                     try {
-	                    SSLSocket sendSocket = (SSLSocket) socket_factory.createSocket(InetAddress.getByName(servDetails[0]),Integer.parseInt(servDetails[1]));
+	                    SSLSocket sendSocket = (SSLSocket) socket_factory.createSocket();
+	                    sendSocket.connect(new InetSocketAddress(InetAddress.getByName(servDetails[0]),Integer.parseInt(servDetails[1])), 1500);
 	                    OutputStream out = sendSocket.getOutputStream();
 	                    out.write(replicate);
 	                    out.close();
@@ -262,7 +263,8 @@ public class TetrisServer implements Runnable{
                 try {
                 	String[] servDetails = other_servers.get(key).split(" ");
                     System.out.println("Sending delete to "+key+":"+other_servers.get(key));
-                    SSLSocket sendSocket = (SSLSocket) socket_factory.createSocket(InetAddress.getByName(servDetails[0]),Integer.parseInt(servDetails[1]));
+                    SSLSocket sendSocket = (SSLSocket) socket_factory.createSocket();
+                    sendSocket.connect(new InetSocketAddress(InetAddress.getByName(servDetails[0]),Integer.parseInt(servDetails[1])), 1500);
                     OutputStream out = sendSocket.getOutputStream();
                     out.write(header.getBytes());
                     out.close();

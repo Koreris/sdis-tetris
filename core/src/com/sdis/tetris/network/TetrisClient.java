@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,9 +38,10 @@ public class TetrisClient {
         this.server_port = server_port;
         OutputStream out = null;
         InputStream in = null;
-        
        
-        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
+        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket();
+        socket.connect(new InetSocketAddress(server_address, server_port),1500);
+        
         out = socket.getOutputStream();
         in = socket.getInputStream();
         try {
@@ -73,7 +75,8 @@ public class TetrisClient {
 
         OutputStream out = null;
         InputStream in = null;
-        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
+        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket();
+        socket.connect(new InetSocketAddress(server_address, server_port),1500);
         out = socket.getOutputStream();
         in = socket.getInputStream();
         try {
@@ -110,7 +113,8 @@ public class TetrisClient {
         OutputStream out = null;
         InputStream in = null;
       
-        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
+        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket();
+        socket.connect(new InetSocketAddress(server_address, server_port),1500);
         out = socket.getOutputStream();
         in = socket.getInputStream();
         try {
@@ -141,7 +145,8 @@ public class TetrisClient {
         OutputStream out = null;
         InputStream in = null;
       
-        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
+        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket();
+        socket.connect(new InetSocketAddress(server_address, server_port),1500);
         out = socket.getOutputStream();
         in = socket.getInputStream();
         try {
@@ -306,7 +311,8 @@ public class TetrisClient {
 		        int server_port = Integer.parseInt(serverInfo[1]);
 		        OutputStream out = null;
 		        InputStream in = null;
-		        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
+		        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket();
+		        socket.connect(new InetSocketAddress(server_address, server_port),1000);
 		        out = socket.getOutputStream();
 		        in = socket.getInputStream();
 		        

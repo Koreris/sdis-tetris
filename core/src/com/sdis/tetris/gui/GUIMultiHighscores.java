@@ -24,7 +24,7 @@ public class GUIMultiHighscores extends GUIScreen
 	Sprite background = new Sprite(new Texture(Gdx.files.internal("img/hsbg.png"), false));
 	private final Stage stage = new Stage();
 	private final Table table = new Table();
-	private final TextButton MainMenuButton = new TextButton("Lobby", Buttons.MenuButton);
+	private final TextButton MainMenuButton = new TextButton("Main Menu", Buttons.MenuButton);
 	public ConcurrentHashMap<String, Integer> scores;
 	public GUIMultiHighscores(Tetris paramParent,ConcurrentHashMap<String,Integer> score)
 	{
