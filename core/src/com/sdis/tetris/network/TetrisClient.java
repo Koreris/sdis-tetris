@@ -123,9 +123,7 @@ public class TetrisClient {
         byte[] buf = new byte[1024];
 
         int read = in.read(buf);
-        String string = new String(buf,0,read);
-        System.out.println("RECEIVED FROM SERVER RESPONSE FOR JOIN: " +string);
-        
+        String string = new String(buf,0,read);        
         String [] msg_tokenized = string.split(" ");
         out.close();
         in.close();
@@ -152,9 +150,7 @@ public class TetrisClient {
 	        byte[] buf = new byte[256];
 	
 	        int read = in.read(buf);
-	        String string = new String(buf,0,read);
-	        System.out.println("RECEIVED FROM SERVER RESPONSE FOR CREATE: " +string);
-	        
+	        String string = new String(buf,0,read);	        
 	        String [] msg_tokenized = string.split(" ");
 	        out.close();
 	        in.close();
@@ -242,7 +238,6 @@ public class TetrisClient {
 				
 			 }
 			 else if(header_tokenized[0].trim().equals("GAMEENDED")){
-			 	System.out.println("Received game ended message");
 				 String stringtemp;
 				 int tempscores;
 				 for(int i=1; i+1<header_tokenized.length;i++){
@@ -316,7 +311,6 @@ public class TetrisClient {
 		        int server_port = Integer.parseInt(serverInfo[1]);
 		        OutputStream out = null;
 		        InputStream in = null;
-		        System.out.println("TRYING SERVER "+serverInfo[0]+":"+serverInfo[1]);
 		        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
 		        out = socket.getOutputStream();
 		        in = socket.getInputStream();
@@ -333,7 +327,6 @@ public class TetrisClient {
 		  	        this.backupServer=key;
 		  	        this.server_address=server_address;
 		  	        this.server_port=server_port;
-		  	        System.out.println("SERVER FAULT: CHOSE NEW SERVER "+key+"-"+server_address+":"+server_port);
 		        	return true;
 		        }
 		        out.close();
@@ -343,14 +336,12 @@ public class TetrisClient {
 	            e.printStackTrace();   
 	        }
 		}
-		System.out.println("CLIENT FAULT: CAN'T REACH ANY SERVER");
 		return false;
 	}
 
 	public void reconnectLobbyOnBackupServer(String original_server,String player_name) {
 		try {
 			join_lobby(original_server+connectedLobbyName, player_name);
-			 System.out.println("RESUMING GAME IN NEW SERVER SUCCESSFULLY");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	

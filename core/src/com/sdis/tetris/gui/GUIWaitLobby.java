@@ -76,7 +76,6 @@ public class GUIWaitLobby  extends GUIScreen{
         {
         	public void run() 
         	{
-        		System.out.println("requesting players");
         		listPlayers();
         	}
         }, 0, 1,TimeUnit.SECONDS);

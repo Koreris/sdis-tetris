@@ -607,7 +607,6 @@ public class GUIMultiGame extends GUIScreen
 						cyanBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						cyanBlock.draw(batch);
 					}
-					else System.out.println("NOT Drawing color "+ y + "," + x+ " "+receivedScreenshot[y][x]);
 				}
 			}
 		}
