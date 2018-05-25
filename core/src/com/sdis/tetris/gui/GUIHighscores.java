@@ -16,9 +16,6 @@ import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.audio.SFX;
-import com.sdis.tetris.network.TetrisClient;
-
-import java.util.Map;
 
 public class GUIHighscores extends GUIScreen
 {
