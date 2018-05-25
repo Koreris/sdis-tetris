@@ -192,10 +192,7 @@ public class TetrisClient {
 			 byte[] buffer = Arrays.copyOfRange(buf,0,read);
 			 String string = new String(buffer);
 			 String[] parts = string.split(System.getProperty("line.separator"));
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/Ricardo
 			 String [] header_tokenized = parts[0].split(" ");
 			 if(header_tokenized[0].trim().equals("GAMESTATE")) 
 			 {
