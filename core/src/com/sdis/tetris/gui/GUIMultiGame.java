@@ -10,14 +10,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 import com.sdis.tetris.Buttons;
@@ -222,6 +221,7 @@ public class GUIMultiGame extends GUIScreen
 		public GameRunningState()
 		{
 			Gdx.input.setInputProcessor(GUIMultiGame.this);
+			Gdx.input.setInputProcessor(stageGame);
 
 			if(isGameRunning())
 			{
@@ -247,10 +247,10 @@ public class GUIMultiGame extends GUIScreen
 				smallTable1.setPosition(-45,minBoardHeight-320f);
 				smallTable1.row();
 				smallTable1.add(actionButton1).size(140,35).row();
-				actionButton1.addListener(new ChangeListener() {
+				actionButton1.addListener(new ClickListener() {
 					@Override
-					public void changed (ChangeEvent event, Actor actor) {
-						System.out.println("Button 1");
+					public void clicked(InputEvent event, float x, float y) {
+						System.out.println("Button1");
 					}
 				});
 				stageGame.addActor(smallTable1);
@@ -265,10 +265,10 @@ public class GUIMultiGame extends GUIScreen
 				smallTable2.setPosition(205,minBoardHeight-320f);
 				smallTable2.row();
 				smallTable2.add(actionButton2).size(140,30).row();
-				actionButton2.addListener(new ChangeListener() {
+				actionButton2.addListener(new ClickListener() {
 					@Override
-					public void changed (ChangeEvent event, Actor actor) {
-						System.out.println("Button 2");
+					public void clicked(InputEvent event, float x, float y) {
+						System.out.println("Button2");
 					}
 				});
 				stageGame.addActor(smallTable2);
@@ -283,10 +283,10 @@ public class GUIMultiGame extends GUIScreen
 				smallTable3.setPosition(455,minBoardHeight-320f);
 				smallTable3.row();
 				smallTable3.add(actionButton3).size(140,30).row();
-				actionButton3.addListener(new ChangeListener() {
+				actionButton3.addListener(new ClickListener() {
 					@Override
-					public void changed (ChangeEvent event, Actor actor) {
-						System.out.println("Button 3");
+					public void clicked(InputEvent event, float x, float y) {
+						System.out.println("Button3");
 					}
 				});
 				stageGame.addActor(smallTable3);
@@ -299,6 +299,10 @@ public class GUIMultiGame extends GUIScreen
 		void enableAction(String username){
 			TextButton button = null;
 
+			if(username == null){
+				return;
+			}
+
 			if(username.equals(smallBoard1.playerName)){
 				button = actionButton1;
 			}else if(username.equals(smallBoard2.playerName)){
@@ -310,14 +314,12 @@ public class GUIMultiGame extends GUIScreen
 			}
 
 			button.setTouchable(Touchable.enabled);
-			return;
 		}
 
 		void disableAction(String username){
 			TextButton button = null;
 
 			if(username == null){
-				System.out.println("Warning - passing null username");
 				return;
 			}
 
