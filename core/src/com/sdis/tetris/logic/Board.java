@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-
 import com.sdis.tetris.audio.AudioHandler;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.network.ColorJSON;
@@ -173,7 +170,7 @@ public class Board {
 		}
 		
 		ArrayList<ColorJSON> screenshot = new ArrayList<>();
-		int i=0;
+
 		for(int h=0;h<boardHeight;h++) {
 			for(int w=0;w<boardWidth;w++) {
 				if(cloneBoard[h][w]!=null)

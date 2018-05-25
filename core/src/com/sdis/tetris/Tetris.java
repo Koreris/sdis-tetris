@@ -1,10 +1,8 @@
 package com.sdis.tetris;
 
 import com.sdis.tetris.audio.AudioHandler;
-import com.sdis.tetris.audio.LRUCache;
 import com.sdis.tetris.gui.GUIGame;
 import com.sdis.tetris.gui.GUIMainMenu;
-import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.gui.GUIScreen;
 import com.sdis.tetris.logic.HighScores;
 import com.sdis.tetris.network.TetrisClient;
@@ -29,16 +27,6 @@ public class Tetris extends Game
 	private AudioHandler audioHandler = AudioHandler.getInstance();
 	HighScores scores= new HighScores();
 	
-
-	private final LRUCache<String, GUIScreen> menuArray = new LRUCache<>(4, new LRUCache.CacheEntryRemovedListener<String, GUIScreen>()
-	{
-		@Override
-		public void notifyEntryRemoved(final String key, final GUIScreen value)
-		{
-			value.dispose();
-		}
-	});
-
 	public Tetris()
 	{
 		gameMode = 1;

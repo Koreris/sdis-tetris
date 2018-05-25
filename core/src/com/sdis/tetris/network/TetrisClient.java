@@ -4,12 +4,10 @@ import javax.net.ssl.*;
 import com.badlogic.gdx.graphics.Color;
 import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.logic.Board;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
@@ -122,10 +120,10 @@ public class TetrisClient {
             e.printStackTrace();
         }
         
-        byte[] buf = new byte[256];
+        byte[] buf = new byte[1024];
 
         int read = in.read(buf);
-        String string = new String(buf);
+        String string = new String(buf,0,read);
         System.out.println("RECEIVED FROM SERVER RESPONSE FOR JOIN: " +string);
         
         String [] msg_tokenized = string.split(" ");
@@ -154,7 +152,7 @@ public class TetrisClient {
 	        byte[] buf = new byte[256];
 	
 	        int read = in.read(buf);
-	        String string = new String(buf);
+	        String string = new String(buf,0,read);
 	        System.out.println("RECEIVED FROM SERVER RESPONSE FOR CREATE: " +string);
 	        
 	        String [] msg_tokenized = string.split(" ");
@@ -326,7 +324,7 @@ public class TetrisClient {
 		        out.write(("TESTCONNECTION "+CRLF).getBytes());
 			
 		        byte[] read = new byte[1024];
-		        String readValue;
+
 		        int readBytes = in.read(read);
 		        if(readBytes>0) {
 		        	out.close();

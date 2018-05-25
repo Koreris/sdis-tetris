@@ -2,11 +2,10 @@ package com.sdis.tetris.logic;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 public class HighScores 
 {
-	public class Score implements Comparable
+	public class Score implements Comparable<Object>
 	{
 		double score;
 		String name;
@@ -53,7 +52,6 @@ public class HighScores
 	 * get sorted ArrayList of scores
 	 * @return sorted list of scores
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Score> getSortedScores()
 	{
 		Collections.sort(scores);

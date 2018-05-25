@@ -1,21 +1,14 @@
 package com.sdis.tetris.gui;
 
-import java.awt.Button; 
-
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -36,8 +29,6 @@ public class GUIGame extends GUIScreen
 
 	private GameState state;
 	private final float screenWidth = Gdx.graphics.getWidth();
-	private final float screenHeight = Gdx.graphics.getHeight();
-	private final Stage stage = new Stage();
 	
 	private Board myBoard = new Board();
 	Sprite lvl1 = new Sprite(new Texture(Gdx.files.internal("img/level1.png"), false));

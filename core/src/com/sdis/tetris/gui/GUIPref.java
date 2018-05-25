@@ -43,7 +43,6 @@ public class GUIPref extends GUIScreen
 	private final TextButton BthemeButton = new TextButton("THEME B", Buttons.ToggleButton);
 	private final TextButton CthemeButton = new TextButton("THEME C", Buttons.ToggleButton);
 	private final TextButton DthemeButton = new TextButton("THEME D", Buttons.ToggleButton);
-	private final float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
 	Sprite background = new Sprite(new Texture(Gdx.files.internal("img/preferences_menu.png"), false));
 	
 	

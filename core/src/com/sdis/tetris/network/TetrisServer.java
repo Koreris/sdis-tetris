@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -156,9 +155,8 @@ public class TetrisServer implements Runnable{
                 }
                 else if(msg_tokens[0].compareTo("ASKLIST") == 0){
                     String msg = "";
-                    byte[] response;
                   
-                    for(Map.Entry me: running_lobbies.entrySet()){
+                    for(Map.Entry<String,TetrisLobby> me: running_lobbies.entrySet()){
                     	if(!running_lobbies.get(me.getKey()).game_started)
                     		msg =  msg + me.getKey()+"    "+ running_lobbies.get(me.getKey()).scores.size() + " out of " + "4"+ ";";
                     }

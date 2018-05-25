@@ -1,6 +1,5 @@
 package com.sdis.tetris.gui;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +27,6 @@ public class GUIMultiGame extends GUIScreen
 
 	private GameState state;
 	private final float screenWidth = Gdx.graphics.getWidth();
-	private final float screenHeight = Gdx.graphics.getHeight();
-	private final Stage stage = new Stage();
 
 	private Board myBoard = new Board();
 	protected int opponentNr;

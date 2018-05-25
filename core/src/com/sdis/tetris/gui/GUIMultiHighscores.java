@@ -35,7 +35,7 @@ public class GUIMultiHighscores extends GUIScreen
 		table.setPosition(0,75);
 		table.add(new Label("HIGHSCORES", Buttons.TitleLabel)).padBottom(32).row();
 		TetrisClient cliente = new TetrisClient();
-		for (Map.Entry me: cliente.multiscores.entrySet())
+		for (Map.Entry<String,Integer> me: cliente.multiscores.entrySet())
 		{
 			String highscore="i+1\n"+me.getKey() + " " + me.getValue();
 			
