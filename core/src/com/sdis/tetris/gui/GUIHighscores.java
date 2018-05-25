@@ -32,19 +32,11 @@ public class GUIHighscores extends GUIScreen
 	public GUIHighscores(Tetris paramParent)
 	{
 		super(paramParent, Song.THEME_CREDITS);
-
+		System.out.println("banana1");
 		background.setPosition(0,0);
 		background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
 		table.setPosition(0,75);
 		table.add(new Label("HIGHSCORES", Buttons.TitleLabel)).padBottom(32).row();
-
-		TetrisClient cliente = new TetrisClient();
-		for (Map.Entry me: cliente.multiscores.entrySet())
-		{
-			String highscore="i+1\n"+me.getKey() + " " + me.getValue();
-
-			table.add(new Label(highscore, Buttons.TitleLabel)).padBottom(20).row();
-		}
 		table.add(MainMenuButton);
 		table.row();
 		table.bottom();

@@ -4,14 +4,14 @@ import javax.net.ssl.*;
 import com.badlogic.gdx.graphics.Color;
 import com.sdis.tetris.gui.GUIMultiGame;
 import com.sdis.tetris.logic.Board;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.SocketException;
+import com.sdis.tetris.gui.GUIMultiHighscores;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TetrisClient {
@@ -24,7 +24,6 @@ public class TetrisClient {
     public String backupServer;
     public ArrayList<String> list_lobbies = new ArrayList<>();
     public ArrayList<String> players = new ArrayList<>();
-	public ConcurrentHashMap<String,Integer> multiscores;
     InetAddress server_address;
     int server_port;
 
@@ -36,11 +35,11 @@ public class TetrisClient {
     	disconnectLobby();
     	list_lobbies = new ArrayList<>();
     	byte[] msg = ("ASKLIST " + server_name + CRLF).getBytes();
-
         this.server_address = server_address;
         this.server_port = server_port;
         OutputStream out = null;
         InputStream in = null;
+        
        
         SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket(server_address, server_port);
         out = socket.getOutputStream();
@@ -188,9 +187,8 @@ public class TetrisClient {
     	String msg = "GAMEOVER " + player_name;
     	lsos.write((msg+CRLF).getBytes());
 	}
-    
-    
-    public int listen_lobby_socket(GUIMultiGame game)  {
+
+    public int listen_lobby_socket(GUIMultiGame game,ConcurrentHashMap<String,Integer> scores)  {
     	if(lobbySocket.isClosed())
     		return -1;
 		 try {
@@ -198,12 +196,7 @@ public class TetrisClient {
 			 int read = lsis.read(buf);
 			 byte[] buffer = Arrays.copyOfRange(buf,0,read);
 			 String string = new String(buffer);
-			
 			 String[] parts = string.split(System.getProperty("line.separator"));
-			 System.out.println("Received parts: "+parts.length);
-			 for(String part:parts) {
-				 System.out.println("Im a part: "+part.trim());
-			 }
 			 String [] header_tokenized = parts[0].split(" ");
 			 if(header_tokenized[0].trim().equals("GAMESTATE")) 
 			 {
@@ -247,21 +240,18 @@ public class TetrisClient {
 				
 			 }
 			 else if(header_tokenized[0].trim().equals("GAMEENDED")){
-			 	System.out.println("Received game ended message");
-				 String stringtemp;
-				 int tempscores;
+				 String playername;
+				 int points;
 				 for(int i=1; i+1<header_tokenized.length;i++){
-				 	stringtemp = header_tokenized[i];
-				 	i++;
-				 	tempscores = Integer.parseInt(header_tokenized[i]);
-					multiscores.put(stringtemp, tempscores);
+				 	playername = header_tokenized[i];
+				 	points = Integer.parseInt(header_tokenized[i+1]);
+				 	scores.put(playername, points);
+					i++;
 				 }
-				 //TODO -  !!!JOSÉ!!!  - Aqui deve passar para o ecra de mostrar as pontuacoes finais de todos os jogadores (ecra de gameover)
 			 	return 0;
 			 }
 		 }
 		catch (IOException e) {
-			//e.printStackTrace();
 			return -1;
 		}
 		 return -1;
@@ -273,14 +263,14 @@ public class TetrisClient {
     		smallboard.cloneBoard[color.y][color.x]=new Color(color.r,color.g,color.b,color.a);
     	}
     }
-    
+
     public static void printColor(Color[][] colors) {
     	for(int h=0;h<colors.length;h++) {
 			for(int w=0;w<colors[0].length;w++) {
 				if(colors[h][w]!=null)
 					System.out.println("Color in position "+h+","+w+": "+colors[h][w].toString());
 				else System.out.println("Color in position "+h+","+w+": null");
-			}	
+			}
 		}
     }
     
@@ -350,14 +340,13 @@ public class TetrisClient {
 	            e.printStackTrace();   
 	        }
 		}
-		System.out.println("CLIENT FAULT: CAN'T REACH ANY SERVER");
+
 		return false;
 	}
 
 	public void reconnectLobbyOnBackupServer(String original_server,String player_name) {
 		try {
 			join_lobby(original_server+connectedLobbyName, player_name);
-			 System.out.println("RESUMING GAME IN NEW SERVER SUCCESSFULLY");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	

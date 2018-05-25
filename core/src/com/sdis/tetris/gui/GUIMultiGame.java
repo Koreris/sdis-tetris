@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Timer;
@@ -24,7 +25,6 @@ import com.sdis.tetris.network.TetrisClient;
 
 public class GUIMultiGame extends GUIScreen
 {
-
 
 	private GameState state;
 	private final float screenWidth = Gdx.graphics.getWidth();
@@ -64,12 +64,12 @@ public class GUIMultiGame extends GUIScreen
 	String playerName;
 	private TetrisClient client;
 	ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-	
+	private ConcurrentHashMap<String,Integer> scores = new ConcurrentHashMap<>();
+
 	public void changeState(GameState newState)
 	{
 		state = newState;
 	}
-
 
 	public GUIMultiGame(Tetris paramParent) 
 	{
@@ -83,9 +83,24 @@ public class GUIMultiGame extends GUIScreen
 		new Thread() {
 			public void run() {
 				while(true) {
-					int result = client.listen_lobby_socket(GUIMultiGame.this);
-					if(result==0)
+					int result = client.listen_lobby_socket(GUIMultiGame.this,scores);
+					if(result==0){
+						Gdx.app.postRunnable(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								parent.switchTo(new GUIMultiHighscores(parent,scores));
+								System.out.println("DONE");
+							}
+						});
+
 						break;
+					}
+
 				}
 			}
 		}.start();
@@ -369,6 +384,8 @@ public class GUIMultiGame extends GUIScreen
 
 			batch.end();
 			stageGame.draw();
+
+
 
 		}
 

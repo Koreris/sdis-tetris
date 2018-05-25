@@ -28,25 +28,33 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="sdis-tetris" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ColorJSON.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/ColorJSON.java">
+      <file leaf-file-name="GUIMultiHighscores.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiHighscores.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="6" selection-start-column="5" selection-end-column="6" />
+            <state relative-caret-position="846">
+              <caret line="83" lean-forward="true" selection-start-line="83" selection-end-line="83" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GUIMultiPlayer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiPlayer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="26" column="13" selection-start-line="26" selection-start-column="13" selection-end-line="26" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -54,8 +62,8 @@
       <file leaf-file-name="TetrisLobby.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="229">
-              <caret line="149" column="75" selection-start-line="149" selection-start-column="75" selection-end-line="149" selection-end-column="75" />
+            <state relative-caret-position="3492">
+              <caret line="241" selection-start-line="241" selection-end-line="241" />
             </state>
           </provider>
         </entry>
@@ -63,8 +71,8 @@
       <file leaf-file-name="TetrisClient.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-281">
-              <caret line="207" selection-start-line="207" selection-end-line="207" />
+            <state relative-caret-position="251">
+              <caret line="342" lean-forward="true" selection-start-line="342" selection-end-line="342" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -72,11 +80,23 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="TetrisLobbyJSON.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobbyJSON.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="6" column="35" selection-start-line="6" selection-start-column="35" selection-end-line="6" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="GUIMultiGame.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiGame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
+            <state relative-caret-position="194">
               <caret line="95" selection-start-line="95" selection-end-line="95" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -84,17 +104,22 @@
       <file leaf-file-name="TetrisServer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="160" column="65" selection-start-line="160" selection-start-column="65" selection-end-line="160" selection-end-column="65" />
+            <state relative-caret-position="3927">
+              <caret line="266" selection-start-line="266" selection-end-line="266" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
+      <file leaf-file-name="GUIMultiPlayer.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiPlayer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="48" selection-start-line="48" selection-end-line="48" />
+            <state relative-caret-position="194">
+              <caret line="41" column="15" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="15" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#2282#2283#0" expanded="true" />
+                <element signature="e#2344#2345#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -124,11 +149,18 @@
       <find />
       <find>g</find>
       <find>gameended</find>
-      <find />
       <find>gameEnd</find>
       <find>send_game_over(</find>
       <find>gameover</find>
+      <find>10</find>
+      <find>oi</find>
+      <find>client</find>
+      <find>Label</find>
+      <find>System.out.println</find>
     </findStrings>
+    <replaceStrings>
+      <replace>scores</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -136,7 +168,7 @@
   <component name="GradleLocalSettings">
     <option name="myGradleHomes">
       <map>
-        <entry key="$PROJECT_DIR$" value="$USER_HOME$/.gradle/wrapper/dists/gradle-4.2.1-all/domrskppdhf3wtn5mziw0c2zr/gradle-4.2.1" />
+        <entry key="$PROJECT_DIR$" value="C:\Users\Mavericks\.gradle\wrapper\dists\gradle-4.2.1-all\domrskppdhf3wtn5mziw0c2zr\gradle-4.2.1" />
       </map>
     </option>
     <option name="myGradleVersions">
@@ -149,14 +181,14 @@
         <entry>
           <key>
             <ExternalProjectPojo>
-              <option name="name" value="PROJ2" />
+              <option name="name" value="sdis-tetris" />
               <option name="path" value="$PROJECT_DIR$" />
             </ExternalProjectPojo>
           </key>
           <value>
             <list>
               <ExternalProjectPojo>
-                <option name="name" value="PROJ2" />
+                <option name="name" value="sdis-tetris" />
                 <option name="path" value="$PROJECT_DIR$" />
               </ExternalProjectPojo>
               <ExternalProjectPojo>
@@ -178,12 +210,12 @@
           <value>
             <list>
               <ExternalTaskPojo>
-                <option name="description" value="Displays the components produced by root project 'PROJ2'. [incubating]" />
+                <option name="description" value="Displays the components produced by root project 'sdis-tetris'. [incubating]" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="components" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Displays the sub-projects of root project 'PROJ2'." />
+                <option name="description" value="Displays the sub-projects of root project 'sdis-tetris'." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="projects" />
               </ExternalTaskPojo>
@@ -202,7 +234,7 @@
                 <option name="name" value="cleanEclipse" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Displays the dependent components of components in root project 'PROJ2'. [incubating]" />
+                <option name="description" value="Displays the dependent components of components in root project 'sdis-tetris'. [incubating]" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="dependentComponents" />
               </ExternalTaskPojo>
@@ -212,7 +244,7 @@
                 <option name="name" value="classes" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Displays all buildscript dependencies declared in root project 'PROJ2'." />
+                <option name="description" value="Displays all buildscript dependencies declared in root project 'sdis-tetris'." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="buildEnvironment" />
               </ExternalTaskPojo>
@@ -249,7 +281,7 @@
                 <option name="name" value="eclipseClasspath" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Displays the configuration model of root project 'PROJ2'. [incubating]" />
+                <option name="description" value="Displays the configuration model of root project 'sdis-tetris'. [incubating]" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="model" />
               </ExternalTaskPojo>
@@ -264,7 +296,7 @@
                 <option name="name" value="processResources" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Displays the tasks runnable from root project 'PROJ2' (some of the displayed tasks may belong to subprojects)." />
+                <option name="description" value="Displays the tasks runnable from root project 'sdis-tetris' (some of the displayed tasks may belong to subprojects)." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="tasks" />
               </ExternalTaskPojo>
@@ -297,7 +329,7 @@
                 <option name="name" value="compileJava" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Displays the insight into a specific dependency in root project 'PROJ2'." />
+                <option name="description" value="Displays the insight into a specific dependency in root project 'sdis-tetris'." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="dependencyInsight" />
               </ExternalTaskPojo>
@@ -322,7 +354,7 @@
                 <option name="name" value="compileTestJava" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Displays all dependencies declared in root project 'PROJ2'." />
+                <option name="description" value="Displays all dependencies declared in root project 'sdis-tetris'." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="dependencies" />
               </ExternalTaskPojo>
@@ -362,7 +394,7 @@
                 <option name="name" value="eclipseProject" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Displays the properties of root project 'PROJ2'." />
+                <option name="description" value="Displays the properties of root project 'sdis-tetris'." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="properties" />
               </ExternalTaskPojo>
@@ -726,9 +758,9 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="9154209722000" />
+        <entry key="$PROJECT_DIR$" value="9163042439983" />
         <entry key="$PROJECT_DIR$/.gradle" value="0" />
-        <entry key="$PROJECT_DIR$/build.gradle" value="2759641264" />
+        <entry key="$PROJECT_DIR$/build.gradle" value="3756363506" />
         <entry key="$PROJECT_DIR$/core/build.gradle" value="2247302725" />
         <entry key="$PROJECT_DIR$/desktop/build.gradle" value="1173268344" />
         <entry key="$PROJECT_DIR$/gradle.properties" value="975134833" />
@@ -766,7 +798,7 @@
                   </entry>
                 </map>
               </option>
-              <option name="name" value="PROJ2" />
+              <option name="name" value="sdis-tetris" />
               <option name="projectBuildClasspath">
                 <list>
                   <option value="$PROJECT_DIR$/buildSrc/src/main/java" />
@@ -776,11 +808,6 @@
             </ExternalProjectBuildClasspathPojo>
           </value>
         </entry>
-      </map>
-    </option>
-    <option name="projectSyncType">
-      <map>
-        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
       </map>
     </option>
   </component>
@@ -797,9 +824,13 @@
         <option value="$PROJECT_DIR$/core/assets/servers.txt" />
         <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/ColorJSON.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
-        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisClient.java" />
-        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiGame.java" />
         <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java" />
+        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiPlayer.java" />
+        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIHighscores.java" />
+        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIScreen.java" />
+        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiGame.java" />
+        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiHighscores.java" />
+        <option value="$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisClient.java" />
       </list>
     </option>
   </component>
@@ -812,7 +843,7 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="23" />
     <option name="width" value="1440" />
     <option name="height" value="877" />
@@ -828,42 +859,51 @@
         <subPane>
           <expand>
             <path>
-              <item name="PROJ2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PROJ2" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sdis-tetris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sdis-tetris" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
-              <item name="PROJ2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PROJ2" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name=".gradle" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PROJ2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PROJ2" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sdis-tetris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sdis-tetris" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
-              <item name="PROJ2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PROJ2" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sdis-tetris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sdis-tetris" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sdis-tetris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sdis-tetris" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
-              <item name="PROJ2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PROJ2" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sdis-tetris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sdis-tetris" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="tetris" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="PROJ2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PROJ2" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="sdis-tetris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sdis-tetris" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="tetris" type="462c0819:PsiDirectoryNode" />
+              <item name="gui" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sdis-tetris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sdis-tetris" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="tetris" type="462c0819:PsiDirectoryNode" />
               <item name="network" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="PROJ2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sdis-tetris" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
@@ -874,8 +914,12 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Libraries" />
@@ -885,10 +929,10 @@
     <property name="settings.editor.selected.configurable" value="project.propCompiler" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
+    <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/core/assets" />
     </key>
-    <key name="CopyFile.RECENT_KEYS">
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/core/assets" />
     </key>
   </component>
@@ -907,22 +951,19 @@
   <component name="RunManager" selected="Application.Game">
     <configuration name="Game" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="1.8.0_171" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="com.sdis.tetris.desktop.DesktopLauncher" />
       <module name="desktop_main" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/core/assets" />
     </configuration>
     <configuration name="Server" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="1.8.0_171" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="com.sdis.tetris.network.TetrisServer" />
       <module name="core_main" />
-      <option name="PROGRAM_PARAMETERS" value="server_name 4444 5555" />
+      <option name="PROGRAM_PARAMETERS" value="server_name 4454 4500" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/core/assets" />
     </configuration>
     <configuration name="Test Client" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="1.8.0_171" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="com.sdis.tetris.network.TetrisClient" />
       <module name="core_main" />
       <option name="PROGRAM_PARAMETERS" value="127.0.0.1 5555" />
@@ -1009,41 +1050,41 @@
     <option name="totallyTimeSpent" value="48276000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="877" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info anchor="right" id="Palette" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="right" id="Maven Projects" order="3" />
-      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info id="Capture Tool" order="2" />
-      <window_info id="Designer" order="2" />
-      <window_info anchor="bottom" id="Build" order="7" weight="0.32820514" />
-      <window_info anchor="right" id="Database" order="3" />
-      <window_info id="Structure" order="1" sideWeight="0.15839694" side_tool="true" visible="true" weight="0.23888889" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info id="UI Designer" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" order="7" weight="0.32848486" />
+      <window_info anchor="bottom" id="Messages" order="7" weight="0.32776618" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
       <window_info id="Image Layers" order="2" />
-      <window_info anchor="right" id="Capture Analysis" order="3" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32820514" />
+      <window_info anchor="right" id="Capture Analysis" order="4" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31210855" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Run with VisualVM" order="7" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.84160304" visible="true" weight="0.23888889" />
-      <window_info anchor="right" id="Gradle" order="3" />
-      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info id="Designer" order="2" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8376328" visible="true" weight="0.18123667" />
+      <window_info anchor="right" id="Gradle" order="9" weight="0.32995737" />
+      <window_info id="Structure" order="1" sideWeight="0.16236722" side_tool="true" visible="true" weight="0.18123667" />
+      <window_info anchor="right" id="Theme Preview" order="5" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug with VisualVM" order="7" />
+      <window_info anchor="bottom" id="Build" order="7" weight="0.32776618" />
+      <window_info anchor="right" id="Palette" order="7" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info id="UI Designer" order="2" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32848486" />
+      <window_info anchor="bottom" id="Run with VisualVM" order="7" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="right" id="Maven Projects" order="6" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Database" order="8" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Debug with VisualVM" order="7" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1066,61 +1107,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2160">
-          <caret line="161" column="51" selection-start-line="161" selection-start-column="51" selection-end-line="161" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2520">
-          <caret line="182" column="70" selection-start-line="182" selection-start-column="70" selection-end-line="182" selection-end-column="70" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiGame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5010">
-          <caret line="384" column="49" selection-start-line="384" selection-start-column="40" selection-end-line="384" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" selection-start-line="10" selection-end-line="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/ColorJSON.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="16" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="30" lean-forward="true" selection-start-line="34" selection-start-column="30" selection-end-line="34" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1680">
-          <caret line="121" column="64" selection-start-line="121" selection-start-column="64" selection-end-line="121" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/ParseServersFile.java">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -1128,13 +1114,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobbySerializable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobbySerializable.java" />
     <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -1156,13 +1136,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobbySerializable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobbySerializable.java" />
     <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -1276,13 +1250,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobbySerializable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobbySerializable.java" />
     <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIServer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="158">
@@ -1304,13 +1272,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/assets/servers.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="1" lean-forward="true" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -1322,13 +1283,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="25" selection-start-line="3" selection-start-column="25" selection-end-line="3" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="48" selection-start-line="48" selection-end-line="48" />
         </state>
       </provider>
     </entry>
@@ -1345,38 +1299,112 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiPlayer.java">
+    <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="26" column="13" selection-start-line="26" selection-start-column="13" selection-end-line="26" selection-end-column="13" />
+        <state relative-caret-position="519">
+          <caret line="50" column="77" selection-start-line="50" selection-start-column="77" selection-end-line="50" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/assets/servers.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="22" lean-forward="true" selection-start-line="2" selection-start-column="22" selection-end-line="2" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIGame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="117" column="47" lean-forward="true" selection-start-line="117" selection-start-column="47" selection-end-line="117" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobbyJSON.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="35" selection-start-line="6" selection-start-column="35" selection-end-line="6" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/logic/Board.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="142" selection-start-line="142" selection-end-line="142" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="160" column="65" selection-start-line="160" selection-start-column="65" selection-end-line="160" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="149" column="75" selection-start-line="149" selection-start-column="75" selection-end-line="149" selection-end-column="75" />
+        <state relative-caret-position="3927">
+          <caret line="266" selection-start-line="266" selection-end-line="266" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiGame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
+        <state relative-caret-position="194">
           <caret line="95" selection-start-line="95" selection-end-line="95" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="41" column="15" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="15" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2282#2283#0" expanded="true" />
+            <element signature="e#2344#2345#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMainMenu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="24" column="13" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIScreen.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIHighscores.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="38" column="83" selection-start-line="38" selection-start-column="83" selection-end-line="38" selection-end-column="83" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisLobby.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3492">
+          <caret line="241" selection-start-line="241" selection-end-line="241" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/gui/GUIMultiHighscores.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="846">
+          <caret line="83" lean-forward="true" selection-start-line="83" selection-end-line="83" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/com/sdis/tetris/network/TetrisClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-281">
-          <caret line="207" selection-start-line="207" selection-end-line="207" />
+        <state relative-caret-position="251">
+          <caret line="342" lean-forward="true" selection-start-line="342" selection-end-line="342" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1392,7 +1420,7 @@
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.2739726" />
               </list>
             </option>
           </splitter-proportions>
@@ -1400,7 +1428,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited />
+          <last-edited>No facets are configured</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1412,7 +1440,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
-          <last-edited />
+          <last-edited>Gradle: org.glassfish:javax.json:1.1.2</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1424,7 +1452,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>1.8.0_171</last-edited>
+          <last-edited>1.8</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1436,11 +1464,11 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>PROJ2</last-edited>
+          <last-edited>core</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
-                <option value="0.2" />
+                <option value="0.2739726" />
               </list>
             </option>
           </splitter-proportions>
@@ -1460,7 +1488,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>javax.json-1.1.2</last-edited>
+          <last-edited>Gradle: org.glassfish:javax.json:1.1.2</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

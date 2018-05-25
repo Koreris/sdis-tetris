@@ -224,7 +224,7 @@ public class TetrisLobby{
 
 	        while(true) {
                 try {
-                    byte[] buf = new byte[1024];
+                    byte[] buf = new byte[100000];
 
                     int read = in.read(buf);
 

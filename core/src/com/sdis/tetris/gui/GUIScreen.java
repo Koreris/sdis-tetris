@@ -29,6 +29,7 @@ public abstract class GUIScreen implements Screen, InputProcessor
 
 	protected Song bgmusic;
 
+
 	public final Song getSong()
 	{
 		return bgmusic;
