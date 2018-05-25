@@ -21,7 +21,7 @@ public class ParseServersFile implements Runnable {
 			String line;
 			while ((line = bufferedReader.readLine()) != null) {
 				String[] lineComponents = line.split(" ");
-				records.put(lineComponents[0], lineComponents[1]+" "+lineComponents[2]);
+				records.put(lineComponents[0].trim(), lineComponents[1].trim()+" "+lineComponents[2].trim());
 			}
 			fileReader.close();
 		}

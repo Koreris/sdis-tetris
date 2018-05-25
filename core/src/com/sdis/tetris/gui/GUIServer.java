@@ -18,7 +18,6 @@ import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.network.ParseServersFile;
-import com.sdis.tetris.network.TetrisClient;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -34,7 +33,6 @@ public class GUIServer extends GUIScreen{
     private final List<String> list;
     private Skin skin;
     private Skin skinv2;
-    private TetrisClient client;
     final ScrollPane scroll;
     ThreadPoolExecutor executor;
     private TextField playerTextField;
@@ -69,7 +67,7 @@ public class GUIServer extends GUIScreen{
          }
          String[] strings = new String[other_servers.size()];
          int i = 1;
-         for (Map.Entry me: other_servers.entrySet()) {
+         for (Map.Entry<String,String> me: other_servers.entrySet()) {
              strings[other_servers.size()-i] = me.getKey()+ " " + me.getValue();
              i++;
          }
@@ -78,7 +76,6 @@ public class GUIServer extends GUIScreen{
     
     public GUIServer(Tetris paramParent) {
         super(paramParent, Song.THEME_A);
-        client = paramParent.networkClient;
         background.setPosition(0,0);
         background.setSize((float)Gdx.graphics.getWidth(),(float)Gdx.graphics.getHeight());
         title.setPosition((float)Gdx.graphics.getWidth()/3.7f,(float)Gdx.graphics.getHeight()-title.getHeight()*2);
@@ -87,7 +84,6 @@ public class GUIServer extends GUIScreen{
         skinv2  = new Skin(Gdx.files.internal("menu/menu.json"), new TextureAtlas(Gdx.files.internal("menu/menu.atlas")));
         list=new List<>(skin);
         list.setAlignment(1);
-        LinkedBlockingQueue<Runnable> queue= new LinkedBlockingQueue<Runnable>();
         executor = new ThreadPoolExecutor(1, 5, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         
         listServers(paramParent.other_servers);

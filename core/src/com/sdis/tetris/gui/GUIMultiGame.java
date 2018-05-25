@@ -1,5 +1,6 @@
 package com.sdis.tetris.gui;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -28,11 +30,8 @@ import com.sdis.tetris.network.TetrisClient;
 public class GUIMultiGame extends GUIScreen
 {
 
-
 	private GameState state;
 	private final float screenWidth = Gdx.graphics.getWidth();
-	private final float screenHeight = Gdx.graphics.getHeight();
-	private final Stage stage = new Stage();
 
 	private Board myBoard = new Board();
 	protected int opponentNr;
@@ -66,12 +65,12 @@ public class GUIMultiGame extends GUIScreen
 	String playerName;
 	private TetrisClient client;
 	ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 5, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-	
+	private ConcurrentHashMap<String,Integer> scores = new ConcurrentHashMap<>();
+
 	public void changeState(GameState newState)
 	{
 		state = newState;
 	}
-
 
 	public GUIMultiGame(Tetris paramParent) 
 	{
@@ -85,14 +84,43 @@ public class GUIMultiGame extends GUIScreen
 		new Thread() {
 			public void run() {
 				while(true) {
-					int result = client.listen_lobby_socket(GUIMultiGame.this);
-					if(result==0)
+					int result = client.listen_lobby_socket(GUIMultiGame.this,scores);
+					if(result==0){
+						Gdx.app.postRunnable(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								parent.switchTo(new GUIMultiHighscores(parent,scores));
+								System.out.println("DONE");
+							}
+						});
+
 						break;
+					}
+
 				}
 			}
 		}.start();
 	}	
-
+	
+	private void handleDisconnect() {
+		if(!lockServerChange) {
+			lockServerChange=true;
+			if(client.canReachAnyServer(parent.other_servers)) {
+				try {
+					client.join_lobby(client.connectedLobbyName, parent.playerName);
+				} catch (Exception e1) {
+					client.reconnectLobbyOnBackupServer(parent.serverName,parent.playerName);
+				}
+				lockServerChange=false;
+			}
+		}
+	}
+	
 	private void reStartGame(){
 		myBoard=new Board();
 		myBoard.setGameOver(false);
@@ -153,11 +181,6 @@ public class GUIMultiGame extends GUIScreen
 		return !(state instanceof GameRunningState);
 	}
 
-
-
-
-
-
 	private abstract class GameState
 	{
 		public abstract void update(float delta);
@@ -194,7 +217,8 @@ public class GUIMultiGame extends GUIScreen
 
 		int prevLevel=0;
 		Sprite background = lvl1;
-
+		
+		
 		public GameRunningState()
 		{
 			Gdx.input.setInputProcessor(GUIMultiGame.this);
@@ -448,14 +472,7 @@ public class GUIMultiGame extends GUIScreen
 						try {
 							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard(), myBoard.getPlayerScore());
 						} catch (IOException e) {
-							if(!lockServerChange) {
-								lockServerChange=true;
-								if(client.canReachAnyServer(parent.other_servers)) {
-									client.reconnectLobbyOnBackupServer(parent.serverName,parent.playerName);
-									lockServerChange=false;
-								}
-							}
-							//else it was a client failure
+							handleDisconnect();
 						}
 					}
 				});
@@ -512,12 +529,14 @@ public class GUIMultiGame extends GUIScreen
 				parent.addToHighScores(myBoard.getPlayerScore(), playerName);
 				t1.cancel();
 				
-				changeState(new GameOverState());
+				changeState(new GameOverState(level,score));
 			}
 
 
 			batch.end();
 			stageGame.draw();
+
+
 
 		}
 
@@ -534,15 +553,63 @@ public class GUIMultiGame extends GUIScreen
 	private class GameOverState extends GameState
 	{
 		private final Stage stageOver = new Stage();
-
-		public GameOverState()
+		Label level;
+		Label score;
+		private Table table = new Table();
+		public GameOverState(Label level, Label score)
 		{
 			audio.playSong(Song.THEME_GAME_OVER, true);
-
+			this.level=level;
+			this.score=score;
+			sendStateCount=60;
+			table.setFillParent(true);
+			this.level.setFontScale(0.8f,0.8f);
+			this.score.setFontScale(0.8f,0.8f);
+			table.add(level).padBottom(10);
+			table.row();
+			table.add(score);
+			table.setPosition(0,minBoardHeight+250f);
+			stageOver.addActor(table);
 		}
 		@Override
 		public void draw()
 		{
+			sendStateCount++;
+			
+			if(sendStateCount>=60 && !myBoard.isGameOver() && !lockServerChange) {
+				executor.execute(new Runnable() {
+					public void run() {
+						try {
+							client.send_game_state(parent.playerName, parent.serverName, myBoard.screenshotBoard(), myBoard.getPlayerScore());
+						} catch (IOException e) {
+							handleDisconnect();
+						}
+					}
+				});
+				sendStateCount=0;
+			}
+			
+			Gdx.gl.glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+			Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+			batch.begin();
+			drawBoard(9.1f);
+			switch(opponentNr)
+			{
+			case 3:
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				drawSmallBoard(smallBoard2.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				drawSmallBoard(smallBoard3.cloneBoard, smallBoard3, smallFrame3, 850f, 250f, 1.26f);
+				break;
+			case 2:
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				drawSmallBoard(smallBoard2.cloneBoard, smallBoard2, smallFrame2, 600f, 250f, 1.64f);
+				break;
+			default:
+				
+				drawSmallBoard(smallBoard1.cloneBoard, smallBoard1, smallFrame1, 350f, 250f, 2.35f);
+				break;	
+			}
+			batch.end();
 			stageOver.draw();
 		}
 
@@ -714,7 +781,6 @@ public class GUIMultiGame extends GUIScreen
 						cyanBlock.setSize(smallBoard.scaleX, smallBoard.scaleY);
 						cyanBlock.draw(batch);
 					}
-					else System.out.println("NOT Drawing color "+ y + "," + x+ " "+receivedScreenshot[y][x]);
 				}
 			}
 		}

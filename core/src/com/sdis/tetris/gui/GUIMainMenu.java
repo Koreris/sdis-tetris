@@ -1,9 +1,7 @@
 package com.sdis.tetris.gui;
 
 import com.badlogic.gdx.Gdx; 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -13,20 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
 import com.sdis.tetris.audio.SFX;
 import com.sdis.tetris.audio.Song;
-import com.sdis.tetris.logic.Board;
 
 public class GUIMainMenu extends GUIScreen
 {
 	private final Stage stage = new Stage();
 	private final Table table = new Table();
-	private Board myBoard = new Board();
 	Sprite background = new Sprite(new Texture(Gdx.files.internal("img/main_menu.png"), false));
 	Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
 	private final TextButton onePButton = new TextButton("1 PLAYER", Buttons.MenuButton);
@@ -34,11 +28,7 @@ public class GUIMainMenu extends GUIScreen
 	private final TextButton multiButton = new TextButton("MultiPlayer", Buttons.MenuButton);
 	private final TextButton credButton = new TextButton("CREDITS", Buttons.MenuButton);
 	private final TextButton exitButton = new TextButton("EXIT", Buttons.MenuButton);
-	private final float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
-	private final Camera camera=new OrthographicCamera(25 * aspectRatio ,25);
-	private final Viewport viewport=new FitViewport(800,480,camera);
 	
-
 	private class RunGame implements Runnable
 	{
 		@Override

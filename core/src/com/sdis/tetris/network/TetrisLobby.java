@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -47,7 +46,9 @@ public class TetrisLobby{
             ClientListener newlistener =new ClientListener(player_name,socket);
             playerConnections.put(player_name,newlistener);
             scores.putIfAbsent(player_name, 0);
-            playersReady.putIfAbsent(player_name, false);
+            if(!game_started)
+            	playersReady.putIfAbsent(player_name, false);
+            else playersReady.putIfAbsent(player_name,true);
             playersGameover.putIfAbsent(player_name, false);
             master.thread_pool.execute(newlistener);
         } catch (IOException e) {
@@ -101,6 +102,8 @@ public class TetrisLobby{
         }
 	    	
 	    public void checkAllTrue() throws IOException {
+	    	if(playersReady.size()<2)
+	    		return;
 	    	boolean alltrue=true;
 	    	for(String key: playersReady.keySet()) {
 	    		if(!playersReady.get(key))
@@ -195,13 +198,14 @@ public class TetrisLobby{
 	    }
 	    
 	    void handlePlayerDisconnection() {
+	    	playerConnections.remove(username);
 	    	if(!game_started) {
         		scores.remove(username);
-        		playerConnections.remove(username);
         		playersReady.remove(username);
+        		playersGameover.remove(username);
         		if(scores.isEmpty())
         			master.deleteEmptyLobby(lobby_name);
-        	}
+	    	}
 	    }
 	    
         protected void forwardState(String packet) throws IOException {
@@ -241,17 +245,12 @@ public class TetrisLobby{
                     //System.out.println("Received packet in lobby " + lobby_name + ": " + str);
                     handlePacket(str);
                 }
-                catch(SocketException e) {
+                catch(Exception e) {
                 	System.out.println("Client has been disconnected: "+username);
                 	handlePlayerDisconnection();
                 	closeSockets(socket);
                 	break;
-                } catch (IOException e) {
-                	System.out.println("Client has been disconnected: "+username);
-                	handlePlayerDisconnection();
-                	closeSockets(socket);
-					e.printStackTrace();
-				}
+                }
             }
         }
     }

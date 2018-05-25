@@ -20,7 +20,6 @@ import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.network.TetrisClient;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -104,7 +103,6 @@ public class GUIMultiPlayer extends GUIScreen{
         {
         	public void run() 
         	{
-        		System.out.println("requesting lobbies");
         		listLobbies(paramParent);
         	}
         }, 0, 1,TimeUnit.SECONDS);

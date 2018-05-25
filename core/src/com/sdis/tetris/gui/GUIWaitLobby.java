@@ -28,7 +28,7 @@ public class GUIWaitLobby  extends GUIScreen{
     Sprite title = new Sprite(new Texture(Gdx.files.internal("img/main_title.png"), false));
     private final TextButton startButton = new TextButton("Start Game", Buttons.MenuButton);
     private final TextButton backButton = new TextButton("< BACK", Buttons.MenuButton);
-    private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(0);
+    private ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(2);
     private final List<String> list;
     private Skin skin;
     ScrollPane scrollPane;
@@ -106,8 +106,7 @@ public class GUIWaitLobby  extends GUIScreen{
                 audio.playSFX(SFX.HOVER);
                 try {
 					client.start_game(paramParent.playerName);
-					listPlayers();
-					scheduler.execute(new Runnable() {
+					scheduler.schedule(new Runnable() {
 						public void run() {
 							try {
 								int nr_players = client.listen_game_begin();
@@ -135,7 +134,7 @@ public class GUIWaitLobby  extends GUIScreen{
 								scheduler.shutdown();
 							}
 						}
-					});
+					},0,TimeUnit.SECONDS);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

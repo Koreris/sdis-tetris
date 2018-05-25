@@ -12,13 +12,15 @@ hs_err_pid*
 /.gradle/
 .project
 
-.project
-*
-.prefs
-*
-.png
-*
+*.project
+*.prefs
+*.png
 
 .idea/workspace.xml
 core/.classpath
 desktop/.classpath
+core/assets/servers.txt
+core/assets/wdserver/client.keys
+core/assets/wdserver/server.keys
+core/assets/wdserver/servers.txt
+core/assets/wdserver/truststore

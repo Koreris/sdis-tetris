@@ -14,10 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import com.sdis.tetris.Buttons;
 import com.sdis.tetris.Tetris;
-import com.sdis.tetris.TetrisPreferences;
 import com.sdis.tetris.audio.Song;
 import com.sdis.tetris.audio.SFX;
-import com.sdis.tetris.logic.HighScores;
 import com.sdis.tetris.network.TetrisClient;
 
 import java.util.Map;
@@ -39,7 +37,7 @@ public class GUIHighscores extends GUIScreen
 		table.add(new Label("HIGHSCORES", Buttons.TitleLabel)).padBottom(32).row();
 
 		TetrisClient cliente = new TetrisClient();
-		for (Map.Entry me: cliente.multiscores.entrySet())
+		for (Map.Entry<String,Integer> me: cliente.multiscores.entrySet())
 		{
 			String highscore="i+1\n"+me.getKey() + " " + me.getValue();
 
