@@ -419,4 +419,35 @@ public class TetrisClient {
 			
 		}	
 	}
+
+	public void reconnectLobbyOnOriginalServer(String lobby_name, String player_name, InetAddress sa,
+			int sp) throws IOException {
+		disconnectLobby();
+        byte[] msg = ("CONNECT " + lobby_name + " " + player_name + " " + CRLF).getBytes();
+
+        OutputStream out = null;
+        InputStream in = null;
+      
+        SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket();
+        socket.connect(new InetSocketAddress(sa, sp),1500);
+        out = socket.getOutputStream();
+        in = socket.getInputStream();
+        out.write(msg);
+        
+        byte[] buf = new byte[1024];
+
+        int read = in.read(buf);
+        String string = new String(buf,0,read);        
+        String [] msg_tokenized = string.split(" ");
+        out.close();
+        in.close();
+        socket.close();
+        
+        lobbySocket = (SSLSocket) sslsocketFactory.createSocket(sa,Integer.parseInt(msg_tokenized[1].trim()));
+        lsos = lobbySocket.getOutputStream();
+        lsis = lobbySocket.getInputStream();
+        server_address=sa;
+        server_port=sp;
+        connectedLobbyName=lobby_name;
+	}
 }

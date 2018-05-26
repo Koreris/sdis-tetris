@@ -102,7 +102,7 @@ public class GUIMultiGame extends GUIScreen
 			lockServerChange=true;
 			if(client.canReachAnyServer(parent.other_servers)) {
 				try {
-					client.join_lobby(client.connectedLobbyName, parent.playerName);
+					client.reconnectLobbyOnOriginalServer(client.connectedLobbyName, parent.playerName,parent.serverAddress,parent.serverPort);
 				} catch (Exception e1) {
 					client.reconnectLobbyOnBackupServer(parent.serverName,parent.playerName);
 				}
