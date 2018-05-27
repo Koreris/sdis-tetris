@@ -108,7 +108,7 @@ public class TetrisClient {
         socket.close();
     }
     
-    public void join_lobby(String lobby_name, String player_name) throws IOException {
+    public void join_lobby(String lobby_name, String player_name) throws Exception {
     	disconnectLobby();
         byte[] msg = ("CONNECT " + lobby_name + " " + player_name + " " + CRLF).getBytes();
 
@@ -117,17 +117,16 @@ public class TetrisClient {
       
         SSLSocket socket = (SSLSocket) sslsocketFactory.createSocket();
         socket.connect(new InetSocketAddress(server_address, server_port),1500);
+        
         out = socket.getOutputStream();
         in = socket.getInputStream();
-        try {
-            out.write(msg);
-        } catch (IOException e) {
-            
-        }
         
+        out.write(msg);
+                   
         byte[] buf = new byte[1024];
 
         int read = in.read(buf);
+        
         String string = new String(buf,0,read);        
         String [] msg_tokenized = string.split(" ");
         out.close();
@@ -135,6 +134,7 @@ public class TetrisClient {
         socket.close();
         
         lobbySocket = (SSLSocket) sslsocketFactory.createSocket(server_address,Integer.parseInt(msg_tokenized[1].trim()));
+       
         lsos = lobbySocket.getOutputStream();
         lsis = lobbySocket.getInputStream();
         connectedLobbyName=lobby_name;
@@ -415,13 +415,13 @@ public class TetrisClient {
 	public void reconnectLobbyOnBackupServer(String original_server,String player_name) {
 		try {
 			join_lobby(original_server+connectedLobbyName, player_name);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			
 		}	
 	}
 
 	public void reconnectLobbyOnOriginalServer(String lobby_name, String player_name, InetAddress sa,
-			int sp) throws IOException {
+			int sp) throws Exception {
 		disconnectLobby();
         byte[] msg = ("CONNECT " + lobby_name + " " + player_name + " " + CRLF).getBytes();
 
