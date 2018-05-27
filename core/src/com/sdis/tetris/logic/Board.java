@@ -13,8 +13,8 @@ public class Board {
 	public int boardHeight = 20;
 	public int scaleX = 30;
 	public int scaleY = 30;
-	public final Color gameBoard[][] = new Color[boardHeight][boardWidth];
-	public volatile Color cloneBoard[][] = new Color[boardHeight][boardWidth];
+	public Color gameBoard[][];
+	public volatile Color cloneBoard[][];
 	public String playerName;
 	public Tetromino fallingPiece;
 	private int playerScore;
@@ -44,6 +44,7 @@ public class Board {
 			if (fallingPiece.getY() >= boardHeight-4) 
 			{
 				gameOver=true;
+				return 0;
 			}
 			int rowsDeleted = checkRows();
 			fallingPiece = TetrominoProto.generateRandom();
@@ -103,8 +104,11 @@ public class Board {
 	 */
 	public Board() 
 	{
+		gameBoard = new Color[boardHeight][boardWidth];
+		cloneBoard=new Color[boardHeight][boardWidth];
 		fallingPiece = TetrominoProto.generateRandom();
 		fallingPiece.setPosition(boardWidth/2, boardHeight-3);
+		fallingPiece.mFalling=true;
 		gameBounds = new Bounds(0, 0, boardWidth, boardHeight);
 		gameOver=false;
 	}
@@ -118,6 +122,7 @@ public class Board {
 		scaleX = scX;
 		scaleY = scY;
 		cloneBoard=new Color[boardHeight][boardWidth];
+		gameOver=false;
 	}
 	
 	
