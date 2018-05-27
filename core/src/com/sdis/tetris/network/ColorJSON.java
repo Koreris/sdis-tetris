@@ -10,8 +10,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
-import com.badlogic.gdx.graphics.Color;
-public class ColorJSON extends Color {
+public class ColorJSON{
 	float r;
 	float g;
 	float b;
