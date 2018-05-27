@@ -187,7 +187,7 @@ public class TetrisServer implements Runnable{
                     		answer = "RECONNECTED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
 	                    	out.write(answer.getBytes());  
                     	}
-                    	else if(running_lobbies.get(lobby_name).scores.size()<4 && !running_lobbies.get(lobby_name).game_started) {
+                    	else if(running_lobbies.get(lobby_name).scores.size()<4 && !running_lobbies.get(lobby_name).game_started && !running_lobbies.get(lobby_name).scores.containsKey(msg_tokens[2])) {
 	                    	answer = "JOINED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
 	                    	out.write(answer.getBytes());  
                     	}

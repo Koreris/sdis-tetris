@@ -66,7 +66,7 @@ public class TetrisLobby{
 	}
 	
 	public void start_and_replicate_game() {
-		//prevent other joins from this point on?
+		
 		game_started=true;
 		TetrisLobbyJSON json_representation = 
 				new TetrisLobbyJSON()
