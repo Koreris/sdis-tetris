@@ -139,7 +139,7 @@ public class TetrisServer implements Runnable{
                 String msg_tokens[] = str.split(" ");
 
                 if(msg_tokens[0].compareTo("CREATE") == 0){
-                    String lobby_name = msg_tokens[1];
+                    String lobby_name = msg_tokens[1].trim();
                     TetrisLobby new_lob = new TetrisLobby(TetrisServer.this,lobby_name);
 
                     if(running_lobbies.get(lobby_name) != null){
@@ -292,12 +292,12 @@ public class TetrisServer implements Runnable{
 	            switch(headerComponents[0]) {
 	                case "REPLICATE":
                         TetrisLobbyJSON lobby = TetrisLobbyJSON.fromJSON(lines[1].trim());
-                        replicated_lobbies.remove(headerComponents[1]+headerComponents[2]);
-                        replicated_lobbies.put(headerComponents[1]+headerComponents[2], lobby);
+                        replicated_lobbies.remove(headerComponents[1].trim()+headerComponents[2].trim());
+                        replicated_lobbies.put(headerComponents[1].trim()+headerComponents[2].trim(), lobby);
                         printLobbies();
 	                    break;
 	                case "DELETE":
-	                    replicated_lobbies.remove(headerComponents[1]+headerComponents[2]);
+	                    replicated_lobbies.remove(headerComponents[1].trim()+headerComponents[2].trim());
 	                    printLobbies();
 	                    break;
 	                default:
