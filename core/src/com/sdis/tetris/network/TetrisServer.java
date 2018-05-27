@@ -149,7 +149,7 @@ public class TetrisServer implements Runnable{
                     }
 
                     running_lobbies.put(lobby_name,new_lob);
-                    String answer = "CREATED " + new_lob.join_lobby(msg_tokens[2])+CRLF;
+                    String answer = "CREATED " + new_lob.join_lobby(msg_tokens[2].trim())+CRLF;
                     System.out.println("SERVER RESPONSE TO CREATE LOBBY  :"+answer);
                     out.write(answer.getBytes());
                 }
@@ -183,18 +183,18 @@ public class TetrisServer implements Runnable{
                     String lobby_name = msg_tokens[1].trim();
                     String answer="";
                     if(running_lobbies.containsKey(lobby_name)){
-                    	if(running_lobbies.get(lobby_name).scores.containsKey(msg_tokens[2])) {
-                    		answer = "RECONNECTED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
+                    	if(running_lobbies.get(lobby_name).scores.containsKey(msg_tokens[2].trim())) {
+                    		answer = "RECONNECTED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2].trim())+CRLF;
 	                    	out.write(answer.getBytes());  
                     	}
-                    	else if(running_lobbies.get(lobby_name).scores.size()<4 && !running_lobbies.get(lobby_name).game_started && !running_lobbies.get(lobby_name).scores.containsKey(msg_tokens[2])) {
-	                    	answer = "JOINED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
+                    	else if(running_lobbies.get(lobby_name).scores.size()<4 && !running_lobbies.get(lobby_name).game_started && !running_lobbies.get(lobby_name).scores.containsKey(msg_tokens[2].trim())) {
+	                    	answer = "JOINED " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2].trim())+CRLF;
 	                    	out.write(answer.getBytes());  
                     	}
                     }
                     else if(replicated_lobbies.containsKey(lobby_name)){
                     	running_lobbies.putIfAbsent(lobby_name, new TetrisLobby(TetrisServer.this,lobby_name).set_scores_from_replication(replicated_lobbies.get(lobby_name).scores));
-                    	answer = "CHANGEDSERVER " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2])+CRLF;
+                    	answer = "CHANGEDSERVER " + running_lobbies.get(lobby_name).join_lobby(msg_tokens[2].trim())+CRLF;
                     	out.write(answer.getBytes()); 
                     }   
                     System.out.println("RESPONSE TO JOIN: "+answer);
