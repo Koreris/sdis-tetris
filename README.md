@@ -1,3 +1,6 @@
+sdis 2nd project @feup
+
+
 Compiling and executing the server - Can be done on any platform(windows,linux,macOS)
 
 In some directory, for example the desktop:
